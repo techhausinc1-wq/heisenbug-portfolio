@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a16">
+<title>Heisenbug — Vertical software for operators</title>
+<meta name="description" content="Single-operator software for niche industries. Live demos in jewelry, furniture, pool service, accounting, auto parts, HVAC. One operator at a time, one tool at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f7f3e9;
+    --paper-warm: #f1ebd9;
+    --ink: #18170f;
+    --ink-soft: #3a352a;
+    --ink-dim: #6e6757;
+    --rule: #b8ad95;
+    --indigo: #3d35a6;
+    --indigo-bright: #5347d9;
+    --rust: #b8541d;
+    --emerald: #2e7d5b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.6; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  /* === Header === */
+  header { padding: 28px 6%; display: flex; justify-content: space-between; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 42px; height: 42px;
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500;
+    border-radius: 6px;
+    font-style: italic;
+  }
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
+  .brand-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  nav { display: flex; gap: 28px; align-items: center; }
+  nav a {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    transition: color 120ms;
+  }
+  nav a:hover { color: var(--rust); }
+  .cta {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .cta:hover { background: var(--indigo); }
+  @media (max-width: 760px) { nav a:not(.cta) { display: none; } }
+
+  /* === Hero === */
+  .hero {
+    padding: 60px 6% 100px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  @media (max-width: 1100px) { .hero { grid-template-columns: 1fr; gap: 40px; padding: 40px 6% 60px; } }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2.5px;
+    color: var(--rust); text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(40px, 7vw, 84px);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  h1 em { font-style: italic; color: var(--rust); font-weight: 400; }
+  .hero-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    margin-bottom: 36px;
+    max-width: 30em;
+  }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--ink); color: var(--paper);
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 14px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary:hover { background: var(--indigo); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 14px; font-weight: 600;
+    border: 1px solid var(--rule);
+  }
+  .btn-secondary:hover { border-color: var(--ink); }
+
+  /* Hero visual */
+  .hero-visual {
+    position: relative;
+    height: 480px;
+  }
+  @media (max-width: 1100px) { .hero-visual { height: 360px; } }
+  .demo-card {
+    position: absolute;
+    background: white;
+    border: 0.5px solid var(--rule);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 30px 80px rgba(24,23,15,0.18), 0 6px 18px rgba(24,23,15,0.08);
+    transition: transform 250ms;
+  }
+  .demo-card:hover { transform: translateY(-4px); }
+  .demo-card .dc-bar { display: flex; gap: 6px; margin-bottom: 8px; }
+  .demo-card .dc-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+  .demo-card-1 {
+    top: 0; left: 30%;
+    width: 380px;
+    background: #0a0a0a; color: #e8e3d0;
+    transform: rotate(-3deg);
+  }
+  .demo-card-2 {
+    top: 40%; left: 0;
+    width: 320px;
+    background: #fbf8f1;
+    transform: rotate(2deg);
+  }
+  .demo-card-3 {
+    top: 50%; right: 0;
+    width: 340px;
+    background: #f4f8fb;
+    transform: rotate(-2deg);
+  }
+  .dc-title { font-size: 11px; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.3px; }
+  .dc-stat { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; margin-bottom: 2px; }
+  .dc-meta { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 1px; color: var(--ink-dim); text-transform: uppercase; }
+
+  /* === Demos grid === */
+  .demos-section {
+    padding: 100px 6%;
+    background: var(--paper-warm);
+    border-top: 0.5px solid var(--rule);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2.5px;
+    color: var(--rust); text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+  }
+  h2 em { font-style: italic; color: var(--rust); font-weight: 400; }
+  .section-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 36em;
+    margin-bottom: 56px;
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 1100px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 760px) { .demo-grid { grid-template-columns: 1fr; } }
+
+  .demo {
+    background: white;
+    border: 0.5px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 200ms, box-shadow 200ms;
+    display: block;
+  }
+  .demo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(24,23,15,0.15);
+  }
+  .demo-preview {
+    aspect-ratio: 16/10;
+    background: linear-gradient(135deg, var(--paper-warm) 0%, var(--paper) 100%);
+    border-bottom: 0.5px solid var(--rule);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .demo-preview.jewelry { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); color: #b89968; }
+  .demo-preview.furniture { background: linear-gradient(135deg, #f6f3ec 0%, #e6e0d2 100%); color: #1f3a5f; }
+  .demo-preview.pool { background: linear-gradient(135deg, #f4f8fb 0%, #d4e3ef 100%); color: #0a6cb0; }
+  .demo-preview.audit { background: linear-gradient(135deg, #faf8f2 0%, #ede9d8 100%); color: #0f1f3a; }
+  .demo-preview.parts { background: linear-gradient(135deg, #2d3140 0%, #1a1d24 100%); color: #c4880a; }
+  .demo-preview.hvac { background: linear-gradient(135deg, #fbfaf6 0%, #ede9d8 100%); color: #4a3220; }
+
+  .demo-preview-name {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 500;
+  }
+  .demo-body { padding: 22px 24px 24px; }
+  .demo-industry {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .demo-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .demo-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .demo-features {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 16px;
+  }
+  .demo-feature {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    background: var(--paper-warm);
+    padding: 4px 9px;
+    border-radius: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .demo-cta {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .demo-link {
+    color: var(--rust);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .demo-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--emerald);
+    font-weight: 600;
+  }
+  .demo-status.soon { color: var(--ink-dim); }
+
+  /* === Approach section === */
+  .approach { padding: 100px 6%; }
+  .approach-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .approach-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .approach-points { display: flex; flex-direction: column; gap: 26px; }
+  .approach-point { display: flex; gap: 18px; }
+  .ap-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 30px;
+    color: var(--rust);
+    width: 50px;
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .ap-body h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .ap-body p { color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+
+  /* === Footer === */
+  footer {
+    padding: 60px 6% 40px;
+    background: var(--ink);
+    color: var(--paper);
+    text-align: center;
+  }
+  footer h3 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: var(--paper);
+  }
+  footer p { color: rgba(247,243,233,0.7); font-size: 14px; max-width: 600px; margin: 0 auto 24px; line-height: 1.6; }
+  footer .btn-primary { background: var(--paper); color: var(--ink); }
+  footer .btn-primary:hover { background: var(--paper-warm); }
+  .foot-meta {
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: rgba(247,243,233,0.4);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">H</div>
+    <div>
+      <div class="brand-name">Heisenbug</div>
+      <div class="brand-sub">Vertical Software · For Operators</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#demos">Demos</a>
+    <a href="#approach">Approach</a>
+    <a class="cta" href="#contact">Start a project</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="hero-tag">★ ★ ★ ★ ★  ·  Built one operator at a time</div>
+    <h1>Software that <em>fits</em> the way you actually run the business.</h1>
+    <p class="hero-sub">Most operator software is generic SaaS bent into your shape. Heisenbug builds the opposite: a custom-fit cockpit per industry, per business, that mirrors how you actually work — not how a Silicon Valley product team thinks you should.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#demos">See the live demos →</a>
+      <a class="btn-secondary" href="#approach">How it works</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="demo-card demo-card-1">
+      <div class="dc-bar"><span class="dc-dot"></span><span class="dc-dot"></span><span class="dc-dot"></span></div>
+      <div class="dc-title">DIAMOND ATELIER · DASHBOARD</div>
+      <div class="dc-stat">$1,847,500</div>
+      <div class="dc-meta">Memos out · 11 active · 1 risk flag</div>
+    </div>
+    <div class="demo-card demo-card-2">
+      <div class="dc-bar"><span class="dc-dot"></span><span class="dc-dot"></span><span class="dc-dot"></span></div>
+      <div class="dc-title">FURNITURE HOUSE · AI CHAT</div>
+      <div class="dc-stat">147 inquiries</div>
+      <div class="dc-meta">4 languages · 38 to follow up</div>
+    </div>
+    <div class="demo-card demo-card-3">
+      <div class="dc-bar"><span class="dc-dot"></span><span class="dc-dot"></span><span class="dc-dot"></span></div>
+      <div class="dc-title">POOL SERVICE · CHEMISTRY</div>
+      <div class="dc-stat">3 alerts</div>
+      <div class="dc-meta">14 stops today · 11 done</div>
+    </div>
+  </div>
+</section>
+
+<section class="demos-section" id="demos">
+  <div class="section-tag">→ Live demos · open any in 1 second</div>
+  <h2>Six operator cockpits, <em>live</em>.</h2>
+  <p class="section-sub">Each demo is a working single-file web app — mock data, real workflow. Built as a starting template, then tailored to the specific operator. Tap any tile to open the demo on your phone or laptop.</p>
+
+  <div class="demo-grid">
+    <a class="demo" href="https://techhausinc1-wq.github.io/diamond-atelier-demo/" target="_blank">
+      <div class="demo-preview jewelry">
+        <div class="demo-preview-name">Diamond Atelier</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">Jewelry · house management</div>
+        <div class="demo-title">14-tab cockpit for a working diamond house</div>
+        <div class="demo-desc">Dashboard, leads, custom design pipeline (7 stages), repairs, memos out with cadence engine, appraisals with house-letterhead PDFs, VIP client portfolios, milestone calendar with anniversary outreach.</div>
+        <div class="demo-features">
+          <span class="demo-feature">GIA</span><span class="demo-feature">RAPAPORT</span><span class="demo-feature">CAD PIPELINE</span><span class="demo-feature">VIP TIERING</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="demo" href="https://techhausinc1-wq.github.io/furniture-cockpit-demo/" target="_blank">
+      <div class="demo-preview furniture">
+        <div class="demo-preview-name">Furniture House</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">Furniture retail · mid-market</div>
+        <div class="demo-title">Showroom + delivery + design + financing in one app</div>
+        <div class="demo-desc">AI room scene (the conversion driver), 4-language AI chat (EN / ES / PL / RU), financing waterfall across 5 lenders, custom orders pipeline, designer trade portal, route-optimized delivery.</div>
+        <div class="demo-features">
+          <span class="demo-feature">AI ROOM</span><span class="demo-feature">MULTILINGUAL</span><span class="demo-feature">WATERFALL</span><span class="demo-feature">TRADE PORTAL</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="demo" href="https://techhausinc1-wq.github.io/stockscout-demo/" target="_blank">
+      <div class="demo-preview hvac">
+        <div class="demo-preview-name">HVAC Inventory</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">HVAC service · field inventory</div>
+        <div class="demo-title">PWA for the truck — barcode + voice + EPA compliance</div>
+        <div class="demo-desc">Field-grade inventory PWA. Barcode scan with phone camera, voice queries ("where's the 2-ton condenser fan motor?"), EPA Section 608 refrigerant logging, two views (tech / owner), works offline.</div>
+        <div class="demo-features">
+          <span class="demo-feature">PWA</span><span class="demo-feature">BARCODE</span><span class="demo-feature">VOICE</span><span class="demo-feature">EPA 608</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="demo" href="https://techhausinc1-wq.github.io/pool-service-cockpit-demo/" target="_blank">
+      <div class="demo-preview pool">
+        <div class="demo-preview-name">Pool Service</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">Pool service · residential + commercial</div>
+        <div class="demo-title">Route + chemistry + equipment service in one</div>
+        <div class="demo-desc">Today's route with live status, chemistry log with auto-alerts on out-of-range readings, equipment service work-order pipeline, per-pool spec history, monthly auto-invoicing.</div>
+        <div class="demo-features">
+          <span class="demo-feature">CHEM ALERTS</span><span class="demo-feature">ROUTE</span><span class="demo-feature">WORK ORDERS</span><span class="demo-feature">CPO TRACKING</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="demo" href="https://techhausinc1-wq.github.io/audit-practice-cockpit-demo/" target="_blank">
+      <div class="demo-preview audit">
+        <div class="demo-preview-name">Audit Practice</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">CPA / tax practice · solo to mid-size firm</div>
+        <div class="demo-title">Returns + deadlines + document inbox + time</div>
+        <div class="demo-desc">Returns pipeline (1040 / 1120 / 1041 / 1065), critical-deadline calendar with auto-reminders, secure document inbox per client with OCR, time tracking with realization reporting, audit and advisory engagements.</div>
+        <div class="demo-features">
+          <span class="demo-feature">DEADLINES</span><span class="demo-feature">DOC INBOX</span><span class="demo-feature">REALIZATION</span><span class="demo-feature">CPE</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="demo" href="https://techhausinc1-wq.github.io/auto-parts-cockpit-demo/" target="_blank">
+      <div class="demo-preview parts">
+        <div class="demo-preview-name">Parts Operations</div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-industry">Auto parts · salvage + aftermarket</div>
+        <div class="demo-title">1000-photo-day pipeline + multi-channel listing</div>
+        <div class="demo-desc">Designed for the high-throughput parts operation: AI part-ID from photos, auto-listing to eBay + Amazon + FB Marketplace, source-vehicle tracking from VIN to part-out, Hollander interchange mapping.</div>
+        <div class="demo-features">
+          <span class="demo-feature">AI PART-ID</span><span class="demo-feature">MULTI-CHANNEL</span><span class="demo-feature">HOLLANDER</span><span class="demo-feature">VIN</span>
+        </div>
+        <div class="demo-cta">
+          <span class="demo-link">Open demo →</span>
+          <span class="demo-status">LIVE · MOCK DATA</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="approach" id="approach">
+  <div class="approach-grid">
+    <div>
+      <div class="section-tag">→ How we work</div>
+      <h2>One operator, <em>one tool</em>, one cycle.</h2>
+      <p class="section-sub">Heisenbug doesn't sell a platform that fits everyone. We build the cockpit that fits you. Same underlying engine, different shape for every industry. Same team across the portfolio — what we learn from one operator strengthens every other.</p>
+    </div>
+    <div class="approach-points">
+      <div class="approach-point">
+        <div class="ap-num">01</div>
+        <div class="ap-body">
+          <h4>Industry-specific by default</h4>
+          <p>A pool service operator and a diamond house need different software. We build the right tool for the right industry — not a generic CRM with industry branding tacked on.</p>
+        </div>
+      </div>
+      <div class="approach-point">
+        <div class="ap-num">02</div>
+        <div class="ap-body">
+          <h4>One operator at a time</h4>
+          <p>Each tool is configured around one specific operator's workflow. Mock data becomes real data. Generic terminology becomes your terminology. The tool reflects your business, not the other way around.</p>
+        </div>
+      </div>
+      <div class="approach-point">
+        <div class="ap-num">03</div>
+        <div class="ap-body">
+          <h4>Same engine, different shape</h4>
+          <p>Underneath every cockpit is the same platform. Multi-language AI chat, financing waterfalls, photo pipelines, document inboxes — built once, reused across verticals. Innovation in one operator's tool becomes available to all.</p>
+        </div>
+      </div>
+      <div class="approach-point">
+        <div class="ap-num">04</div>
+        <div class="ap-body">
+          <h4>Fast cycle, real ship</h4>
+          <p>Demo in a week, first deployed version in a month, fully operational v1 in a quarter. No multi-year roadmaps. We ship and iterate. You see progress every week, not every quarter.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <h3>Want a cockpit for your operation?</h3>
+  <p>Pick the demo above closest to your business. Open it on your phone, tap around for 10 minutes, and tell me what's wrong and what's missing. That's how every Heisenbug tool starts.</p>
+  <a class="btn-primary" href="mailto:hello@heisenbug.dev?subject=Heisenbug%20-%20cockpit%20inquiry">Start a conversation →</a>
+  <div class="foot-meta">
+    Heisenbug LLC · Vertical software for operators · 2026
+  </div>
+</footer>
+
+</body>
+</html>
