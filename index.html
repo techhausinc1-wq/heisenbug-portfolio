@@ -82,10 +82,10 @@
   section { padding: 80px 6%; }
   section.tinted { background: var(--paper-warm); border-top: 0.5px solid var(--rule); border-bottom: 0.5px solid var(--rule); }
   section.dark { background: var(--ink); color: var(--paper); border-top: 0.5px solid var(--ink); border-bottom: 0.5px solid var(--ink); }
-  section.dark .section-tag { color: rgba(247,243,233,0.6); }
+  section.dark .section-tag { color: #e87a3e; }
   section.dark h2 { color: var(--paper); }
-  section.dark h2 em { color: var(--rust); }
-  section.dark .section-sub { color: rgba(247,243,233,0.75); }
+  section.dark h2 em { color: #e87a3e; }
+  section.dark .section-sub { color: rgba(247,243,233,0.82); }
   .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2.5px; color: var(--rust); text-transform: uppercase; margin-bottom: 16px; }
   h2 { font-family: 'Fraunces', serif; font-size: clamp(30px, 4.5vw, 52px); font-weight: 500; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 18px; }
   h2 em { font-style: italic; color: var(--rust); font-weight: 400; }
@@ -110,12 +110,12 @@
     box-shadow: 0 24px 60px rgba(24,23,15,0.15);
     cursor: pointer;
   }
-  section.dark .tile { background: #1d1c14; border-color: #3a352a; }
+  section.dark .tile { background: #232118; border-color: #4a4334; }
   section.dark .tile-name { color: var(--paper); }
-  section.dark .tile-desc { color: rgba(247,243,233,0.75); }
-  section.dark .tile-feature { background: rgba(247,243,233,0.08); color: rgba(247,243,233,0.8); }
-  section.dark .tile-foot { border-top-color: #3a352a; }
-  section.dark .tile-industry { color: rgba(247,243,233,0.5); }
+  section.dark .tile-desc { color: rgba(247,243,233,0.85); }
+  section.dark .tile-feature { background: rgba(247,243,233,0.12); color: rgba(247,243,233,0.9); }
+  section.dark .tile-foot { border-top-color: #4a4334; }
+  section.dark .tile-industry { color: rgba(247,243,233,0.7); }
 
   .tile-mark {
     aspect-ratio: 16/9;
@@ -176,14 +176,14 @@
   /* === Footer === */
   footer { padding: 56px 6% 40px; background: var(--ink); color: var(--paper); text-align: center; }
   footer h3 { font-family: 'Fraunces', serif; font-style: italic; font-size: 26px; margin-bottom: 14px; color: var(--paper); }
-  footer p { color: rgba(247,243,233,0.7); font-size: 14px; max-width: 580px; margin: 0 auto 22px; line-height: 1.6; }
+  footer p { color: rgba(247,243,233,0.85); font-size: 14px; max-width: 580px; margin: 0 auto 22px; line-height: 1.6; }
   footer .btn-primary { background: var(--paper); color: var(--ink); }
   footer .btn-primary:hover { background: var(--paper-warm); }
-  .foot-meta { margin-top: 36px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: rgba(247,243,233,0.4); text-transform: uppercase; }
+  .foot-meta { margin-top: 36px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: rgba(247,243,233,0.6); text-transform: uppercase; }
 
   /* === Subsection header for grouping === */
   .subsec { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--ink-dim); text-transform: uppercase; margin: 36px 0 18px; padding-bottom: 8px; border-bottom: 0.5px solid var(--rule); }
-  section.dark .subsec { color: rgba(247,243,233,0.6); border-bottom-color: #3a352a; }
+  section.dark .subsec { color: rgba(247,243,233,0.8); border-bottom-color: #4a4334; }
 </style>
 </head>
 <body>
@@ -1056,18 +1056,18 @@
   @media (max-width: 1000px) { .pricing-grid { grid-template-columns: 1fr; } }
   .pricing-card { background: white; border: 0.5px solid var(--rule); border-radius: 12px; padding: 28px 28px 24px; display: flex; flex-direction: column; position: relative; }
   .pricing-card.featured { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: scale(1.02); }
-  .pricing-card.featured .pc-tier { color: var(--rust); }
-  .pricing-card.featured .pc-desc { color: rgba(247,243,233,0.8); }
-  .pricing-card.featured .pc-features { color: rgba(247,243,233,0.85); }
-  .pricing-card.featured .pc-features li { border-bottom-color: rgba(247,243,233,0.1); }
+  .pricing-card.featured .pc-tier { color: #e87a3e; font-weight: 700; }
+  .pricing-card.featured .pc-desc { color: rgba(247,243,233,0.88); }
+  .pricing-card.featured .pc-features { color: rgba(247,243,233,0.92); }
+  .pricing-card.featured .pc-features li { border-bottom-color: rgba(247,243,233,0.14); color: rgba(247,243,233,0.92); }
   .pricing-card.featured .pc-cta { background: var(--paper); color: var(--ink); }
   .pricing-card.featured .pc-cta:hover { background: var(--paper-warm); }
-  .pricing-card.featured .pc-setup { color: rgba(247,243,233,0.6); }
+  .pricing-card.featured .pc-setup { color: rgba(247,243,233,0.75); }
   .pc-badge { position: absolute; top: -10px; right: 20px; background: var(--rust); color: var(--paper); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 12px; font-weight: 600; }
   .pc-tier { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 12px; font-weight: 600; }
   .pc-price { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 500; line-height: 1; margin-bottom: 2px; }
   .pc-price span { font-size: 16px; color: var(--ink-dim); font-weight: 400; }
-  .pricing-card.featured .pc-price span { color: rgba(247,243,233,0.6); }
+  .pricing-card.featured .pc-price span { color: rgba(247,243,233,0.75); }
   .pc-setup { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); margin-bottom: 18px; }
   .pc-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 0.5px solid var(--rule); }
   .pricing-card.featured .pc-desc { border-bottom-color: rgba(247,243,233,0.15); }
