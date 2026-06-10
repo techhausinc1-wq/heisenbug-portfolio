@@ -32,13 +32,15 @@
   header { padding: 24px 6%; display: flex; justify-content: space-between; align-items: center; }
   .brand { display: flex; align-items: center; gap: 14px; }
   .brand-mark {
-    width: 42px; height: 42px;
-    background: var(--ink); color: var(--paper);
+    width: 46px; height: 46px;
+    background: var(--paper-warm, #f5efe4);
+    border: 0.5px solid var(--rule);
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500;
-    border-radius: 6px;
-    font-style: italic;
+    overflow: hidden;
+    flex-shrink: 0;
   }
+  .brand-mark img, .brand-mark svg { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
   .brand-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; letter-spacing: -0.3px; }
   .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--ink-dim); text-transform: uppercase; margin-top: 2px; }
   nav { display: flex; gap: 26px; align-items: center; }
@@ -67,6 +69,12 @@
 
   .hero-visual { position: relative; height: 480px; }
   @media (max-width: 1100px) { .hero-visual { height: 380px; } }
+  /* On phones, stack the floating preview cards vertically — the absolute-
+     positioned overlapping desktop layout would cause them to collide off-screen. */
+  @media (max-width: 760px) {
+    .hero-visual { height: auto; display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+    .demo-card { position: static !important; width: 100% !important; max-width: 100%; transform: none !important; top: auto !important; left: auto !important; right: auto !important; }
+  }
   .demo-card { position: absolute; background: white; border: 0.5px solid var(--rule); border-radius: 12px; padding: 14px; box-shadow: 0 30px 80px rgba(24,23,15,0.18), 0 6px 18px rgba(24,23,15,0.08); transition: transform 250ms; }
   .demo-card:hover { transform: translateY(-4px); }
   .demo-card .dc-bar { display: flex; gap: 6px; margin-bottom: 8px; }
@@ -190,7 +198,7 @@
 
 <header>
   <div class="brand">
-    <div class="brand-mark">H</div>
+    <div class="brand-mark"><img src="heisenbug-mark.svg" alt="Heisenbug" width="46" height="46"></div>
     <div>
       <div class="brand-name">Heisenbug</div>
       <div class="brand-sub">Vertical Software · For Operators</div>
@@ -1102,7 +1110,7 @@
 <footer id="contact">
   <h3>Want a cockpit for your operation?</h3>
   <p>Pick the demo above closest to your business. Open it on your phone, tap around for 10 minutes, and tell me what's wrong and what's missing. That's how every Heisenbug tool starts.</p>
-  <a class="btn-primary" href="mailto:hello@heisenbug.dev?subject=Heisenbug%20-%20cockpit%20inquiry">Start a conversation →</a>
+  <a class="btn-primary" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=hello@heisenbug.dev&amp;su=Heisenbug%20%E2%80%94%20cockpit%20inquiry" target="_blank" rel="noopener">Start a conversation →</a>
   <div class="foot-meta">
     Heisenbug LLC · Vertical software for operators · 2026
   </div>
@@ -1118,8 +1126,23 @@
       const subject = data.get('_subject') || 'Heisenbug inquiry';
       let body = '';
       data.forEach((value, key) => { if (!key.startsWith('_') && value) body += key.replace(/_/g, ' ') + ': ' + value + '\n'; });
-      window.location.href = 'mailto:hello@heisenbug.dev?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      status.textContent = 'Opening your email client...';
+      // Open Gmail web compose in a new tab — works on desktop (Gmail web)
+      // and on mobile (deep-links into the Gmail app if installed, web otherwise).
+      // Nobody uses the native macOS Mail app, so mailto: is the wrong default.
+      const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=hello@heisenbug.dev'
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+      // Also copy the body to clipboard as a belt-and-suspenders fallback
+      // in case the popup is blocked or the user isn't signed into Gmail.
+      try { navigator.clipboard.writeText('To: hello@heisenbug.dev\nSubject: ' + subject + '\n\n' + body); } catch (e) {}
+      const win = window.open(gmailUrl, '_blank', 'noopener');
+      if (win) {
+        status.innerHTML = 'Opening Gmail in a new tab. <br><span style="font-size:11px; opacity:0.7;">Message also copied to clipboard as backup.</span>';
+        status.style.color = 'var(--emerald, #2d7a3e)';
+      } else {
+        status.innerHTML = 'Popup blocked. <a href="' + gmailUrl + '" target="_blank" style="color:var(--rust);">Click here to open Gmail</a> — message is on your clipboard.';
+        status.style.color = 'var(--rust, #b8463a)';
+      }
       return false;
     }
     event.preventDefault();
