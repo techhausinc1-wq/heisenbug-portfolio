@@ -184,10 +184,16 @@ header {
   display: flex; align-items: center; justify-content: center;
 }
 .hero-artwork img {
-  max-width: 420px; width: 100%;
+  max-width: 460px; width: 100%;
   height: auto; display: block;
-  mix-blend-mode: lighten;
-  filter: drop-shadow(0 0 50px rgba(198,217,122,0.35)) drop-shadow(0 0 90px rgba(198,217,122,0.18));
+  /* screen blend kills dark pixels harder than lighten — pure black
+     becomes invisible, dark greens become page-green */
+  mix-blend-mode: screen;
+  /* radial mask softly fades the rectangle's edges into transparency
+     so the image dissolves into the page instead of sitting as a card */
+  -webkit-mask-image: radial-gradient(ellipse 70% 78% at center, #000 35%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.3) 80%, transparent 100%);
+          mask-image: radial-gradient(ellipse 70% 78% at center, #000 35%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  filter: drop-shadow(0 0 60px rgba(198,217,122,0.28));
 }
 @media (max-width: 900px) {
   .hero { padding: 56px 6% 70px; }
