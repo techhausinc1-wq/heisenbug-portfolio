@@ -263,12 +263,24 @@ h2 em { color: var(--green-mid); font-style: italic; }
   letter-spacing: -0.3px;
   border-bottom: 0.5px solid var(--rule-dark);
 }
-.tile-mark.furniture { background: linear-gradient(135deg, #213d56 0%, #102234 100%); color: #c4d8e8; }
-.tile-mark.hvac      { background: linear-gradient(135deg, #4a2e1a 0%, #281710 100%); color: #e8c8a8; }
-.tile-mark.vending   { background: linear-gradient(135deg, #4a3018 0%, #28190c 100%); color: #e8c89c; }
-.tile-mark.contractor{ background: linear-gradient(135deg, var(--green-mid) 0%, var(--dark) 100%); color: var(--cream); }
-.tile-mark.diamond   { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); color: #d8d8d8; }
-.tile-mark.parts     { background: linear-gradient(135deg, #4a2840 0%, #28162a 100%); color: #e8b8d8; }
+.tile-mark.furniture     { background: linear-gradient(135deg, #213d56 0%, #102234 100%); color: #c4d8e8; }
+.tile-mark.furniture-live{ background: linear-gradient(135deg, #2c4a64 0%, #15293e 100%); color: #c4d8e8; }
+.tile-mark.hvac          { background: linear-gradient(135deg, #4a2e1a 0%, #281710 100%); color: #e8c8a8; }
+.tile-mark.vending       { background: linear-gradient(135deg, #4a3018 0%, #28190c 100%); color: #e8c89c; }
+.tile-mark.brew          { background: linear-gradient(135deg, #4a3018 0%, #28190c 100%); color: #e8c89c; }
+.tile-mark.contractor    { background: linear-gradient(135deg, var(--green-mid) 0%, var(--dark) 100%); color: var(--cream); }
+.tile-mark.construction  { background: linear-gradient(135deg, #2e4a2e 0%, #14201a 100%); color: #c8e0c8; }
+.tile-mark.diamond       { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); color: #d8d8d8; }
+.tile-mark.jewelry       { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); color: #d8d8d8; }
+.tile-mark.parts         { background: linear-gradient(135deg, #4a2840 0%, #28162a 100%); color: #e8b8d8; }
+.tile-mark.parts-c       { background: linear-gradient(135deg, #4a2840 0%, #28162a 100%); color: #e8b8d8; }
+.tile-mark.pool-c        { background: linear-gradient(135deg, #1a3a52 0%, #0a1c2c 100%); color: #b8d4e8; }
+.tile-mark.pool-live     { background: linear-gradient(135deg, #1a3a52 0%, #0a1c2c 100%); color: #b8d4e8; }
+.tile-mark.audit-c       { background: linear-gradient(135deg, #2a3a2e 0%, #14201a 100%); color: #c8e0c8; }
+.tile-mark.audit-live    { background: linear-gradient(135deg, #2a3a2e 0%, #14201a 100%); color: #c8e0c8; }
+.tile-mark.auto-live     { background: linear-gradient(135deg, #4a2e1a 0%, #281710 100%); color: #e8c8a8; }
+.tile-mark.insulation    { background: linear-gradient(135deg, #4a4018 0%, #28220c 100%); color: #e8e09c; }
+.tile-mark.hemp          { background: linear-gradient(135deg, #2e4a2e 0%, #14201a 100%); color: #c8e0c8; }
 .tile-body { padding: 18px 22px 22px; flex: 1; display: flex; flex-direction: column; }
 .tile-industry {
   font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
@@ -295,6 +307,18 @@ h2 em { color: var(--green-mid); font-style: italic; }
   background: rgba(198,217,122,0.18); color: var(--green-bright);
   font-weight: 700; font-size: 9.5px;
 }
+
+/* CATEGORY HEADERS inside the dark Work section */
+.cat-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 500; letter-spacing: -0.01em;
+  color: var(--green-bright);
+  margin: 56px 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--rule-dark);
+}
+.cat-title:first-of-type { margin-top: 16px; }
 
 /* APPROACH — light section with centered serif italic */
 .approach-inner { text-align: center; }
@@ -435,78 +459,17 @@ footer .brand-mark {
   </div>
 </section>
 
-<!-- FEATURED WORK — dark section -->
+<!-- FEATURED WORK — dark section, full catalog -->
 <section class="sec sec-dark" id="work">
   <div class="sec-inner">
     <div class="work-head">
       <div>
         <div class="section-eyebrow">→ Selected work</div>
-        <h2>Six cockpits, six industries, <em>one engine</em>.</h2>
+        <h2>26 cockpits, every industry we've gone deep on, <em>one engine</em>.</h2>
       </div>
-      <div class="small">Each tile opens a live demo you can click around. Mobile + desktop. Mock data inside, real features.</div>
+      <div class="small">Each tile opens a live demo you can click around. Mobile + desktop. Mock data inside, real features. Pick the one closest to your business.</div>
     </div>
-
-    <div class="tiles">
-      <a class="tile" href="https://techhausinc1-wq.github.io/furniture-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture">Furniture &amp; Mattress</div>
-        <div class="tile-body">
-          <div class="tile-industry">Discount furniture · multi-account retail</div>
-          <div class="tile-name">Multi-account inbox, live inventory, financing, reels</div>
-          <div class="tile-desc">Unifies every customer channel — Facebook Pages, FB Marketplace, Instagram, TikTok, OfferUp, WhatsApp, Google Business, email — into one inbox. Live inventory with tap-to-add Easy Order. In-app finance application supporting the major no-credit lenders. Auto-generated TikTok reels from showroom photos.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-
-      <a class="tile" href="https://techhausinc1-wq.github.io/stockscout-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark hvac">HVAC Inventory</div>
-        <div class="tile-body">
-          <div class="tile-industry">HVAC · field PWA</div>
-          <div class="tile-name">Truck-grade inventory with barcode + voice + EPA 608</div>
-          <div class="tile-desc">Built for HVAC techs on the truck. Barcode scan to find parts, voice queries for hands-free lookup, EPA-608 refrigerant logging (regulatory required), separate tech and owner views, works offline. Real working tool, not a slideshow.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-
-      <a class="tile" href="https://techhausinc1-wq.github.io/vending-route-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark vending">Vending Route</div>
-        <div class="tile-body">
-          <div class="tile-industry">Vending · coffee + snack · multi-state</div>
-          <div class="tile-name">Routes from telemetry, location-scout from permits</div>
-          <div class="tile-desc">Today's optimized route from machine telemetry (DEX/MDB). Location-scout engine that finds new placement targets from new-business permits and openings. Cashless integration. Designed for route operators running across multiple states.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-
-      <a class="tile" href="https://techhausinc1-wq.github.io/contractor-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark contractor">Contractor (GC)</div>
-        <div class="tile-body">
-          <div class="tile-industry">General contractor · commercial + residential</div>
-          <div class="tile-name">Jobs, subs, permits, AIA billing</div>
-          <div class="tile-desc">Active jobs by phase with change orders. Sub roster with W-9 and COI compliance tracking. Permits and inspections calendar. OSHA logs. AIA-format progress billing built in. For GCs who hate spreadsheets.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-
-      <a class="tile" href="https://techhausinc1-wq.github.io/diamond-atelier-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark diamond">Diamond Atelier</div>
-        <div class="tile-body">
-          <div class="tile-industry">Diamond &amp; fine jewelry · multi-client memos</div>
-          <div class="tile-name">Memo-out tracking, GIA log, risk flags</div>
-          <div class="tile-desc">Tracks loose stones on memo across clients, GIA / IGI cert log per stone, days-out aging, automated risk-flag escalation for stones older than a threshold. For diamond merchants whose paper memo books have served them well for decades — but who now need digital visibility.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-
-      <a class="tile" href="https://techhausinc1-wq.github.io/auto-parts-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark parts">Auto Parts Pipeline</div>
-        <div class="tile-body">
-          <div class="tile-industry">Auto parts · salvage + aftermarket</div>
-          <div class="tile-name">Listing pipeline for high-volume parts operations</div>
-          <div class="tile-desc">A part comes in, gets photographed, AI extracts the part identity from the photos, listings auto-publish to eBay, Facebook Marketplace, OfferUp, and the shop's own site. For high-volume operations where every minute saved per part compounds across thousands of parts a day.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-    </div>
+TILES_BLOCK_PLACEHOLDER
   </div>
 </section>
 
