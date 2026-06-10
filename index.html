@@ -166,9 +166,9 @@ header {
   letter-spacing: -0.022em; margin: 0 0 30px;
   color: var(--cream);
 }
-.hero h1 em { color: var(--green-bright); font-style: italic; }
+.hero h1 em { color: var(--green-bright); font-style: normal; font-weight: 600; }
 .hero-lead {
-  font-family: 'Fraunces', serif; font-style: italic;
+  font-family: 'Fraunces', serif;
   font-size: clamp(17px, 1.7vw, 22px);
   line-height: 1.5; color: rgba(242,235,203,0.78);
   margin: 0 0 36px; max-width: 30em;
@@ -239,9 +239,9 @@ h2 {
   letter-spacing: -0.018em; margin: 0 auto 22px;
   max-width: 22em;
 }
-h2 em { color: var(--green-mid); font-style: italic; }
+h2 em { color: var(--green-mid); font-style: normal; font-weight: 600; }
 .sec-dark h2 { color: var(--cream); }
-.sec-dark h2 em { color: var(--green-bright); }
+.sec-dark h2 em { color: var(--green-bright); font-style: normal; font-weight: 600; }
 
 .sec p {
   font-size: 18px; line-height: 1.65;
@@ -375,10 +375,11 @@ h2 em { color: var(--green-mid); font-style: italic; }
 }
 .cat-title:first-of-type { margin-top: 16px; }
 
-/* APPROACH — short italic blockquote callouts that should be centered */
+/* APPROACH — short serif blockquote callouts, centered. No italics — emphasis
+   carried by color + weight instead. */
 .approach-inner { text-align: center; }
 .approach-inner p, .approach p {
-  font-family: 'Fraunces', serif; font-style: italic;
+  font-family: 'Fraunces', serif;
   font-size: clamp(20px, 2.4vw, 28px);
   line-height: 1.5; color: var(--ink-soft);
   margin: 18px auto;
@@ -386,8 +387,8 @@ h2 em { color: var(--green-mid); font-style: italic; }
   text-align: center;   /* wins over .sec p text-align:left */
 }
 .sec-dark .approach-inner p { color: rgba(242,235,203,0.85); }
-.approach p em, .approach-inner p em { color: var(--green-mid); font-weight: 500; font-style: italic; }
-.sec-dark .approach-inner p em { color: var(--green-bright); }
+.approach p em, .approach-inner p em { color: var(--green-mid); font-weight: 600; font-style: normal; }
+.sec-dark .approach-inner p em { color: var(--green-bright); font-style: normal; font-weight: 600; }
 
 /* SHIP */
 .ship-grid {
