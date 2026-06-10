@@ -6,8 +6,25 @@
 <title>Heisenbug — vertical software for operators</title>
 <meta name="description" content="We build custom-fit operator cockpits — daily-driver software that runs a single business. Web, PWA, native app, or simple website. Your call.">
 <meta name="theme-color" content="#0F1F0F">
-<link rel="icon" href="heisenbug-square.png" type="image/png">
-<link rel="apple-touch-icon" href="heisenbug-square.png">
+<link rel="canonical" href="https://heisenbug.app/">
+<link rel="icon" href="heisenbug-square-small.png" type="image/png">
+<link rel="apple-touch-icon" href="heisenbug-square-small.png">
+
+<!-- Open Graph (Facebook, iMessage, Slack, LinkedIn, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://heisenbug.app/">
+<meta property="og:title" content="Heisenbug — vertical software for operators">
+<meta property="og:description" content="Custom-fit operator cockpits — daily-driver software that runs a single business. 26 demos live. Web, PWA, native app, or just a website. Your call.">
+<meta property="og:image" content="https://heisenbug.app/heisenbug-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:site_name" content="Heisenbug">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Heisenbug — vertical software for operators">
+<meta name="twitter:description" content="Custom-fit operator cockpits — daily-driver software that runs a single business. 26 demos live.">
+<meta name="twitter:image" content="https://heisenbug.app/heisenbug-og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -201,8 +218,10 @@ header {
   .hero-artwork img { max-width: 280px; }
 }
 
-/* SECTIONS */
-.sec { padding: 90px 6%; }
+/* SECTIONS — default to centered headers; body paragraphs are
+   centered as a block but text inside stays left-aligned (readability).
+   .work-head opts out (catalog header is intentionally asymmetric). */
+.sec { padding: 90px 6%; text-align: center; }
 .sec-inner { max-width: 1240px; margin: 0 auto; }
 .sec-narrow { max-width: 920px; margin: 0 auto; }
 
@@ -217,7 +236,8 @@ h2 {
   font-family: 'Fraunces', serif;
   font-size: clamp(30px, 3.6vw, 46px);
   font-weight: 500; line-height: 1.13;
-  letter-spacing: -0.018em; margin: 0 0 22px;
+  letter-spacing: -0.018em; margin: 0 auto 22px;
+  max-width: 22em;
 }
 h2 em { color: var(--green-mid); font-style: italic; }
 .sec-dark h2 { color: var(--cream); }
@@ -225,10 +245,18 @@ h2 em { color: var(--green-mid); font-style: italic; }
 
 .sec p {
   font-size: 18px; line-height: 1.65;
-  color: var(--ink-soft); margin: 0 0 18px;
+  color: var(--ink-soft); margin: 0 auto 18px;
   max-width: 38em;
+  text-align: left;
 }
 .sec-dark p { color: rgba(242,235,203,0.78); }
+
+/* Sections whose layout is intentionally NOT centered need to opt out. */
+.work-head { text-align: left; }
+.work-head h2 { max-width: none; margin-left: 0; margin-right: 0; }
+.tiles { text-align: left; }
+.process { text-align: left; }
+.ship-grid { text-align: left; }
 
 /* NUMBERS */
 .numbers {
@@ -347,16 +375,19 @@ h2 em { color: var(--green-mid); font-style: italic; }
 }
 .cat-title:first-of-type { margin-top: 16px; }
 
-/* APPROACH */
+/* APPROACH — short italic blockquote callouts that should be centered */
 .approach-inner { text-align: center; }
-.approach p {
+.approach-inner p, .approach p {
   font-family: 'Fraunces', serif; font-style: italic;
   font-size: clamp(20px, 2.4vw, 28px);
   line-height: 1.5; color: var(--ink-soft);
   margin: 18px auto;
   max-width: 38em;
+  text-align: center;   /* wins over .sec p text-align:left */
 }
-.approach p em { color: var(--green-mid); font-weight: 500; font-style: italic; }
+.sec-dark .approach-inner p { color: rgba(242,235,203,0.85); }
+.approach p em, .approach-inner p em { color: var(--green-mid); font-weight: 500; font-style: italic; }
+.sec-dark .approach-inner p em { color: var(--green-bright); }
 
 /* SHIP */
 .ship-grid {
@@ -415,6 +446,7 @@ h2 em { color: var(--green-mid); font-style: italic; }
 .contact p {
   font-size: 17px; color: var(--ink-soft);
   max-width: 32em; margin: 0 auto 24px;
+  text-align: center;   /* wins over .sec p text-align:left */
 }
 .contact .btn-primary {
   background: var(--green-mid); color: var(--cream);
@@ -482,7 +514,7 @@ footer .brand-mark {
 <header>
   <div class="header-inner">
     <a class="brand" href="#/">
-      <div class="brand-mark"><img src="heisenbug-square.png" alt="Heisenbug"></div>
+      <div class="brand-mark"><img src="heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
       <div class="brand-text">
         <div class="brand-name">Heisenbug</div>
         <div class="brand-sub">Vertical Software</div>
@@ -514,7 +546,7 @@ footer .brand-mark {
         </div>
       </div>
       <div class="hero-artwork">
-        <img src="heisenbug-hero.png" alt="Heisenbug — vertical software for operators">
+        <img src="heisenbug-hero.jpg" alt="Heisenbug — vertical software for operators" width="1000" height="1500">
       </div>
     </div>
   </section>
@@ -543,10 +575,10 @@ footer .brand-mark {
     </div>
   </section>
 
-  <section class="sec sec-dark">
+  <section class="sec sec-dark approach">
     <div class="sec-inner sec-narrow approach-inner">
-      <div class="section-eyebrow" style="color:var(--green-bright)">→ How we build</div>
-      <p style="color:rgba(242,235,203,0.85); font-family:'Fraunces',serif; font-style:italic; font-size:clamp(20px,2.4vw,28px); line-height:1.5; margin:18px auto; max-width:38em;">We start with <em style="color:var(--green-bright)">one operator</em>, <em style="color:var(--green-bright)">one industry</em>, <em style="color:var(--green-bright)">one cockpit</em>. We build what they wished existed. We ship it. We watch them use it. We fix what's wrong. Then we propagate the working pieces to adjacent industries.</p>
+      <div class="section-eyebrow">→ How we build</div>
+      <p>We start with <em>one operator</em>, <em>one industry</em>, <em>one cockpit</em>. We build what they wished existed. We ship it. We watch them use it. We fix what's wrong. Then we propagate the working pieces to adjacent industries.</p>
       <div style="margin-top:32px;">
         <a class="btn-primary" href="#/built">See the catalog →</a>
       </div>
@@ -946,7 +978,7 @@ footer .brand-mark {
 
 <!-- ====================== FOOTER (shared) ====================== -->
 <footer>
-  <div class="brand-mark"><img src="heisenbug-square.png" alt="Heisenbug"></div>
+  <div class="brand-mark"><img src="heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
   <div class="foot-name">Heisenbug Software</div>
   <div class="foot-tagline">Vertical software for operators</div>
   <div class="foot-meta">Heisenbug Inc. · © 2026</div>
