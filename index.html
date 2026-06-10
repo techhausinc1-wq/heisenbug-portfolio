@@ -184,9 +184,10 @@ header {
   display: flex; align-items: center; justify-content: center;
 }
 .hero-artwork img {
-  max-width: 380px; width: 100%;
+  max-width: 420px; width: 100%;
   height: auto; display: block;
-  filter: drop-shadow(0 30px 80px rgba(0,0,0,0.5)) drop-shadow(0 0 60px var(--green-glow));
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 0 50px rgba(198,217,122,0.35)) drop-shadow(0 0 90px rgba(198,217,122,0.18));
 }
 @media (max-width: 900px) {
   .hero { padding: 56px 6% 70px; }
