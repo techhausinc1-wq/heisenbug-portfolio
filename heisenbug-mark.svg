@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Heisenbug brand mark — silhouette only, square format for the nav brand-mark slot.
+  Extracted from heisenbug-brand/logo/heisenbug-bowler-silhouette.svg.
+  Bowler hat (not porkpie) for legal safety vs Breaking Bad iconography.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="markGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3d35a6"/>
+      <stop offset="100%" stop-color="#2a2480"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background atomic orbital — subtle physics motif -->
+  <g transform="translate(100, 100)">
+    <ellipse cx="0" cy="0" rx="78" ry="32" fill="none" stroke="#3d35a6" stroke-width="1.2" opacity="0.22" transform="rotate(30)"/>
+    <ellipse cx="0" cy="0" rx="78" ry="32" fill="none" stroke="#3d35a6" stroke-width="1.2" opacity="0.22" transform="rotate(-30)"/>
+    <ellipse cx="0" cy="0" rx="78" ry="32" fill="none" stroke="#3d35a6" stroke-width="1.2" opacity="0.22" transform="rotate(90)"/>
+    <circle cx="0" cy="0" r="4" fill="#b8541d" opacity="0.7"/>
+  </g>
+
+  <!-- Silhouette — 1920s scientist in bowler hat, right-facing.
+       Positioned with a slight upward offset so the figure is centered visually. -->
+  <g transform="translate(40, 0)" fill="url(#markGradient)">
+    <!-- Bowler hat dome -->
+    <path d="M 30 28
+             Q 30 0, 75 0
+             Q 120 0, 120 28
+             L 120 50
+             L 30 50 Z"/>
+    <!-- Brim -->
+    <rect x="18" y="48" width="116" height="7" rx="2"/>
+    <!-- Head profile -->
+    <path d="M 36 55 L 36 80 Q 36 88, 44 92 L 78 92 Q 88 92, 92 100 L 102 110 L 112 122 L 100 130 L 98 138 L 102 144 L 96 152 L 100 162 L 92 176 L 70 184 L 50 184 L 38 178 L 36 168 Z"/>
+    <!-- Mustache -->
+    <rect x="100" y="132" width="14" height="5" fill="#1a1612" opacity="0.9"/>
+    <!-- Suit collar (left) -->
+    <path d="M 36 178 L 36 200 L 12 200 L 12 188 L 36 184 Z"/>
+    <!-- Suit collar (right lapel) -->
+    <path d="M 80 184 L 110 198 L 138 200 L 138 188 L 105 184 L 88 184 Z"/>
+  </g>
+</svg>
