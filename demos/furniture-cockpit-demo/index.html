@@ -1,0 +1,2134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1a2a">
+<title>Furniture Operator Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f3ec;
+    --bg-2: #ffffff;
+    --bg-3: #fbf8f1;
+    --ink: #1c1f2a;
+    --ink-2: #2d3142;
+    --text-dim: #5a6072;
+    --text-mute: #8a8f9e;
+    --line: #e6e0d2;
+    --line-2: #d0c9b7;
+    --navy: #1f3a5f;
+    --navy-bright: #2d5689;
+    --terracotta: #b85c3b;
+    --olive: #5e6e3d;
+    --gold: #b08236;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  input, select, textarea {
+    font-family: inherit; font-size: 14px;
+    background: var(--bg-2); color: var(--ink);
+    border: 1px solid var(--line); padding: 10px 14px;
+    outline: none; border-radius: 6px;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--navy); }
+
+  header {
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    gap: 14px;
+  }
+  @media (max-width: 760px) {
+    header { padding: 12px 16px; flex-wrap: wrap; }
+    .brand-sub { font-size: 8px !important; }
+    .lang-select { font-size: 10px; padding: 5px 10px; }
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 40px; height: 40px;
+    background: var(--navy);
+    color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 500;
+    border-radius: 3px;
+  }
+  .brand-name {
+    font-family: 'Lora', serif;
+    font-size: 18px; font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .brand-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.8px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+  .lang-select {
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: transparent;
+    letter-spacing: 0.5px;
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 6px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    font-size: 12px;
+  }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--navy);
+    color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+  }
+
+  .layout { display: grid; grid-template-columns: 230px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      display: flex; flex-direction: row;
+      overflow-x: auto;
+      padding: 12px 16px;
+      background: var(--bg-3);
+      border-right: 0; border-bottom: 1px solid var(--line);
+      gap: 6px;
+      scrollbar-width: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; }
+    .nav-label { display: none; }
+    .nav-item {
+      padding: 6px 14px;
+      font-size: 12px;
+      white-space: nowrap;
+      border-left: 0;
+      border-radius: 16px;
+      background: transparent;
+    }
+    .nav-item.active {
+      border-left: 0;
+      background: rgba(31,58,95,0.1);
+    }
+    .nav-item .ic { display: none; }
+    .nav-badge { font-size: 9px; padding: 1px 6px; margin-left: 4px; }
+  }
+
+  .sidebar {
+    background: var(--bg-3);
+    border-right: 1px solid var(--line);
+    padding: 22px 0;
+    overflow-y: auto;
+  }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.8px;
+    color: var(--text-mute); text-transform: uppercase;
+    padding: 0 28px 8px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 28px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+    border-left: 2px solid transparent;
+    transition: all 120ms;
+    cursor: pointer;
+  }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active {
+    color: var(--navy);
+    background: var(--bg-2);
+    border-left-color: var(--navy);
+    font-weight: 500;
+  }
+  .nav-item .ic { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+  .nav-item.active .ic { opacity: 1; }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--terracotta);
+    color: white;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .nav-badge.muted { background: var(--line-2); color: var(--text-dim); }
+
+  main { padding: 32px 40px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+
+  .page-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    margin-bottom: 28px; padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 600px) {
+    .page-title { font-size: 24px !important; }
+    .page-actions { width: 100%; }
+    .page-actions .btn { flex: 1; text-align: center; }
+  }
+  .page-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1.8px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .page-title {
+    font-family: 'Lora', serif;
+    font-size: 32px; font-weight: 500; line-height: 1.1;
+    letter-spacing: -0.3px;
+  }
+  .page-actions { display: flex; gap: 10px; }
+  .btn {
+    padding: 9px 18px;
+    border: 1px solid var(--line-2);
+    color: var(--ink);
+    font-size: 12.5px; font-weight: 500;
+    border-radius: 5px;
+    transition: all 120ms;
+    background: var(--bg-2);
+  }
+  .btn:hover { border-color: var(--navy); }
+  .btn.primary {
+    background: var(--navy); color: white; border-color: var(--navy);
+  }
+  .btn.primary:hover { background: var(--navy-bright); border-color: var(--navy-bright); }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .btn.ghost:hover { background: var(--bg-2); border-color: var(--line); }
+
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.5px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-family: 'Lora', serif;
+    font-size: 28px; font-weight: 500; line-height: 1;
+    color: var(--ink);
+  }
+  .stat-delta {
+    font-size: 11px;
+    color: var(--olive);
+    margin-top: 6px;
+  }
+  .stat-delta.neg { color: var(--terracotta); }
+
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px;
+    margin-bottom: 16px;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .panel-title {
+    font-family: 'Lora', serif;
+    font-size: 17px; font-weight: 500;
+  }
+  .panel-link {
+    font-size: 11px;
+    color: var(--navy);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th {
+    text-align: left; padding: 11px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.5px;
+    color: var(--text-mute); text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+    font-weight: 500;
+  }
+  .table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .tag.navy { background: rgba(31,58,95,0.13); color: var(--navy); }
+  .tag.olive { background: rgba(94,110,61,0.15); color: var(--olive); }
+  .tag.terra { background: rgba(184,92,59,0.15); color: var(--terracotta); }
+  .tag.gold { background: rgba(176,130,54,0.15); color: var(--gold); }
+  .tag.muted { background: var(--line); color: var(--text-dim); }
+
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  /* AI Room scene mock */
+  .ai-room {
+    background: var(--bg-3);
+    border: 1px dashed var(--line-2);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .ai-room-preview {
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #e8e0cf 0%, #d4c8b0 50%, #c4b89e 100%);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif;
+    color: var(--navy);
+    font-style: italic;
+    font-size: 18px;
+    position: relative;
+  }
+  .ai-room-preview::before {
+    content: '↑ Customer photo';
+    position: absolute;
+    top: 10px; left: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-style: normal;
+    letter-spacing: 1.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+  }
+  .ai-room-preview::after {
+    content: '+ Sofa from our catalog → AI render';
+    position: absolute;
+    bottom: 10px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-style: normal;
+    letter-spacing: 1.2px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+  }
+
+  /* Inventory grid */
+  .inv-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .inv-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 150ms, transform 150ms;
+  }
+  .inv-card:hover { border-color: var(--navy); transform: translateY(-2px); }
+  .inv-photo {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, #d8cdb6 0%, #b9ab8e 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif;
+    font-size: 32px;
+    color: var(--bg-2);
+    opacity: 0.85;
+  }
+  .inv-body { padding: 14px; }
+  .inv-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; line-height: 1.35; }
+  .inv-meta {
+    font-size: 11px; color: var(--text-dim);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .inv-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .inv-price {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .inv-stock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--olive);
+  }
+  .inv-stock.low { color: var(--terracotta); }
+
+  /* AI search bar */
+  .ai-search {
+    background: var(--bg-2);
+    border: 2px solid var(--navy);
+    border-radius: 30px;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 22px;
+  }
+  .ai-search input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-size: 15px;
+  }
+  .ai-search input:focus { border-color: transparent; }
+  .ai-search-ic { color: var(--navy); }
+  .ai-search-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--navy);
+    background: rgba(31,58,95,0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+  }
+
+  /* Customer card */
+  .cust-card {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .cust-card:last-child { border: 0; }
+  .cust-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-bright) 100%);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .cust-body { flex: 1; }
+  .cust-name { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+  .cust-meta { font-size: 12px; color: var(--text-dim); }
+  .cust-value {
+    text-align: right;
+    font-family: 'Lora', serif;
+    font-size: 18px; color: var(--navy);
+  }
+
+  /* AI chat preview */
+  .chat-msg {
+    display: flex; gap: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .chat-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    color: white;
+  }
+  .chat-avatar.customer { background: var(--text-mute); }
+  .chat-avatar.ai { background: var(--navy); }
+  .chat-bubble {
+    background: var(--bg-3);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border-top-left-radius: 2px;
+    max-width: 80%;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .chat-bubble.ai {
+    background: var(--navy);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 2px;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  .chat-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-mute);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* Financing waterfall */
+  .lender-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--bg-2);
+  }
+  .lender-row.approved { border-left: 4px solid var(--olive); background: rgba(94,110,61,0.05); }
+  .lender-row.declined { border-left: 4px solid var(--text-mute); opacity: 0.7; }
+  .lender-name { font-weight: 500; flex: 1; }
+  .lender-rate { font-size: 12px; color: var(--text-dim); margin-right: 14px; }
+  .lender-status { font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+  .lender-status.approved { color: var(--olive); }
+  .lender-status.declined { color: var(--text-mute); }
+  .lender-status.pending { color: var(--gold); }
+
+  /* Delivery map mock */
+  .delivery-mock {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    font-family: 'Lora', serif;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .coming-soon {
+    background: var(--bg-2);
+    border: 1px dashed var(--line-2);
+    border-radius: 8px;
+    padding: 50px 40px;
+    text-align: center;
+  }
+  .coming-soon h3 {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .coming-soon p {
+    color: var(--text-dim); font-size: 13px;
+    max-width: 460px; margin: 0 auto 18px;
+    line-height: 1.6;
+  }
+  .coming-soon ul {
+    text-align: left;
+    max-width: 380px;
+    margin: 0 auto;
+    list-style: none;
+  }
+  .coming-soon li {
+    padding: 7px 0;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--line);
+  }
+  .coming-soon li::before {
+    content: '— '; color: var(--navy); margin-right: 6px;
+  }
+
+  footer {
+    padding: 14px 28px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-3);
+    font-size: 11px;
+    color: var(--text-mute);
+    text-align: center;
+  }
+  footer span { color: var(--navy); }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Activity */
+  .activity-item {
+    display: flex; gap: 12px; padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .activity-item:last-child { border: 0; }
+  .activity-icon {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--bg-3); color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .activity-text { flex: 1; }
+  .activity-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-mute);
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">F</div>
+    <div>
+      <div class="brand-name">Furniture House</div>
+      <div class="brand-sub">Operator Cockpit · Mid-Market Retail</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <select class="lang-select">
+      <option>EN</option>
+      <option>ES (Español)</option>
+      <option>PL (Polski)</option>
+      <option>RU (Русский)</option>
+    </select>
+    <div class="user-chip">
+      <div class="user-avatar">V</div>
+      <span>Owner</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active" data-view="dashboard">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Sales</div>
+      <div class="nav-item" data-view="showroom">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Showroom
+      </div>
+      <div class="nav-item" data-view="inventory">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Inventory <span class="nav-badge muted">2,847</span>
+      </div>
+      <div class="nav-item" data-view="custom-orders">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Custom Orders <span class="nav-badge">9</span>
+      </div>
+      <div class="nav-item" data-view="financing">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Financing
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Customers</div>
+      <div class="nav-item" data-view="customers">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Customers
+      </div>
+      <div class="nav-item" data-view="ai-chat">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        AI Chat <span class="nav-badge">4</span>
+      </div>
+      <div class="nav-item" data-view="designers">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Designers / Trade
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Operations</div>
+      <div class="nav-item" data-view="delivery">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Delivery
+      </div>
+      <div class="nav-item" data-view="marketing">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
+        Marketing
+      </div>
+      <div class="nav-item" data-view="reviews">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Reviews
+      </div>
+      <div class="nav-item" data-view="reports">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Shared Engine</div>
+      <div class="nav-item" data-view="tax">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        Tax &amp; Compliance
+      </div>
+      <div class="nav-item" data-view="documents">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Document Inbox
+      </div>
+      <div class="nav-item" data-view="anniversaries">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Milestone Engine
+      </div>
+      <div class="nav-item" data-view="memo-board">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        Memos Out
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ======== DASHBOARD ======== -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Saturday · June 7, 2026</div>
+          <div class="page-title">Good evening</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Export</button>
+          <button class="btn primary">+ New Sale</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Today's Sales</div>
+          <div class="stat-value">$18,420</div>
+          <div class="stat-delta">+22% vs same day last week</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">June MTD</div>
+          <div class="stat-value">$284,650</div>
+          <div class="stat-delta">+11% vs May</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Pending Deliveries</div>
+          <div class="stat-value">23</div>
+          <div class="stat-delta">7 today · 16 next week</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">AI Chat (24h)</div>
+          <div class="stat-value">147</div>
+          <div class="stat-delta">38 to follow up</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">AI Room Scene — top conversion feature</div>
+              <a class="panel-link" onclick="navigate('inventory')">Try it</a>
+            </div>
+            <div class="ai-room">
+              <div class="ai-room-preview">"Your living room, with our Ravenna sectional"</div>
+              <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">
+                Customer uploads a photo of their living room. Our AI realistically places any sofa, sectional, or table from your inventory into that exact space — same lighting, same scale, same angle. Customers who try it convert at <strong>~38%</strong> vs <strong>~12%</strong> on standard product pages.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Today's priorities</div>
+              <a class="panel-link" onclick="navigate('customers')">All customers</a>
+            </div>
+            <div class="cust-card">
+              <div class="cust-avatar">RK</div>
+              <div class="cust-body">
+                <div class="cust-name">Rachel Kowalski — Ravenna sectional decision</div>
+                <div class="cust-meta">Polish-speaking · 2 prior visits · financing pre-approved · ready to close today</div>
+              </div>
+              <div class="cust-value">$4,280</div>
+            </div>
+            <div class="cust-card">
+              <div class="cust-avatar">MC</div>
+              <div class="cust-body">
+                <div class="cust-name">Marcus & Claudia Diaz — bedroom set</div>
+                <div class="cust-meta">Custom order · made-to-order · awaiting fabric selection</div>
+              </div>
+              <div class="cust-value">$6,920</div>
+            </div>
+            <div class="cust-card">
+              <div class="cust-avatar">JC</div>
+              <div class="cust-body">
+                <div class="cust-name">Jennifer Chen — designer purchase</div>
+                <div class="cust-meta">Trade portal · designing condo on Cooper · sample request</div>
+              </div>
+              <div class="cust-value">$12,400</div>
+            </div>
+            <div class="cust-card">
+              <div class="cust-avatar">AS</div>
+              <div class="cust-body">
+                <div class="cust-name">Anna Sokolov — Russian-speaking inquiry</div>
+                <div class="cust-meta">AI chat handled initial · 5pc bedroom set · needs in-person visit</div>
+              </div>
+              <div class="cust-value">~$5,800</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Recent activity</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">$</div>
+              <div class="activity-text">
+                <div>Sale: Cortona sleeper sofa → <strong>The Bergmans</strong></div>
+                <div class="activity-time">2 HRS AGO · $3,840 · DELIVERY TUE</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">A</div>
+              <div class="activity-text">
+                <div>AI Chat: handled inquiry in Polish · transferred to showroom</div>
+                <div class="activity-time">3 HRS AGO · KOWALSKI FAMILY</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">F</div>
+              <div class="activity-text">
+                <div>Financing approved: Snap → <strong>Rivera household</strong></div>
+                <div class="activity-time">4 HRS AGO · $4,200 LIMIT</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">D</div>
+              <div class="activity-text">
+                <div>Delivery completed: dining set → <strong>Chen on Cooper</strong></div>
+                <div class="activity-time">5 HRS AGO · NPS PROMPT SENT</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">★</div>
+              <div class="activity-text">
+                <div>5-star review on Google → <strong>Mark Williams</strong></div>
+                <div class="activity-time">6 HRS AGO · AUTO-THANK SENT</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Today's deliveries</div>
+              <a class="panel-link" onclick="navigate('delivery')">Route map</a>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--olive);">✓</div>
+              <div class="activity-text">
+                <div><strong>9:30 AM</strong> · Chen residence — Cooper</div>
+                <div class="activity-time">DINING SET · DELIVERED · NPS SENT</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--olive);">✓</div>
+              <div class="activity-text">
+                <div><strong>11:00 AM</strong> · Williams family — Robbinsville</div>
+                <div class="activity-time">SECTIONAL · DELIVERED · 5-STAR REVIEW</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--gold);">→</div>
+              <div class="activity-text">
+                <div><strong>1:00 PM</strong> · Bergmans — Princeton</div>
+                <div class="activity-time">SLEEPER SOFA · EN ROUTE · ETA 1:45</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">3</div>
+              <div class="activity-text">
+                <div><strong>3:30 PM</strong> · The Adlers — Lawrenceville</div>
+                <div class="activity-time">BEDROOM SET · SCHEDULED</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">5</div>
+              <div class="activity-text">
+                <div><strong>5:00 PM</strong> · Sokolov apartment — Trenton</div>
+                <div class="activity-time">RECLINER · SCHEDULED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== INVENTORY ======== -->
+    <div class="view" id="view-inventory">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">2,847 SKUs in stock · $1.84M inventory value</div>
+          <div class="page-title">Inventory</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter</button>
+          <button class="btn primary">+ Add SKU</button>
+        </div>
+      </div>
+
+      <div class="ai-search">
+        <svg class="ai-search-ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Ask in plain language: 'modern apartment-sized sectionals under $2,000 in stock'" value="modern apartment-sized sectionals under $2,000 in stock">
+        <span class="ai-search-tag">AI · 14 MATCHES</span>
+      </div>
+
+      <div class="inv-grid">
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Ravenna 3-Seat Sectional · Charcoal</div>
+            <div class="inv-meta">110" · LH chaise · poly-blend · 7-year frame</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,849</div>
+              <div class="inv-stock">8 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Cortona Convertible Sleeper · Ivory</div>
+            <div class="inv-meta">88" · Queen sleeper · linen · 5-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,640</div>
+              <div class="inv-stock">3 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Milano Modular · Stone Grey</div>
+            <div class="inv-meta">100" · 3-piece · velvet · 7-year frame</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,995</div>
+              <div class="inv-stock low">2 in stock — low</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Toscana L-Shape · Slate Blue</div>
+            <div class="inv-meta">96" · RH chaise · poly-blend · 5-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,725</div>
+              <div class="inv-stock">6 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Verona Loft Sectional · Camel</div>
+            <div class="inv-meta">94" · 2-piece · faux leather · 5-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,495</div>
+              <div class="inv-stock">11 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Genoa Studio Sectional · Espresso</div>
+            <div class="inv-meta">82" · LH chaise · linen-look · 5-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,375</div>
+              <div class="inv-stock">9 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Bologna Compact Sectional · Navy</div>
+            <div class="inv-meta">86" · 2-piece · cotton-poly · 7-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,620</div>
+              <div class="inv-stock">5 in stock</div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">▬</div>
+          <div class="inv-body">
+            <div class="inv-title">Padova Reversible Sectional · Greige</div>
+            <div class="inv-meta">99" · reversible chaise · poly · 5-year</div>
+            <div class="inv-row">
+              <div class="inv-price">$1,889</div>
+              <div class="inv-stock">4 in stock</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== FINANCING ======== -->
+    <div class="view" id="view-financing">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Waterfall · Snap → Acima → Affirm → Synchrony → Wells Fargo</div>
+          <div class="page-title">Financing</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">All applications</button>
+          <button class="btn primary">+ New Application</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Rivera household — $4,200 purchase</div>
+          <a class="panel-link">View customer</a>
+        </div>
+        <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 16px;">
+          Applied 4 hours ago · 60-second decision via waterfall · approved with <strong>Snap Finance</strong> at $4,200 limit. No customer paperwork required — application pulled from prior visit notes + financing pre-screen.
+        </p>
+
+        <div class="lender-row approved">
+          <div class="lender-name">Snap Finance</div>
+          <div class="lender-rate">12-mo no interest · $4,200 limit</div>
+          <div class="lender-status approved">✓ Approved</div>
+        </div>
+        <div class="lender-row declined">
+          <div class="lender-name">Acima Lease-to-own</div>
+          <div class="lender-rate">90-day same as cash</div>
+          <div class="lender-status declined">Skipped (snap approved first)</div>
+        </div>
+        <div class="lender-row declined">
+          <div class="lender-name">Affirm</div>
+          <div class="lender-rate">3-36 mo</div>
+          <div class="lender-status declined">Skipped</div>
+        </div>
+        <div class="lender-row declined">
+          <div class="lender-name">Synchrony</div>
+          <div class="lender-rate">Standard revolving</div>
+          <div class="lender-status declined">Skipped</div>
+        </div>
+        <div class="lender-row declined">
+          <div class="lender-name">Wells Fargo Furniture Card</div>
+          <div class="lender-rate">Promotional terms</div>
+          <div class="lender-status declined">Skipped</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Active applications (this week)</div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Customer</th><th>Purchase</th><th>Approved with</th><th>Limit</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Rivera</strong></td><td>Sectional</td><td>Snap Finance</td><td>$4,200</td><td><span class="tag olive">Closed</span></td></tr>
+            <tr><td><strong>Bergmans</strong></td><td>Sleeper sofa</td><td>Wells Fargo</td><td>$8,500</td><td><span class="tag olive">Closed</span></td></tr>
+            <tr><td><strong>The Adlers</strong></td><td>Bedroom set</td><td>Synchrony</td><td>$12,000</td><td><span class="tag olive">Closed</span></td></tr>
+            <tr><td><strong>Sokolov</strong></td><td>Recliner</td><td>Acima L2O</td><td>$1,800</td><td><span class="tag olive">Closed</span></td></tr>
+            <tr><td><strong>Diaz</strong></td><td>Custom bedroom set</td><td>Synchrony</td><td>$7,500</td><td><span class="tag gold">Pending fabric</span></td></tr>
+            <tr><td><strong>Kowalski</strong></td><td>Sectional</td><td>Snap</td><td>$4,200</td><td><span class="tag gold">Pre-approved</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======== AI CHAT ======== -->
+    <div class="view" id="view-ai-chat">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">24/7 · English / Español / Polski / Русский</div>
+          <div class="page-title">AI Chat</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Settings</button>
+          <button class="btn primary">View all conversations</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Today's Inquiries</div>
+          <div class="stat-value">147</div>
+          <div class="stat-delta">38 to follow up</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Conversion to Visit</div>
+          <div class="stat-value">22%</div>
+          <div class="stat-delta">+8 pts vs no-AI</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Languages (24h)</div>
+          <div class="stat-value">4</div>
+          <div class="stat-delta">EN · ES · PL · RU</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">After-Hours Handling</div>
+          <div class="stat-value">61%</div>
+          <div class="stat-delta">After 8pm or before 9am</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Kowalski family · Polish-language inquiry</div>
+            <span class="tag navy">Polski</span>
+          </div>
+          <div class="chat-msg">
+            <div class="chat-avatar customer">RK</div>
+            <div>
+              <div class="chat-bubble">Dzień dobry. Czy macie sekcyjną sofę w kolorze ciemnoszarym około 110 cali, w stylu nowoczesnym?</div>
+              <div class="chat-meta">CUSTOMER · 14:22</div>
+            </div>
+          </div>
+          <div class="chat-msg" style="justify-content: flex-end;">
+            <div>
+              <div class="chat-bubble ai">Witam! Mamy kilka opcji w tym stylu. Najpopularniejsza to "Ravenna 3-Seat Sectional" w kolorze Charcoal — 110 cali, lewa szezlong, $1,849. Czy chciałaby Pani umówić wizytę w salonie, czy zobaczyć ją w swoim pokoju przez naszą funkcję AI Room?</div>
+              <div class="chat-meta" style="text-align:right;">AI · 14:22</div>
+            </div>
+            <div class="chat-avatar ai">AI</div>
+          </div>
+          <div class="chat-msg">
+            <div class="chat-avatar customer">RK</div>
+            <div>
+              <div class="chat-bubble">AI Room brzmi ciekawie. Jak to działa?</div>
+              <div class="chat-meta">CUSTOMER · 14:24</div>
+            </div>
+          </div>
+          <div class="chat-msg" style="justify-content: flex-end;">
+            <div>
+              <div class="chat-bubble ai">Wystarczy wgrać zdjęcie pokoju, a my w 30 sekund pokażemy Pani jak sofa Ravenna wygląda w Pani salonie — z tym samym oświetleniem i w tej samej skali. Tu link: [AI Room Scene]. Jeśli się spodoba, zarezerwuję dla Pani wizytę i opcję finansowania bez wpływu na credit score.</div>
+              <div class="chat-meta" style="text-align:right;">AI · 14:24</div>
+            </div>
+            <div class="chat-avatar ai">AI</div>
+          </div>
+          <p style="font-size: 11px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; margin-top: 14px;">
+            → CONVERTED TO SHOWROOM VISIT · APPT MON 4:30 PM · FINANCING PRE-APPROVED
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">After-hours queue (since 8pm)</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">AS</div>
+            <div class="activity-text">
+              <div><strong>Anna Sokolov</strong> · Russian-language · bedroom set inquiry</div>
+              <div class="activity-time">9:14 PM · AI HANDLED · APPT BOOKED TUE 10 AM</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">MM</div>
+            <div class="activity-text">
+              <div><strong>Maria Mendez</strong> · Spanish-language · sleeper sofa for studio apt</div>
+              <div class="activity-time">9:47 PM · AI HANDLED · LINK TO CORTONA SENT</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">JT</div>
+            <div class="activity-text">
+              <div><strong>James Thomas</strong> · English · custom order question</div>
+              <div class="activity-time">10:22 PM · AI ESCALATED · HUMAN FOLLOWUP MORNING</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">EW</div>
+            <div class="activity-text">
+              <div><strong>Eric W.</strong> · English · price match request from Wayfair</div>
+              <div class="activity-time">11:08 PM · AI HANDLED · MATCHED W/ FREE DELIVERY</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">PK</div>
+            <div class="activity-text">
+              <div><strong>Pawel K.</strong> · Polish · designer/trade inquiry</div>
+              <div class="activity-time">12:33 AM · AI ROUTED · TRADE FORM SENT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== Other tabs (coming-soon placeholders) ======== -->
+    <div class="view" id="view-showroom">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Today: 84 visitors · 22% conversion · $18,420 floor revenue</div>
+          <div class="page-title">Showroom</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Open heat map</button>
+          <button class="btn primary">Log walk-in</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Today's Visitors</div>
+          <div class="stat-value">84</div>
+          <div class="stat-delta">+12 vs same day LW</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Conversion Rate</div>
+          <div class="stat-value">22%</div>
+          <div class="stat-delta">18 sales / 84 visitors</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Avg Ticket</div>
+          <div class="stat-value">$1,023</div>
+          <div class="stat-delta">+8% MoM</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Returning Visitors</div>
+          <div class="stat-value">19</div>
+          <div class="stat-delta">23% of today's traffic</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Live floor — who's on the showroom right now</div>
+            <a class="panel-link">Refresh</a>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--gold);">★</div>
+            <div class="activity-text">
+              <div><strong>Returning visitor</strong> — 3rd visit · Living section, looking at Milano modular</div>
+              <div class="activity-time">23 MIN ON FLOOR · MARIA ASSIGNED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">N</div>
+            <div class="activity-text">
+              <div><strong>New visitor</strong> · 2 people, possibly couple · Sectionals area</div>
+              <div class="activity-time">11 MIN ON FLOOR · CARLOS APPROACHED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">N</div>
+            <div class="activity-text">
+              <div><strong>New visitor</strong> · solo · Bedroom + custom corner</div>
+              <div class="activity-time">7 MIN ON FLOOR · NOT YET APPROACHED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--gold);">★</div>
+            <div class="activity-text">
+              <div><strong>Returning</strong> — designer (Jennifer Chen) · Picking samples for Cooper</div>
+              <div class="activity-time">JUST ARRIVED · TRADE TIER · OWNER GREETING</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">N</div>
+            <div class="activity-text">
+              <div><strong>New visitor</strong> · Family of 4 · Kids playing in dining room display</div>
+              <div class="activity-time">18 MIN ON FLOOR · YOLANDA TRACKING</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Hot zones today (heat map · placeholder)</div>
+          </div>
+          <div class="delivery-mock" style="background: linear-gradient(135deg, rgba(94,110,61,0.15) 0%, rgba(184,92,59,0.2) 30%, rgba(94,110,61,0.1) 60%, rgba(31,58,95,0.15) 100%); padding: 30px; font-family: 'Inter', sans-serif; font-style: normal;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 18px;">Floor traffic heat · last 7 days</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+              <div style="background: rgba(184,92,59,0.4); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 22px; color: var(--terracotta);">Sectionals</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">412 dwells · highest traffic</div>
+              </div>
+              <div style="background: rgba(184,92,59,0.2); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 22px; color: var(--ink);">Bedroom</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">287 dwells</div>
+              </div>
+              <div style="background: rgba(94,110,61,0.2); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 22px; color: var(--ink);">Dining</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">194 dwells</div>
+              </div>
+              <div style="background: rgba(94,110,61,0.15); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 18px; color: var(--ink);">Accents</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">128 dwells</div>
+              </div>
+              <div style="background: rgba(31,58,95,0.18); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 18px; color: var(--ink);">Rugs</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">102 dwells</div>
+              </div>
+              <div style="background: rgba(31,58,95,0.1); padding: 16px; border-radius: 4px; text-align: center;">
+                <div style="font-family: 'Lora', serif; font-size: 18px; color: var(--ink);">Outdoor</div>
+                <div style="font-size: 11px; color: var(--ink-soft); margin-top: 4px;">61 dwells</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="panel-header">
+          <div class="panel-title">Salesperson scorecard — today</div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Salesperson</th><th>Approaches</th><th>Sales</th><th>Avg ticket</th><th>Conversion</th><th>Revenue</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Maria</strong></td><td>14</td><td>5</td><td>$1,420</td><td>36%</td><td>$7,100</td></tr>
+            <tr><td><strong>Carlos</strong></td><td>11</td><td>4</td><td>$1,090</td><td>36%</td><td>$4,360</td></tr>
+            <tr><td><strong>Yolanda</strong></td><td>9</td><td>3</td><td>$1,820</td><td>33%</td><td>$5,460</td></tr>
+            <tr><td><strong>Diego</strong></td><td>8</td><td>2</td><td>$750</td><td>25%</td><td>$1,500</td></tr>
+            <tr><td><em>Floor avg</em></td><td>10.5</td><td>3.5</td><td>$1,275</td><td>32%</td><td>$4,605</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-custom-orders">
+      <div class="page-header"><div><div class="page-subtitle">9 custom orders in pipeline</div><div class="page-title">Custom Orders</div></div></div>
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr><th>Customer</th><th>Piece</th><th>Stage</th><th>Fabric</th><th>Value</th><th>Promised</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Diaz</strong></td><td>King bedroom set · oak</td><td><span class="tag gold">Fabric selection</span></td><td>Pending</td><td>$6,920</td><td>July 20</td></tr>
+            <tr><td><strong>Bergmans</strong></td><td>Custom sectional · L-shape 130"</td><td><span class="tag navy">CAD review</span></td><td>Velvet · stone</td><td>$4,250</td><td>July 14</td></tr>
+            <tr><td><strong>Williams</strong></td><td>Dining table · 96" walnut</td><td><span class="tag navy">Manufacturing</span></td><td>—</td><td>$3,180</td><td>July 28</td></tr>
+            <tr><td><strong>Adler</strong></td><td>Custom bookshelf · floor-to-ceiling</td><td><span class="tag navy">Manufacturing</span></td><td>—</td><td>$5,800</td><td>August 4</td></tr>
+            <tr><td><strong>Patel</strong></td><td>Sectional · 4-piece modular</td><td><span class="tag terra">Awaiting fabric in</span></td><td>Boucle · cream</td><td>$8,420</td><td>August 11</td></tr>
+            <tr><td><strong>Chen</strong></td><td>Designer commission · ottoman pair</td><td><span class="tag terra">In production</span></td><td>Performance velvet</td><td>$2,400</td><td>July 18</td></tr>
+            <tr><td><strong>Robinson</strong></td><td>Headboard · custom upholstered</td><td><span class="tag olive">Ready for delivery</span></td><td>Linen · navy</td><td>$1,650</td><td>—</td></tr>
+            <tr><td><strong>O'Brien</strong></td><td>Custom recliner pair</td><td><span class="tag navy">Manufacturing</span></td><td>Top-grain leather</td><td>$3,990</td><td>July 25</td></tr>
+            <tr><td><strong>Kohn</strong></td><td>Built-in entertainment unit</td><td><span class="tag navy">CAD review</span></td><td>—</td><td>$7,200</td><td>August 30</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-customers">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">4,228 households · 162 active this month · top decile = 38% of revenue</div>
+          <div class="page-title">Customers</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter by language</button>
+          <button class="btn primary">+ New Customer</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Total Households</div>
+          <div class="stat-value">4,228</div>
+          <div class="stat-delta">+38 this month</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active (90 days)</div>
+          <div class="stat-value">462</div>
+          <div class="stat-delta">11% conversion to repeat</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">VIP Tier</div>
+          <div class="stat-value">68</div>
+          <div class="stat-delta">$5K+ lifetime · 38% revenue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Languages Served</div>
+          <div class="stat-value">4</div>
+          <div class="stat-delta">EN · ES · PL · RU</div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr><th>Household</th><th>Tier</th><th>Lifetime</th><th>Last visit</th><th>Language</th><th>Open opportunity</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>The Bergmans</strong> · Princeton</td>
+              <td><span class="tag gold">VIP</span></td>
+              <td>$48,400</td>
+              <td>Today · delivery</td>
+              <td>EN</td>
+              <td>Custom sectional in CAD review</td>
+            </tr>
+            <tr>
+              <td><strong>Jennifer Chen</strong> · Cooper (designer)</td>
+              <td><span class="tag navy">Trade</span></td>
+              <td>$184,200 ytd</td>
+              <td>Today · delivery</td>
+              <td>EN</td>
+              <td>Cooper condo project · 3 pieces pending</td>
+            </tr>
+            <tr>
+              <td><strong>Williams family</strong> · Robbinsville</td>
+              <td><span class="tag gold">VIP</span></td>
+              <td>$36,800</td>
+              <td>Today · delivered + reviewed</td>
+              <td>EN</td>
+              <td>Dining table in production</td>
+            </tr>
+            <tr>
+              <td><strong>Rivera household</strong></td>
+              <td><span class="tag navy">A</span></td>
+              <td>$8,420</td>
+              <td>4 hrs ago · Snap approval</td>
+              <td>ES</td>
+              <td>Sectional pickup tomorrow</td>
+            </tr>
+            <tr>
+              <td><strong>Kowalski family</strong></td>
+              <td><span class="tag navy">A</span></td>
+              <td>$0 (new)</td>
+              <td>3 hrs ago · AI chat</td>
+              <td>PL</td>
+              <td>Ravenna sectional · Monday 4:30 appt</td>
+            </tr>
+            <tr>
+              <td><strong>Anna Sokolov</strong></td>
+              <td><span class="tag navy">A</span></td>
+              <td>$0 (new)</td>
+              <td>Last night · AI chat</td>
+              <td>RU</td>
+              <td>5pc bedroom set · Tuesday 10 AM</td>
+            </tr>
+            <tr>
+              <td><strong>Marcus &amp; Claudia Diaz</strong></td>
+              <td><span class="tag navy">A</span></td>
+              <td>$2,400</td>
+              <td>Last week</td>
+              <td>ES</td>
+              <td>Custom bedroom set · fabric pending</td>
+            </tr>
+            <tr>
+              <td><strong>The Adlers</strong> · Lawrenceville</td>
+              <td><span class="tag gold">VIP</span></td>
+              <td>$22,600</td>
+              <td>Yesterday · delivery scheduled</td>
+              <td>EN</td>
+              <td>Bedroom set delivery today 3:30 PM</td>
+            </tr>
+            <tr>
+              <td><strong>Patel household</strong></td>
+              <td><span class="tag navy">A</span></td>
+              <td>$8,420</td>
+              <td>2 weeks ago</td>
+              <td>EN</td>
+              <td>Boucle sectional · awaiting fabric</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-designers">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">23 active trade accounts · $284K B2B revenue YTD</div>
+          <div class="page-title">Designers / Trade</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Issue swatches</button>
+          <button class="btn primary">+ New Trade Account</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Active Trade Accounts</div>
+          <div class="stat-value">23</div>
+          <div class="stat-delta">+4 onboarded this quarter</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">B2B Revenue YTD</div>
+          <div class="stat-value">$284K</div>
+          <div class="stat-delta">22% of total store revenue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Avg. Trade Order</div>
+          <div class="stat-value">$8,400</div>
+          <div class="stat-delta">vs $1,840 retail</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Wholesale Discount</div>
+          <div class="stat-value">20%</div>
+          <div class="stat-delta">Locked tier · Net-30 terms</div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr><th>Designer / Firm</th><th>Specialty</th><th>YTD spend</th><th>Open projects</th><th>Net terms</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Jennifer Chen Design</strong></td>
+              <td>Residential · modern</td>
+              <td>$48,200</td>
+              <td>3 (Cooper condo, Princeton renovation)</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+            <tr>
+              <td><strong>Roma Staging Group</strong></td>
+              <td>Real estate staging</td>
+              <td>$62,800</td>
+              <td>7 active properties</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+            <tr>
+              <td><strong>Kowalska Interiors</strong></td>
+              <td>Residential · traditional · Polish-speaking</td>
+              <td>$34,500</td>
+              <td>2</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+            <tr>
+              <td><strong>The Brook Group</strong></td>
+              <td>Restaurant + boutique hospitality</td>
+              <td>$28,400</td>
+              <td>1 (new café space)</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+            <tr>
+              <td><strong>Estate Realty + Co.</strong></td>
+              <td>High-end residential staging</td>
+              <td>$22,800</td>
+              <td>4 listings</td>
+              <td><span class="tag gold">Net-30 · slow paying</span></td>
+            </tr>
+            <tr>
+              <td><strong>Volkov Design Studio</strong></td>
+              <td>Custom residential · Russian-speaking</td>
+              <td>$18,600</td>
+              <td>1</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+            <tr>
+              <td><strong>Hamilton Realtors Group</strong></td>
+              <td>Realtor co-op buys</td>
+              <td>$14,200</td>
+              <td>3</td>
+              <td><span class="tag olive">Net-30 · good</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Tearsheet generator</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Designers need spec PDFs to show their clients. Generate a branded tearsheet for any piece in one click — fabric details, dimensions, lead time, designer-tier pricing.</p>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Auto-branded with designer's firm name on cover</div>
+              <div class="activity-time">CO-BRANDED · WHITE-GLOVE</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Trade pricing visible (designer cost + suggested retail to their client)</div>
+              <div class="activity-time">PROTECTS DESIGNER MARGIN</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Multi-piece roomboard PDF for project pitches</div>
+              <div class="activity-time">EX: WHOLE LIVING ROOM IN ONE DOC</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Swatch ordering — free + tracked</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Trade accounts request fabric samples directly through portal. We ship same-day. Tracking + reorder reminders.</p>
+          <div class="activity-item">
+            <div class="activity-icon">14</div>
+            <div class="activity-text">
+              <div>14 swatch requests this week</div>
+              <div class="activity-time">AVG 4 SWATCHES PER REQUEST</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">$</div>
+            <div class="activity-text">
+              <div>Swatch-to-order conversion: 34%</div>
+              <div class="activity-time">CHEAPEST MARKETING IN THE BUSINESS</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">→</div>
+            <div class="activity-text">
+              <div>Auto-follow-up 14 days after swatches received</div>
+              <div class="activity-time">"DECISION ON THE BOUCLE?"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-delivery">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">5 deliveries today · 23 this week · driver: Jose · van #2</div>
+          <div class="page-title">Delivery</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Re-optimize route</button>
+          <button class="btn primary">+ Schedule Delivery</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Today</div>
+          <div class="stat-value">5 stops</div>
+          <div class="stat-delta">87 mi · 4 hrs</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">This Week</div>
+          <div class="stat-value">23</div>
+          <div class="stat-delta">4-star avg post-delivery NPS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Damage Rate</div>
+          <div class="stat-value">0.8%</div>
+          <div class="stat-delta">Industry avg: 2.4%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">On-Time</div>
+          <div class="stat-value">94%</div>
+          <div class="stat-delta">±15 min of promised window</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Today's route — local area</div>
+          <a class="panel-link">Open driver app</a>
+        </div>
+        <div class="delivery-mock" style="padding: 20px; text-align:left; font-style: normal; font-family: 'Inter', sans-serif; font-size: 13px;">
+          <div style="margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase;">Route map · 5 stops · 87 mi · 4 hrs · driver Jose · van #2</div>
+          <div style="display: grid; grid-template-columns: 60px 1fr 1fr 1fr 100px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 12px;">
+            <div style="font-weight: 600;">9:30 AM</div>
+            <div>Chen residence · Cooper</div>
+            <div>Dining set</div>
+            <div style="color: var(--olive);">✓ Delivered</div>
+            <div style="color: var(--olive);">5-star</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 60px 1fr 1fr 1fr 100px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 12px;">
+            <div style="font-weight: 600;">11:00 AM</div>
+            <div>Williams · Robbinsville</div>
+            <div>Sectional</div>
+            <div style="color: var(--olive);">✓ Delivered</div>
+            <div style="color: var(--olive);">5-star</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 60px 1fr 1fr 1fr 100px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 12px; background: rgba(176,130,54,0.06);">
+            <div style="font-weight: 600;">1:00 PM</div>
+            <div>Bergmans · Princeton</div>
+            <div>Cortona sleeper</div>
+            <div style="color: var(--gold);">→ En route · ETA 1:45</div>
+            <div>—</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 60px 1fr 1fr 1fr 100px; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 12px;">
+            <div style="font-weight: 600;">3:30 PM</div>
+            <div>The Adlers · Lawrenceville</div>
+            <div>Bedroom set</div>
+            <div style="color: var(--text-dim);">Scheduled · text sent</div>
+            <div>—</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 60px 1fr 1fr 1fr 100px; gap: 12px; padding: 10px 0; color: var(--ink); font-size: 12px;">
+            <div style="font-weight: 600;">5:00 PM</div>
+            <div>Sokolov · Trenton</div>
+            <div>Recliner</div>
+            <div style="color: var(--text-dim);">Scheduled · text sent</div>
+            <div>—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Customer-side tracking</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Customer gets a tracking link the night before. Driver app pushes live ETA + photo proof of delivery + electronic signature capture.</p>
+          <div class="activity-item">
+            <div class="activity-icon">→</div>
+            <div class="activity-text">
+              <div>Night-before reminder text: "Tomorrow 1-3 PM"</div>
+              <div class="activity-time">REDUCES NO-ONE-HOME RATE BY 60%</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">⏱</div>
+            <div class="activity-text">
+              <div>30-min-out alert: "Driver is on the way"</div>
+              <div class="activity-time">CUSTOMER PREPS THE ROOM</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">📷</div>
+            <div class="activity-text">
+              <div>Photo proof + signature on delivery</div>
+              <div class="activity-time">DAMAGE-CLAIM EVIDENCE · INSURANCE PROTECTION</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Post-delivery NPS automation</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Auto-text 24 hrs after delivery: "How was your experience?" 5-star → review prompt (Google/Yelp). 1-4 star → private resolution thread.</p>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--olive);">★</div>
+            <div class="activity-text">
+              <div>5-star this week: 19 → 7 posted to Google</div>
+              <div class="activity-time">37% PUBLIC-REVIEW CONVERSION</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">★</div>
+            <div class="activity-text">
+              <div>4-star this week: 3 → all addressed personally</div>
+              <div class="activity-time">FIXED BEFORE PUBLIC POST</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--terracotta);">!</div>
+            <div class="activity-text">
+              <div>1 damage report → photo evidence → replacement scheduled</div>
+              <div class="activity-time">CUSTOMER COMPED REPAIR-LEVEL SERVICE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-marketing">
+      <div class="page-header"><div><div class="page-subtitle">Instagram · Facebook · Pinterest · TikTok · email</div><div class="page-title">Marketing</div></div></div>
+      <div class="coming-soon">
+        <h3>Multi-Channel Marketing</h3>
+        <p>AI-generated content, scheduled posting, and conversion-tracked promotions across every channel that drives furniture traffic.</p>
+        <ul>
+          <li>AI Room Scene-as-content engine (your inventory in different rooms)</li>
+          <li>Instagram + Facebook Shopping integration</li>
+          <li>Pinterest auto-pinning (huge for furniture)</li>
+          <li>TikTok Shopping</li>
+          <li>Email newsletter to customer database (segmented by language, interest)</li>
+          <li>Loyalty program (return-customer discount, refer-a-friend)</li>
+          <li>Per-channel ROI reporting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-reviews">
+      <div class="page-header"><div><div class="page-subtitle">4.7 stars · 312 reviews across Google + Yelp + Facebook</div><div class="page-title">Reviews</div></div></div>
+      <div class="coming-soon">
+        <h3>Review Management</h3>
+        <p>Capture every positive moment, address every negative one, and surface aggregate sentiment trends.</p>
+        <ul>
+          <li>Auto-prompt after delivery (24h delay, NPS-style)</li>
+          <li>5-star routing → Google / Yelp public posting</li>
+          <li>Sub-5-star → private resolution flow (don't lose them)</li>
+          <li>Cross-platform review aggregation (Google, Yelp, FB, BBB)</li>
+          <li>Sentiment analysis on themes (delivery, quality, financing, service)</li>
+          <li>Negative-review alert with rapid response template</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-reports">
+      <div class="page-header"><div><div class="page-subtitle">Monthly · QoQ · YoY</div><div class="page-title">Reports</div></div></div>
+      <div class="coming-soon">
+        <h3>Business Reporting</h3>
+        <p>The numbers that matter for furniture retail: revenue, margin, traffic, conversion, inventory turn, and customer LTV.</p>
+        <ul>
+          <li>Monthly revenue by category (sofas / bedroom / dining / accessories / custom)</li>
+          <li>Salesperson scorecard (units, $, attach rate, returns)</li>
+          <li>Financing mix (cash / Snap / Acima / Affirm / Wells)</li>
+          <li>Inventory aging (SKUs in stock > 90 days)</li>
+          <li>Delivery margin (cost of getting it to customer vs gross)</li>
+          <li>Customer LTV cohorts (first visit by year/quarter)</li>
+          <li>QuickBooks-synced P&amp;L</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-tax">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Sales tax · 1099 vendors · multi-state nexus · use tax</div>
+          <div class="page-title">Tax &amp; Compliance</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Sync to QuickBooks</button>
+          <button class="btn primary">Run filing</button>
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · adapted for retail</p>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Sales Tax Due</div>
+          <div class="stat-value">$18,420</div>
+          <div class="stat-delta neg">Filing due July 20</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">1099 Vendors</div>
+          <div class="stat-value">23</div>
+          <div class="stat-delta">All on track for Jan filing</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">States with Nexus</div>
+          <div class="stat-value">4</div>
+          <div class="stat-delta">NJ + NY + PA + DE</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Use Tax (online)</div>
+          <div class="stat-value">$2,840</div>
+          <div class="stat-delta">From out-of-state vendor purchases</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Sales tax — current period</div>
+          <a class="panel-link">Detail by state</a>
+        </div>
+        <table class="table">
+          <thead><tr><th>State</th><th>Period</th><th>Taxable Sales</th><th>Tax Rate</th><th>Tax Due</th><th>Filing Due</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>New Jersey</strong></td><td>June 2026</td><td>$162,400</td><td>6.625%</td><td>$10,759</td><td>July 20</td><td><span class="tag amber">In prep</span></td></tr>
+            <tr><td><strong>New York</strong></td><td>June 2026</td><td>$84,200</td><td>varies 4-8.875%</td><td>$5,840</td><td>July 22</td><td><span class="tag amber">In prep</span></td></tr>
+            <tr><td><strong>Pennsylvania</strong></td><td>June 2026</td><td>$18,600</td><td>6%</td><td>$1,116</td><td>July 20</td><td><span class="tag amber">In prep</span></td></tr>
+            <tr><td><strong>Delaware</strong></td><td>June 2026</td><td>$8,200</td><td>0% (no sales tax)</td><td>$0</td><td>—</td><td><span class="tag olive">No filing</span></td></tr>
+            <tr><td><em>Quarterly total</em></td><td></td><td>$273,400</td><td></td><td>$17,715</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">1099 vendor tracking — current year</div></div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 10px;">Every contractor / designer / freelancer who earned over $600 this year. Auto-tracks YTD, generates 1099-NEC and 1099-MISC in January.</p>
+          <div class="activity-item">
+            <div class="activity-icon">JC</div>
+            <div class="activity-text">
+              <div>Jennifer Chen Design · 1099-NEC · $48,200 YTD</div>
+              <div class="activity-time">DESIGNER · W-9 ON FILE · TIN VERIFIED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">RS</div>
+            <div class="activity-text">
+              <div>Roma Staging Group · 1099-NEC · $62,800 YTD</div>
+              <div class="activity-time">STAGING · W-9 ON FILE · TIN VERIFIED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">JD</div>
+            <div class="activity-text">
+              <div>Jose Delivery Service · 1099-NEC · $42,500 YTD</div>
+              <div class="activity-time">DELIVERY DRIVER · W-9 ON FILE</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">!</div>
+            <div class="activity-text">
+              <div style="color: var(--terracotta);"><strong>3 vendors missing W-9</strong></div>
+              <div class="activity-time">SURFACE BLOCK · PAYMENT HELD UNTIL COLLECTED</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Multi-state nexus tracking</div></div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 10px;">Triggers automatically when you cross a state's economic nexus threshold (revenue + transactions). Surfaces compliance risk before it becomes audit risk.</p>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--olive);">✓</div>
+            <div class="activity-text">
+              <div><strong>New Jersey</strong> · home state · always required</div>
+              <div class="activity-time">CERTIFICATE OF AUTHORITY ACTIVE</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--olive);">✓</div>
+            <div class="activity-text">
+              <div><strong>New York</strong> · threshold crossed Jan 2025</div>
+              <div class="activity-time">$500K + 100 TXN OVER 4 QUARTERS</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--olive);">✓</div>
+            <div class="activity-text">
+              <div><strong>Pennsylvania</strong> · threshold crossed Mar 2025</div>
+              <div class="activity-time">$100K OR 200 TXN OVER 12 MONTHS</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--gold);">⚠</div>
+            <div class="activity-text">
+              <div><strong>Delaware</strong> · 89% to threshold</div>
+              <div class="activity-time">PROJECTED TO HIT JUL 2026 · PREPARE TO REGISTER</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">—</div>
+            <div class="activity-text">
+              <div><strong>Connecticut, Maryland, Virginia</strong> — under threshold</div>
+              <div class="activity-time">MONITORING · NO ACTION NEEDED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-documents">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">14 awaiting review · 78 archived this month · OCR-indexed</div>
+          <div class="page-title">Document Inbox</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Search archive</button>
+          <button class="btn primary">+ Upload</button>
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · adapted for retail document handling</p>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Awaiting review</div></div>
+        <table class="table">
+          <thead><tr><th>Document</th><th>Source</th><th>Type</th><th>Linked to</th><th>Received</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Custom-Order-Diaz-Bedroom.pdf</strong></td><td>Customer email</td><td>Custom order spec</td><td>Diaz custom · $6,920</td><td>2h ago</td><td><span class="tag emerald">Auto-parsed → order</span></td></tr>
+            <tr><td><strong>Fabric-COA-Boucle-Cream.pdf</strong></td><td>Supplier</td><td>Fabric certification</td><td>Patel sectional</td><td>4h ago</td><td><span class="tag emerald">Auto-attached</span></td></tr>
+            <tr><td><strong>Designer-Agreement-Chen-Cooper.pdf</strong></td><td>Designer</td><td>Trade contract</td><td>Jennifer Chen Design</td><td>Yesterday</td><td><span class="tag gold">Needs signature</span></td></tr>
+            <tr><td><strong>Insurance-COI-RoyalLeasing.pdf</strong></td><td>Insurance carrier</td><td>Certificate of Insurance</td><td>Delivery vehicle</td><td>Yesterday</td><td><span class="tag emerald">Filed</span></td></tr>
+            <tr><td><strong>WarrantyClaim-Bergmans-Sectional.pdf</strong></td><td>Customer</td><td>Warranty claim</td><td>Bergmans · sectional</td><td>2 days ago</td><td><span class="tag terra">Pending review</span></td></tr>
+            <tr><td><strong>1099-W9-NewDriver.pdf</strong></td><td>HR</td><td>New contractor W-9</td><td>1099 tracker</td><td>3 days ago</td><td><span class="tag emerald">TIN verified</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Jewelry / Diamond Atelier cockpit ===== -->
+    <div class="view" id="view-anniversaries">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">62 milestones in next 90 days · 14 high-LTV · proactive outreach engine</div>
+          <div class="page-title">Milestone Engine</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Calendar view</button>
+          <button class="btn primary">+ Add milestone</button>
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Diamond Atelier cockpit · adapted for furniture moments (move-in, anniversary, renovation, new-baby)</p>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Next 30 days — outreach triggers</div>
+          <a class="panel-link">Full calendar</a>
+        </div>
+        <table class="table">
+          <thead><tr><th>Date</th><th>Household</th><th>Event</th><th>Recommendation</th><th>Budget</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Jun 14</strong></td><td>The Bergmans</td><td>5-year house anniversary</td><td>Refresh outdoor set (originally bought 2021)</td><td>$2-4K</td><td><span class="tag gold">Reach out this week</span></td></tr>
+            <tr><td><strong>Jun 22</strong></td><td>The Williams</td><td>New baby (registered)</td><td>Nursery glider + crib · staff handled it last week</td><td>$1,800</td><td><span class="tag olive">Done</span></td></tr>
+            <tr><td><strong>Jul 5</strong></td><td>The Adlers</td><td>Marina's 60th birthday</td><td>Accent chair (she's commented on the Eames style 3x)</td><td>$1-2K</td><td><span class="tag gold">Reach out by Jun 21</span></td></tr>
+            <tr><td><strong>Jul 14</strong></td><td>The Diaz family</td><td>30th wedding anniversary</td><td>Refresh bedroom set (their custom is in production)</td><td>In flight</td><td><span class="tag emerald">In production</span></td></tr>
+            <tr><td><strong>Jul 28</strong></td><td>Sokolov apartment</td><td>1-year apartment anniversary</td><td>"Year-in" review — what else does the space need?</td><td>~$1K avg</td><td><span class="tag gold">Reach out by Jul 14</span></td></tr>
+            <tr><td><strong>Aug 8</strong></td><td>Cooper renovation</td><td>Renovation done (per designer)</td><td>Final styling pieces · accent + dining lighting</td><td>$3-5K</td><td><span class="tag gold">Coordinate w/ designer</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Event sources we track</div></div>
+          <div class="activity-item">
+            <div class="activity-icon">📅</div>
+            <div class="activity-text">
+              <div>Customer-provided anniversaries + birthdays</div>
+              <div class="activity-time">CAPTURED AT FIRST PURCHASE · OPT-IN</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🏠</div>
+            <div class="activity-text">
+              <div>Move-in dates (public record + customer-provided)</div>
+              <div class="activity-time">1-YEAR, 5-YEAR, 10-YEAR ANNIVERSARIES TRIGGER REFRESH</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">👶</div>
+            <div class="activity-text">
+              <div>Life events: new baby, new pet, wedding, divorce</div>
+              <div class="activity-time">REGISTRY DATA · SOCIAL SIGNALS · CUSTOMER-VOLUNTEERED</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🔨</div>
+            <div class="activity-text">
+              <div>Renovation completion (designer + permit data)</div>
+              <div class="activity-time">FINAL-STYLING WINDOW = HIGHEST CONVERSION</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Conversion data (past 12 mo)</div></div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Milestone-driven outreach converts at 31% — vs 4% for general promotional emails. Average milestone purchase: $1,840.</p>
+          <div class="activity-item">
+            <div class="activity-icon">💍</div>
+            <div class="activity-text">
+              <div>Wedding anniversary: 42% convert</div>
+              <div class="activity-time">HIGHEST · USUALLY UPGRADE OR ADD ROOM</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">👶</div>
+            <div class="activity-text">
+              <div>New baby: 38% convert</div>
+              <div class="activity-time">SPECIFIC PURCHASE (NURSERY) · TIME-CRITICAL</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🏠</div>
+            <div class="activity-text">
+              <div>Move-in / renovation: 36% convert</div>
+              <div class="activity-time">BUDGET HIGH · COMPLETE-ROOM PURCHASES</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">🎂</div>
+            <div class="activity-text">
+              <div>Birthday: 24% convert</div>
+              <div class="activity-time">SPOUSAL PURCHASE FOR ANOTHER</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Jewelry / Diamond Atelier cockpit — memo cadence ===== -->
+    <div class="view" id="view-memo-board">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">$84,200 currently on memo · 12 pieces out to designers + stagers</div>
+          <div class="page-title">Memos Out</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">By designer</button>
+          <button class="btn primary">+ Place memo</button>
+        </div>
+      </div>
+
+      <p style="font-size: 12px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Diamond Atelier cockpit · adapted for furniture display pieces, staging loans, designer try-outs</p>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr><th>Memo #</th><th>Designer/Stager</th><th>Piece</th><th>Value</th><th>Days out</th><th>Status</th><th>Next touch</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>M-2026-0042</td><td><strong>Jennifer Chen Design</strong></td><td>Bergamo accent chair pair · cognac leather</td><td>$3,200</td><td>4</td><td><span class="tag emerald">Active</span></td><td>Cooper condo install Thu</td></tr>
+            <tr><td>M-2026-0041</td><td><strong>Roma Staging Group</strong></td><td>3-piece dining set · walnut · staging</td><td>$8,400</td><td>12</td><td><span class="tag emerald">Active</span></td><td>House goes on market Sat</td></tr>
+            <tr><td>M-2026-0040</td><td><strong>Estate Realty</strong></td><td>Sectional + accent set · 4 pieces</td><td>$12,800</td><td>18</td><td><span class="tag gold">2-week check</span></td><td>Call today · listing went pending</td></tr>
+            <tr><td>M-2026-0039</td><td><strong>Volkov Design</strong></td><td>Velvet bench + ottoman</td><td>$1,840</td><td>22</td><td><span class="tag ruby">Risk · 30-day</span></td><td>Decision or return Tue</td></tr>
+            <tr><td>M-2026-0038</td><td><strong>Kowalska Interiors</strong></td><td>Boucle accent chair · ivory</td><td>$1,420</td><td>6</td><td><span class="tag emerald">Active</span></td><td>Client revealing Friday</td></tr>
+            <tr><td>M-2026-0037</td><td><strong>Hamilton Realtors Group</strong></td><td>Floor-model living set · staging</td><td>$28,400</td><td>14</td><td><span class="tag emerald">Active · 4 listings</span></td><td>Rotation OK · weekly check</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Memo cadence engine</div></div>
+        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 14px;">Every display piece out to a designer or stager gets an automatic follow-up rhythm based on the relationship tier. The system handles the timing; you handle the conversation.</p>
+        <div class="activity-item">
+          <div class="activity-icon">7</div>
+          <div class="activity-text">
+            <div>Day 7 — soft check-in (email + photo refresh from designer)</div>
+            <div class="activity-time">AUTO · UNLESS DESIGNER INITIATES SOONER</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">14</div>
+          <div class="activity-text">
+            <div>Day 14 — phone call: "is the staging working? want to swap?"</div>
+            <div class="activity-time">SURFACES IN DASHBOARD</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon" style="color: var(--terracotta);">30</div>
+          <div class="activity-text">
+            <div>Day 30 — risk flag: decision or return</div>
+            <div class="activity-time">PROTECTS YOUR INVENTORY EXPOSURE · OVERRIDE FOR LONG STAGING JOBS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  Furniture House · Operator Cockpit · Built by <span>Heisenbug</span> · v0.1
+</footer>
+
+<script>
+  function navigate(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById('view-' + viewId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.toggle('active', n.dataset.view === viewId);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.addEventListener('click', () => navigate(n.dataset.view));
+  });
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
