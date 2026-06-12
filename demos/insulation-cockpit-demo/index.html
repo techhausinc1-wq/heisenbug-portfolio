@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a24">
+<title>Insulation Contractor Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #f5f3f8; --bg-2: #ffffff; --bg-3: #ece9f0; --ink: #1a1a24; --text-dim: #5a566e; --text-mute: #8a85a0; --line: #dad5e4; --line-2: #b8b0c8; --indigo: #4a3a8a; --indigo-bright: #5d4ab0; --amber: #c4880a; --olive: #5e6e3d; --emerald: #2e7d5b; --red: #b53148; --slate: #1a1a24; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; } button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--indigo); color: var(--bg); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; border-radius: 4px; }
+  .brand-name { font-weight: 700; font-size: 16px; letter-spacing: 0.5px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--indigo); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(74,58,138,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--indigo); background: var(--bg-2); border-left-color: var(--indigo); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--indigo); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); }
+  .btn.primary { background: var(--indigo); color: white; border-color: var(--indigo); font-weight: 600; }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1; }
+  .stat-delta { font-size: 11px; color: var(--olive); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-size: 16px; font-weight: 700; }
+  .panel-link { font-size: 11px; color: var(--indigo); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.indigo { background: rgba(74,58,138,0.15); color: var(--indigo); }
+  .tag.amber { background: rgba(196,136,10,0.15); color: var(--amber); }
+  .tag.olive { background: rgba(94,110,61,0.15); color: var(--olive); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--indigo); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '→ '; color: var(--indigo); margin-right: 4px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--indigo); font-weight: 700; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">I</div>
+    <div><div class="brand-name">Insulation Contractor Cockpit</div><div class="brand-sub">Spray foam · blown-in · batt · weatherization</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">O</div><span>Owner</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="leads">Leads <span class="nav-badge">17</span></div></div>
+    <div class="nav-section"><div class="nav-label">Pipeline</div><div class="nav-item" data-view="proposals">Proposals</div><div class="nav-item" data-view="contracts">Contracts</div><div class="nav-item" data-view="jobs">Active Jobs</div></div>
+    <div class="nav-section"><div class="nav-label">Operations</div><div class="nav-item" data-view="crews">Crew Scheduling</div><div class="nav-item" data-view="materials">Materials (foam + insulation)</div><div class="nav-item" data-view="route">Route Planner</div><div class="nav-item" data-view="rebates">Rebate Programs</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="docs">Documents</div><div class="nav-item" data-view="financing">Customer Financing</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 17 active leads · 3 jobs in process</div><div class="page-title">Good afternoon</div></div><div class="page-actions"><button class="btn ghost">Today's route</button><button class="btn primary">+ New Lead</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Pipeline Value</div><div class="stat-value">$84K</div><div class="stat-delta">17 leads · avg $4,900 ticket</div></div>
+        <div class="stat"><div class="stat-label">June Revenue</div><div class="stat-value">$48,200</div><div class="stat-delta">+22% vs May</div></div>
+        <div class="stat"><div class="stat-label">Active Jobs</div><div class="stat-value">3</div><div class="stat-delta">$28,400 contract value</div></div>
+        <div class="stat"><div class="stat-label">Close Rate</div><div class="stat-value">38%</div><div class="stat-delta">Industry avg 22%</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's lead pipeline</div><a class="panel-link" onclick="navigate('leads')">All leads</a></div>
+            <table class="table">
+              <thead><tr><th>Lead</th><th>Source</th><th>Job Type</th><th>Stage</th><th>Est $</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Mercer renovation</strong></td><td>Referral</td><td>Spray foam · 2,400 sqft</td><td><span class="tag indigo">Quote sent</span></td><td>$8,400</td></tr>
+                <tr><td><strong>Cedar Crest new build</strong></td><td>Builder partner</td><td>Closed-cell · entire envelope</td><td><span class="tag emerald">Contract pending</span></td><td>$18,200</td></tr>
+                <tr><td><strong>Riverside attic</strong></td><td>Google Ads</td><td>Blown-in attic + air seal</td><td><span class="tag indigo">Site visit done</span></td><td>$2,840</td></tr>
+                <tr><td><strong>Lincoln basement</strong></td><td>Energy audit referral</td><td>Spray foam rim joist + walls</td><td><span class="tag amber">Walk-through scheduled</span></td><td>$4,200</td></tr>
+                <tr><td><strong>Hilltop pole barn</strong></td><td>Door knock</td><td>Closed-cell · 1,800 sqft</td><td><span class="tag indigo">Quote sent</span></td><td>$11,400</td></tr>
+                <tr><td><strong>Pinewood crawlspace</strong></td><td>Inspector referral</td><td>Encapsulation + spray foam</td><td><span class="tag indigo">Estimate prep</span></td><td>$6,800</td></tr>
+                <tr><td><strong>Sunset 3-flat</strong></td><td>Property mgr</td><td>Multi-unit weatherization</td><td><span class="tag amber">Awaiting access</span></td><td>$12,400</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Lead source attribution — last 90 days</div></div>
+            <div class="activity-item"><div class="activity-icon">G</div><div class="activity-text"><div><strong>Google Ads</strong> · 28 leads · 8 closed · $48K booked</div><div class="activity-time">CPC $14 · CPL $84 · CPA $292</div></div></div>
+            <div class="activity-item"><div class="activity-icon">R</div><div class="activity-text"><div><strong>Referrals (past customers + builders)</strong> · 22 leads · 12 closed · $84K</div><div class="activity-time">FREE · 55% CLOSE RATE · BEST CHANNEL</div></div></div>
+            <div class="activity-item"><div class="activity-icon">D</div><div class="activity-text"><div><strong>Door knock + canvassing</strong> · 18 leads · 4 closed · $18K</div><div class="activity-time">22% CLOSE · WORKS IN NEW SUBDIVISIONS</div></div></div>
+            <div class="activity-item"><div class="activity-icon">A</div><div class="activity-text"><div><strong>Energy audit partner</strong> · 14 leads · 9 closed · $42K</div><div class="activity-time">WARM HANDOFF · 64% CLOSE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">F</div><div class="activity-text"><div><strong>Facebook Ads</strong> · 8 leads · 1 closed · $4K</div><div class="activity-time">PAUSE · CONSIDER REALLOCATE</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Active jobs this week</div><a class="panel-link" onclick="navigate('jobs')">All jobs</a></div>
+            <div class="activity-item"><div class="activity-icon">M</div><div class="activity-text"><div><strong>Mon-Tue · Bethel new build</strong> · closed-cell · 3,200 sqft</div><div class="activity-time">2-DAY JOB · CREW A · $18,400</div></div></div>
+            <div class="activity-item"><div class="activity-icon">W</div><div class="activity-text"><div><strong>Wed · Maple attic</strong> · blown-in fiberglass</div><div class="activity-time">1-DAY · CREW B · $3,200</div></div></div>
+            <div class="activity-item"><div class="activity-icon">F</div><div class="activity-text"><div><strong>Fri · Hilltop pole barn</strong> · awaiting customer confirm</div><div class="activity-time">CREW A · $11,400</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Rebate programs — active</div><a class="panel-link" onclick="navigate('rebates')">All programs</a></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>State utility weatherization rebate</strong></div><div class="activity-time">$1.50/SQFT · 4 ACTIVE FILINGS</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Federal 25C tax credit (homeowner)</strong></div><div class="activity-time">30% UP TO $1,200/YR · CUSTOMER PAPERWORK</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Local gas utility rebate</strong></div><div class="activity-time">$0.40/SQFT · 7-DAY TURNAROUND</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-leads"><div class="page-header"><div><div class="page-subtitle">17 active · scored by fit + warmth</div><div class="page-title">Leads</div></div></div><div class="coming-soon"><h3>Lead Pipeline</h3><p>Inbound + outbound lead capture, scoring, routing.</p><ul><li>Per-source lead capture (Google Ads, FB, referrals, door-knock)</li><li>Auto-scoring by fit (job type, square footage, location)</li><li>Auto-routing to estimator</li><li>SLA timer (1-hour response is the standard)</li><li>Per-source CPL + CPA reporting</li></ul></div></div>
+    <div class="view" id="view-proposals"><div class="page-header"><div><div class="page-subtitle">11 sent · 5 viewed · 4 in negotiation</div><div class="page-title">Proposals</div></div></div><div class="coming-soon"><h3>Proposal Generation</h3><p>Branded proposal PDF generation with options + financing built in.</p><ul><li>Per-job take-off auto-fills proposal</li><li>Multi-option proposals (good / better / best)</li><li>E-sign for acceptance</li><li>Customer-side viewing tracking</li><li>Auto-follow-up sequence</li></ul></div></div>
+    <div class="view" id="view-contracts"><div class="page-header"><div><div class="page-subtitle">4 contracts ready to sign · 8 active jobs under contract</div><div class="page-title">Contracts</div></div></div><div class="coming-soon"><h3>Contract Management</h3><p>Contract templates, e-sign, change orders.</p><ul><li>Spray foam / blown-in / batt contract templates</li><li>State-specific contract language</li><li>E-signature workflow</li><li>Change order tracking</li><li>Final inspection sign-off</li></ul></div></div>
+    <div class="view" id="view-jobs"><div class="page-header"><div><div class="page-subtitle">3 active · $28,400 contract value · avg 2-day job</div><div class="page-title">Active Jobs</div></div></div><div class="coming-soon"><h3>Job Operations</h3><p>Scheduling, crew assignments, material orders, photo proof.</p><ul><li>Per-job material take-off + ordering</li><li>Crew assignment + travel time</li><li>Pre/during/after job photos (consent for marketing)</li><li>Customer auto-notifications (day-before, on-the-way, complete)</li><li>Final invoice + thank-you sequence</li></ul></div></div>
+    <div class="view" id="view-crews"><div class="page-header"><div><div class="page-subtitle">2 crews · 5 techs · this week schedule live</div><div class="page-title">Crew Scheduling</div></div></div><div class="coming-soon"><h3>Crew Management</h3><p>Per-crew schedule, certifications, equipment assignments.</p><ul><li>Per-crew daily/weekly schedule</li><li>SPFA certification + state license tracking</li><li>Equipment assignment (rigs, sprayers, blowers)</li><li>Time tracking with payroll integration</li><li>Per-crew job profitability</li></ul></div></div>
+    <div class="view" id="view-materials"><div class="page-header"><div><div class="page-subtitle">Closed-cell + open-cell foam · fiberglass batt · blown-in</div><div class="page-title">Materials</div></div></div><div class="coming-soon"><h3>Material Operations</h3><p>Foam + cellulose + fiberglass inventory + ordering.</p><ul><li>Per-job material take-off</li><li>Drum + bag inventory (closed-cell A+B, open-cell A+B)</li><li>Supplier accounts (BASF, Demilec, Lapolla, Owens-Corning)</li><li>Bulk-discount tier tracking</li><li>Material cost per square foot per job type</li></ul></div></div>
+    <div class="view" id="view-route"><div class="page-header"><div><div class="page-subtitle">Daily route planner · job site + estimate visits</div><div class="page-title">Route Planner</div></div></div><div class="coming-soon"><h3>Route Planning</h3><p>↘ Shared engine — from Pool Service / Vending · adapted for daily estimating + job visits.</p><ul><li>Daily route built from estimates + jobs + follow-ups</li><li>Truck-load planning (which materials for which stops)</li><li>Drive-time + fuel optimization</li><li>Mobile app for crew lead</li></ul></div></div>
+    <div class="view" id="view-rebates"><div class="page-header"><div><div class="page-subtitle">Federal · state · utility · municipal rebate programs</div><div class="page-title">Rebate Programs</div></div></div><div class="coming-soon"><h3>Rebate Operations</h3><p>Every job-eligible rebate auto-surfaced + filing automated.</p><ul><li>Federal 25C tax credit prep for customer</li><li>State utility weatherization rebate filing</li><li>Local gas/electric utility rebates</li><li>HVAC + insulation combo rebates</li><li>Per-rebate documentation packet auto-generated</li><li>Customer rebate redemption tracking</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-channel CAC · per-crew margin · per-job profitability</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Business Reports</h3><p>Numbers an insulation contractor needs.</p><ul><li>Per-channel cost of acquisition</li><li>Per-job gross margin after materials + crew</li><li>Per-crew utilization + profitability</li><li>Seasonal mix (insulation is seasonal-cyclical)</li><li>Bid-to-close conversion + close-rate trends</li></ul></div></div>
+
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">1099 subs · materials sales tax · contractor license · state nexus</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · insulation-flavored: 1099 sub-crews, materials sales tax (resold to customer), multi-state contractor licensing</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Sales Tax MTD</div><div class="stat-value">$1,820</div><div class="stat-delta">Materials portion of jobs</div></div>
+        <div class="stat"><div class="stat-label">1099 Subs YTD</div><div class="stat-value">3</div><div class="stat-delta">All W-9s on file</div></div>
+        <div class="stat"><div class="stat-label">Contractor Licenses</div><div class="stat-value">2</div><div class="stat-delta">PA + DE · both current</div></div>
+        <div class="stat"><div class="stat-label">Use Tax</div><div class="stat-value">$420</div><div class="stat-delta">Out-of-state foam purchases</div></div>
+      </div>
+    </div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Contracts · COIs · SDS · rebate filings · permits</div><div class="page-title">Documents</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · insulation-flavored: SDS sheets per chemical, rebate filings, COIs for the truck + crew, contractor licensure</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Document</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td><strong>Lapolla 4G - SDS.pdf</strong></td><td>Safety Data Sheet</td><td><span class="tag emerald">Current</span></td></tr><tr><td><strong>PA Contractor License 2026.pdf</strong></td><td>State licensure</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>General Liability Insurance.pdf</strong></td><td>Insurance</td><td><span class="tag emerald">$2M aggregate</span></td></tr><tr><td><strong>Workers Comp Certificate.pdf</strong></td><td>Insurance</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>SPFA Certification - Owner.pdf</strong></td><td>Trade cert</td><td><span class="tag emerald">PCP advanced</span></td></tr><tr><td><strong>Cedar Crest - Contract.pdf</strong></td><td>Job contract</td><td><span class="tag amber">Awaiting signature</span></td></tr></tbody></table></div></div>
+
+    <div class="view" id="view-financing"><div class="page-header"><div><div class="page-subtitle">EnerBank · Synchrony · HEAT loan programs</div><div class="page-title">Customer Financing</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Furniture cockpit · insulation-flavored: EnerBank, Synchrony Home, state HEAT loan programs for low-income weatherization</p>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Active financing</div></div><table class="table"><thead><tr><th>Customer</th><th>Job</th><th>Amount</th><th>Lender</th><th>Status</th></tr></thead><tbody><tr><td><strong>Cedar Crest new build</strong></td><td>Whole-envelope foam</td><td>$18,200</td><td>EnerBank</td><td><span class="tag emerald">Approved · 18-mo same-as-cash</span></td></tr><tr><td><strong>Lincoln basement</strong></td><td>Spray foam rim + walls</td><td>$4,200</td><td>Synchrony Home</td><td><span class="tag amber">App in</span></td></tr><tr><td><strong>Sunset 3-flat</strong></td><td>Multi-unit weatherization</td><td>$12,400</td><td>State HEAT loan</td><td><span class="tag amber">Income-qualified · paperwork in</span></td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Insulation Contractor Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
