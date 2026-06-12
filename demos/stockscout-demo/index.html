@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="StockScout">
+  <meta name="theme-color" content="#3d35a6">
+  <title>StockScout — HVAC Field Inventory</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <style>
+    :root {
+      --paper: #f7f3e9;
+      --paper-2: #fcfaf3;
+      --ink: #1a1612;
+      --muted: #6a6560;
+      --line: #d9d1bf;
+      --indigo: #3d35a6;
+      --indigo-deep: #2a2480;
+      --indigo-soft: #f0eef9;
+      --rust: #b8541d;
+      --rust-soft: #fbf2eb;
+      --green: #2f7a3e;
+      --green-soft: #e8f3ea;
+      --amber: #b8770a;
+      --red: #b81d2a;
+      --red-soft: #fdf1f1;
+      --shadow: 0 1px 2px rgba(10,9,8,0.04), 0 4px 16px rgba(10,9,8,0.05);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', sans-serif;
+      font-size: 15px;
+      line-height: 1.4;
+      overscroll-behavior: none;
+      -webkit-font-smoothing: antialiased;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    body { min-height: 100vh; }
+
+    /* Layout primitives */
+    .app { max-width: 720px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--paper);
+      border-bottom: 0.5px solid var(--line);
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 14px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .topbar h1 {
+      font-family: 'Fraunces', 'Source Serif Pro', Georgia, serif;
+      font-size: 20px; font-weight: 500; margin: 0; letter-spacing: -0.3px;
+    }
+    .topbar .crumb { font-family: 'JetBrains Mono', 'SF Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+    .topbar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+    .content { flex: 1; padding: 14px 18px 100px; }
+    .footer-tabs {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: var(--paper-2);
+      border-top: 0.5px solid var(--line);
+      display: flex; max-width: 720px; margin: 0 auto;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .tab {
+      flex: 1; padding: 12px 6px 14px;
+      background: transparent; border: none;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      color: var(--muted); cursor: pointer;
+      font-family: inherit; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .tab.active { color: var(--indigo); }
+    .tab .ic { font-size: 22px; line-height: 1; }
+
+    /* Cards */
+    .card {
+      background: var(--paper-2);
+      border: 0.5px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card.row { display: flex; align-items: center; gap: 12px; }
+    .card.row:hover { background: #fffdf7; cursor: pointer; }
+
+    /* Typography */
+    .label { font-family: 'JetBrains Mono', 'SF Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
+    .display { font-family: 'Fraunces', 'Source Serif Pro', Georgia, serif; font-size: 28px; font-weight: 400; letter-spacing: -0.5px; line-height: 1.1; }
+    .num { font-family: 'Fraunces', 'Source Serif Pro', Georgia, serif; font-size: 22px; font-weight: 600; line-height: 1; }
+    .strong { font-weight: 600; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 16px; border-radius: 8px;
+      border: 0.5px solid var(--line); background: var(--paper-2);
+      color: var(--ink); font-family: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; min-height: 38px;
+      transition: background 80ms;
+    }
+    .btn:hover { background: #fffdf7; }
+    .btn.primary { background: var(--indigo); color: white; border-color: var(--indigo); }
+    .btn.primary:hover { background: var(--indigo-deep); }
+    .btn.rust { background: var(--rust); color: white; border-color: var(--rust); }
+    .btn.full { width: 100%; }
+    .btn.lg { padding: 14px 20px; font-size: 15px; min-height: 50px; }
+    .btn.icon { padding: 8px 10px; min-height: auto; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Pills */
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      background: var(--indigo-soft); color: var(--indigo);
+    }
+    .pill.rust { background: var(--rust-soft); color: var(--rust); }
+    .pill.green { background: var(--green-soft); color: var(--green); }
+    .pill.red { background: var(--red-soft); color: var(--red); }
+    .pill.gray { background: #efe8d8; color: var(--muted); }
+
+    /* Inputs */
+    .input, .select {
+      width: 100%; padding: 11px 14px;
+      border: 0.5px solid var(--line); border-radius: 8px;
+      background: var(--paper-2); color: var(--ink);
+      font-family: inherit; font-size: 16px;
+      outline: none;
+    }
+    .input:focus, .select:focus { background: white; border-color: var(--indigo); }
+
+    /* Lists */
+    .item-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border: 0.5px solid var(--line); border-radius: 10px;
+      background: var(--paper-2); margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .item-row:hover { background: #fffdf7; }
+    .item-row .meta { flex: 1; min-width: 0; }
+    .item-row .name { font-weight: 600; font-size: 14px; }
+    .item-row .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .item-row .qty-block { text-align: right; min-width: 80px; }
+    .item-row .qty-here { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; line-height: 1; }
+    .item-row .qty-total { font-size: 10px; color: var(--muted); margin-top: 2px; letter-spacing: 0.3px; }
+    .item-row .low { color: var(--red); }
+
+    /* Sections */
+    .section-h {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin: 16px 2px 8px;
+    }
+
+    /* Stat cards */
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat {
+      padding: 14px;
+      border: 0.5px solid var(--line); border-radius: 10px;
+      background: var(--paper-2);
+    }
+    .stat .v { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--indigo); line-height: 1; }
+    .stat .l { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; margin-top: 4px; }
+
+    /* Scanner overlay */
+    .scanner-stage {
+      position: relative; width: 100%; aspect-ratio: 4/3;
+      background: #000; border-radius: 14px; overflow: hidden;
+    }
+    .scanner-stage video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .scanner-frame {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 78%; max-width: 380px; aspect-ratio: 3/2;
+      border: 2px solid #d4d419;
+      border-radius: 8px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.4);
+    }
+    .scanner-frame::before, .scanner-frame::after,
+    .scanner-frame > span::before, .scanner-frame > span::after {
+      content: ''; position: absolute; width: 18px; height: 18px;
+      border-color: #f59e0b; border-style: solid; border-width: 0;
+    }
+    .scanner-frame::before { top: -3px; left: -3px; border-top-width: 3px; border-left-width: 3px; }
+    .scanner-frame::after { top: -3px; right: -3px; border-top-width: 3px; border-right-width: 3px; }
+    .scanner-frame > span::before { bottom: -3px; left: -3px; border-bottom-width: 3px; border-left-width: 3px; }
+    .scanner-frame > span::after { bottom: -3px; right: -3px; border-bottom-width: 3px; border-right-width: 3px; }
+    .scanner-status {
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.7); color: white; padding: 6px 14px;
+      border-radius: 999px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    /* Modal */
+    .modal-bg {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(10,9,8,0.45);
+      display: flex; align-items: flex-end; justify-content: center;
+      animation: fadeIn 120ms ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      width: 100%; max-width: 540px; margin: 0;
+      background: var(--paper);
+      border-radius: 18px 18px 0 0;
+      padding: 22px;
+      animation: slideUp 220ms cubic-bezier(0.22,0.61,0.36,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal h2 { margin: 0 0 14px; font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; }
+    .modal .grab { width: 36px; height: 4px; background: var(--line); border-radius: 2px; margin: 0 auto 16px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+      background: var(--ink); color: white;
+      padding: 12px 20px; border-radius: 999px;
+      font-size: 13px; font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      z-index: 200;
+      animation: toastIn 200ms ease-out;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+    /* Splash / login */
+    .splash {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 30px;
+      background: radial-gradient(ellipse at top, #fcfaf3 0%, var(--paper) 60%);
+    }
+    .brandmark {
+      font-family: 'Fraunces', serif; font-size: 40px; font-weight: 400;
+      letter-spacing: -1px; color: var(--indigo);
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .brandmark .dot { width: 12px; height: 12px; background: var(--rust); display: inline-block; }
+    .brandtag {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace; font-size: 9.5px;
+      color: var(--muted); letter-spacing: 3px; text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .splash .panel {
+      margin-top: 36px; width: 100%; max-width: 420px;
+      background: var(--paper-2);
+      border: 0.5px solid var(--line); border-radius: 14px;
+      padding: 22px;
+    }
+    .worker-pick {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; margin-bottom: 8px;
+      border: 0.5px solid var(--line); border-radius: 10px;
+      background: white; cursor: pointer;
+      transition: all 80ms;
+    }
+    .worker-pick:hover { border-color: var(--indigo); background: var(--indigo-soft); }
+    .worker-pick .av {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--indigo-soft); color: var(--indigo);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px;
+    }
+    .worker-pick .role-tag { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+    /* Item detail */
+    .loc-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px;
+      border: 0.5px solid var(--line); border-radius: 10px;
+      background: var(--paper-2); margin-bottom: 8px;
+    }
+    .loc-bar.zero { background: var(--red-soft); border-color: #f4c0c5; }
+    .loc-bar .nm { font-weight: 600; font-size: 13px; }
+    .loc-bar .v { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; }
+
+    /* History */
+    .history-row {
+      display: flex; gap: 12px; padding: 10px 0;
+      border-bottom: 0.5px solid var(--line);
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-row .when { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); min-width: 64px; }
+    .history-row .desc { flex: 1; font-size: 13px; }
+    .history-row .delta { font-weight: 700; font-size: 14px; min-width: 50px; text-align: right; }
+    .history-row .delta.pos { color: var(--green); }
+    .history-row .delta.neg { color: var(--red); }
+
+    /* Quick-adjust */
+    .qa-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin: 18px 0; }
+    .qa-big { font-family: 'Fraunces', serif; font-size: 56px; font-weight: 600; color: var(--indigo); text-align: center; line-height: 1; }
+    .qa-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--paper-2); border: 0.5px solid var(--line);
+      font-size: 24px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qa-btn:hover { background: white; }
+    .qa-btn.minus { color: var(--rust); }
+    .qa-btn.plus { color: var(--green); }
+
+    /* PAR check rows */
+    .par-row {
+      display: grid; grid-template-columns: 1fr auto auto auto;
+      gap: 10px; align-items: center;
+      padding: 10px 12px;
+      border-bottom: 0.5px solid var(--line);
+    }
+    .par-row.short { background: var(--red-soft); }
+    .par-row .nm { font-size: 13px; font-weight: 600; }
+    .par-row .vs { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+    .par-row .gap { font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px; }
+    .par-row .gap.neg { color: var(--red); }
+    .par-row .gap.ok { color: var(--green); }
+
+    /* Refrigerant log */
+    .refrig-banner {
+      background: var(--rust-soft);
+      border: 0.5px solid #f0d4bc;
+      padding: 12px 14px; border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 12px;
+    }
+    .refrig-banner .h { font-weight: 700; color: var(--rust); }
+
+    /* Owner dashboard alerts */
+    .alert-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border: 0.5px solid var(--line); border-radius: 10px;
+      background: var(--paper-2); margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .alert-row.red { background: var(--red-soft); border-color: #f4c0c5; }
+    .alert-row.rust { background: var(--rust-soft); border-color: #f0d4bc; }
+    .alert-row .ic { font-size: 18px; }
+
+    /* AI thinking */
+    .ai-think {
+      padding: 24px; text-align: center;
+    }
+    .ai-think .pulse {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--indigo-soft);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .ai-think .pulse svg { width: 28px; height: 28px; color: var(--indigo); }
+
+    /* Voice button */
+    .voice-fab {
+      position: fixed; bottom: 88px; right: 18px; z-index: 60;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--indigo); color: white; border: none;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(61,53,166,0.4);
+      cursor: pointer; font-size: 24px;
+    }
+    .voice-fab.listening { background: var(--rust); animation: pulse 1s infinite; }
+
+    /* Responsive tweaks */
+    @media (max-width: 380px) {
+      body { font-size: 14px; }
+      .topbar { padding: 12px 14px; }
+      .content { padding: 12px 14px 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div id="topbar"></div>
+  <div id="content" class="content"></div>
+  <div id="tabs"></div>
+</div>
+
+<button id="voice-fab" class="voice-fab" title="Voice query" style="display:none;">🎙</button>
+
+<!-- @zxing/browser via CDN — webcam barcode scanning. async = doesn't
+     block the inline app script below, so the splash + UI work even if
+     the CDN is slow or blocked. Scanner view will show a graceful
+     fallback if the library hasn't loaded by the time it's needed. -->
+<script async src="https://unpkg.com/@zxing/browser@0.1.5/umd/index.min.js"></script>
+
+<script>
+/* ============================================================================
+ * StockScout — single-file PWA prototype
+ * HVAC inventory across multiple warehouses + truck loadouts
+ * Built for Heisenbug LLC, June 2026
+ * ============================================================================ */
+
+// ---------- Seed data ----------
+
+const WORKERS = [
+  { id: 'mike',   name: 'Mike Rodriguez', role: 'tech',      defaultLoc: 'truck-103', cert: 'EPA-608-T2-2019-MR' },
+  { id: 'carlos', name: 'Carlos Ortiz',   role: 'tech',      defaultLoc: 'truck-107', cert: 'EPA-608-Universal-2021-CO' },
+  { id: 'eddie',  name: 'Eddie Phan',     role: 'tech',      defaultLoc: 'truck-112', cert: 'EPA-608-T2-2022-EP' },
+  { id: 'dave',   name: 'Dave Chen',      role: 'warehouse', defaultLoc: 'warehouse-north' },
+  { id: 'owner',  name: 'Owner View',     role: 'owner',     defaultLoc: null }
+];
+
+const LOCATIONS = [
+  { id: 'warehouse-north',   type: 'warehouse', name: 'Warehouse North',   sub: 'Main supply · 8401 Broadway' },
+  { id: 'warehouse-houston', type: 'warehouse', name: 'Warehouse Houston', sub: 'Branch · 5512 Old Spanish Trl' },
+  { id: 'truck-103',         type: 'truck',     name: 'Truck #103',        sub: 'Driver: Mike Rodriguez' },
+  { id: 'truck-107',         type: 'truck',     name: 'Truck #107',        sub: 'Driver: Carlos Ortiz' },
+  { id: 'truck-112',         type: 'truck',     name: 'Truck #112',        sub: 'Driver: Eddie Phan' }
+];
+
+const ITEMS = [
+  // Capacitors
+  { sku: 'CAP-35-5',  bc: '012345670001', name: '35/5 µF Dual Run Capacitor',  cat: 'Capacitors', uom: 'each', cost: 8.50,  min: 4, refr: false },
+  { sku: 'CAP-45-5',  bc: '012345670002', name: '45/5 µF Dual Run Capacitor',  cat: 'Capacitors', uom: 'each', cost: 9.25,  min: 6, refr: false },
+  { sku: 'CAP-55-5',  bc: '012345670003', name: '55/5 µF Dual Run Capacitor',  cat: 'Capacitors', uom: 'each', cost: 10.75, min: 4, refr: false },
+  { sku: 'CAP-7-5',   bc: '012345670004', name: '7.5 µF Single Run Capacitor', cat: 'Capacitors', uom: 'each', cost: 4.20,  min: 6, refr: false },
+  { sku: 'CAP-10',    bc: '012345670005', name: '10 µF Start Capacitor',       cat: 'Capacitors', uom: 'each', cost: 5.60,  min: 4, refr: false },
+  // Contactors
+  { sku: 'CONT-1P-30',bc: '012345670010', name: '1-Pole 30A 24V Contactor',    cat: 'Contactors', uom: 'each', cost: 14.50, min: 3, refr: false },
+  { sku: 'CONT-2P-30',bc: '012345670011', name: '2-Pole 30A 24V Contactor',    cat: 'Contactors', uom: 'each', cost: 17.25, min: 4, refr: false },
+  { sku: 'CONT-2P-40',bc: '012345670012', name: '2-Pole 40A 24V Contactor',    cat: 'Contactors', uom: 'each', cost: 19.80, min: 3, refr: false },
+  { sku: 'CONT-3P-50',bc: '012345670013', name: '3-Pole 50A 24V Contactor',    cat: 'Contactors', uom: 'each', cost: 28.00, min: 2, refr: false },
+  // Refrigerant (Section 608 regulated)
+  { sku: 'REFR-410A', bc: '012345670020', name: 'R-410A Refrigerant', cat: 'Refrigerant', uom: 'lb', cost: 11.50, min: 25, refr: true,  refType: 'R-410A' },
+  { sku: 'REFR-32',   bc: '012345670021', name: 'R-32 Refrigerant',   cat: 'Refrigerant', uom: 'lb', cost: 14.00, min: 15, refr: true,  refType: 'R-32' },
+  { sku: 'REFR-22',   bc: '012345670022', name: 'R-22 Refrigerant',   cat: 'Refrigerant', uom: 'lb', cost: 38.50, min: 10, refr: true,  refType: 'R-22' },
+  // Filters
+  { sku: 'FILT-1620', bc: '012345670030', name: 'Air Filter 16x20x1 MERV 8',  cat: 'Filters', uom: 'each', cost: 3.20, min: 12, refr: false },
+  { sku: 'FILT-1625', bc: '012345670031', name: 'Air Filter 16x25x1 MERV 8',  cat: 'Filters', uom: 'each', cost: 3.60, min: 12, refr: false },
+  { sku: 'FILT-2025', bc: '012345670032', name: 'Air Filter 20x25x1 MERV 8',  cat: 'Filters', uom: 'each', cost: 4.10, min: 12, refr: false },
+  { sku: 'FILT-1625-11', bc:'012345670033', name: 'Air Filter 16x25x1 MERV 11', cat: 'Filters', uom: 'each', cost: 5.75, min: 8, refr: false },
+  // Copper line
+  { sku: 'LINE-14',   bc: '012345670040', name: 'Copper Line 1/4" — per ft', cat: 'Line Sets', uom: 'ft', cost: 2.40, min: 50, refr: false },
+  { sku: 'LINE-38',   bc: '012345670041', name: 'Copper Line 3/8" — per ft', cat: 'Line Sets', uom: 'ft', cost: 3.60, min: 50, refr: false },
+  { sku: 'LINE-58',   bc: '012345670042', name: 'Copper Line 5/8" — per ft', cat: 'Line Sets', uom: 'ft', cost: 5.10, min: 40, refr: false },
+  // Motors / electrical
+  { sku: 'MOT-BLW-12',bc: '012345670050', name: '1/2 HP Blower Motor ECM',     cat: 'Motors', uom: 'each', cost: 285.00, min: 1, refr: false },
+  { sku: 'MOT-BLW-34',bc: '012345670051', name: '3/4 HP Blower Motor ECM',     cat: 'Motors', uom: 'each', cost: 340.00, min: 1, refr: false },
+  { sku: 'MOT-COND-13',bc:'012345670052', name: '1/3 HP Condenser Fan Motor', cat: 'Motors', uom: 'each', cost: 165.00, min: 2, refr: false },
+  { sku: 'IGN-SIN',   bc: '012345670053', name: 'Silicon Nitride Ignitor',     cat: 'Electrical', uom: 'each', cost: 28.50, min: 4, refr: false },
+  { sku: 'TXFR-40',   bc: '012345670054', name: '40VA 120/240→24V Transformer', cat: 'Electrical', uom: 'each', cost: 22.00, min: 3, refr: false },
+  // Misc supplies
+  { sku: 'NITR-RGTR', bc: '012345670060', name: 'Nitrogen Regulator',          cat: 'Tools', uom: 'each', cost: 95.00, min: 1, refr: false },
+  { sku: 'CORE-RM',   bc: '012345670061', name: 'Schrader Core Remover Tool', cat: 'Tools', uom: 'each', cost: 18.00, min: 2, refr: false },
+  { sku: 'TAPE-DCT',  bc: '012345670062', name: 'UL-181 Foil Duct Tape',       cat: 'Supplies', uom: 'roll', cost: 9.50,  min: 6, refr: false },
+  { sku: 'INSL-38',   bc: '012345670063', name: '3/8" Pipe Insulation — 6ft',  cat: 'Supplies', uom: 'each', cost: 6.20,  min: 8, refr: false },
+  { sku: 'INSL-58',   bc: '012345670064', name: '5/8" Pipe Insulation — 6ft',  cat: 'Supplies', uom: 'each', cost: 7.80,  min: 6, refr: false }
+];
+
+// stock[sku][locationId] = quantity
+const SEED_STOCK = {
+  'CAP-35-5':   { 'warehouse-north': 24, 'warehouse-houston': 12, 'truck-103': 2, 'truck-107': 3, 'truck-112': 4 },
+  'CAP-45-5':   { 'warehouse-north': 18, 'warehouse-houston': 9,  'truck-103': 1, 'truck-107': 4, 'truck-112': 4 },
+  'CAP-55-5':   { 'warehouse-north': 14, 'warehouse-houston': 6,  'truck-103': 2, 'truck-107': 2, 'truck-112': 3 },
+  'CAP-7-5':    { 'warehouse-north': 22, 'warehouse-houston': 10, 'truck-103': 4, 'truck-107': 4, 'truck-112': 4 },
+  'CAP-10':     { 'warehouse-north': 16, 'warehouse-houston': 8,  'truck-103': 2, 'truck-107': 2, 'truck-112': 2 },
+  'CONT-1P-30': { 'warehouse-north': 12, 'warehouse-houston': 6,  'truck-103': 3, 'truck-107': 2, 'truck-112': 3 },
+  'CONT-2P-30': { 'warehouse-north': 15, 'warehouse-houston': 8,  'truck-103': 4, 'truck-107': 3, 'truck-112': 4 },
+  'CONT-2P-40': { 'warehouse-north': 10, 'warehouse-houston': 5,  'truck-103': 2, 'truck-107': 2, 'truck-112': 3 },
+  'CONT-3P-50': { 'warehouse-north': 6,  'warehouse-houston': 3,  'truck-103': 1, 'truck-107': 1, 'truck-112': 2 },
+  'REFR-410A':  { 'warehouse-north': 180, 'warehouse-houston': 95, 'truck-103': 25, 'truck-107': 22, 'truck-112': 30 },
+  'REFR-32':    { 'warehouse-north': 80,  'warehouse-houston': 40, 'truck-103': 10, 'truck-107': 12, 'truck-112': 15 },
+  'REFR-22':    { 'warehouse-north': 35,  'warehouse-houston': 18, 'truck-103': 5,  'truck-107': 6,  'truck-112': 8 },
+  'FILT-1620':  { 'warehouse-north': 48,  'warehouse-houston': 24, 'truck-103': 6,  'truck-107': 8,  'truck-112': 6 },
+  'FILT-1625':  { 'warehouse-north': 56,  'warehouse-houston': 28, 'truck-103': 8,  'truck-107': 8,  'truck-112': 8 },
+  'FILT-2025':  { 'warehouse-north': 40,  'warehouse-houston': 20, 'truck-103': 6,  'truck-107': 6,  'truck-112': 6 },
+  'FILT-1625-11':{'warehouse-north': 32,  'warehouse-houston': 16, 'truck-103': 4,  'truck-107': 4,  'truck-112': 4 },
+  'LINE-14':    { 'warehouse-north': 320, 'warehouse-houston': 160,'truck-103': 50, 'truck-107': 45, 'truck-112': 60 },
+  'LINE-38':    { 'warehouse-north': 280, 'warehouse-houston': 140,'truck-103': 40, 'truck-107': 50, 'truck-112': 50 },
+  'LINE-58':    { 'warehouse-north': 240, 'warehouse-houston': 120,'truck-103': 35, 'truck-107': 40, 'truck-112': 40 },
+  'MOT-BLW-12': { 'warehouse-north': 4,   'warehouse-houston': 2,  'truck-103': 1,  'truck-107': 1,  'truck-112': 1 },
+  'MOT-BLW-34': { 'warehouse-north': 3,   'warehouse-houston': 1,  'truck-103': 0,  'truck-107': 1,  'truck-112': 1 },
+  'MOT-COND-13':{ 'warehouse-north': 5,   'warehouse-houston': 3,  'truck-103': 2,  'truck-107': 2,  'truck-112': 2 },
+  'IGN-SIN':    { 'warehouse-north': 14,  'warehouse-houston': 8,  'truck-103': 4,  'truck-107': 3,  'truck-112': 4 },
+  'TXFR-40':    { 'warehouse-north': 8,   'warehouse-houston': 4,  'truck-103': 2,  'truck-107': 2,  'truck-112': 2 },
+  'NITR-RGTR':  { 'warehouse-north': 2,   'warehouse-houston': 1,  'truck-103': 1,  'truck-107': 1,  'truck-112': 1 },
+  'CORE-RM':    { 'warehouse-north': 4,   'warehouse-houston': 2,  'truck-103': 1,  'truck-107': 2,  'truck-112': 2 },
+  'TAPE-DCT':   { 'warehouse-north': 24,  'warehouse-houston': 12, 'truck-103': 4,  'truck-107': 6,  'truck-112': 6 },
+  'INSL-38':    { 'warehouse-north': 20,  'warehouse-houston': 10, 'truck-103': 6,  'truck-107': 8,  'truck-112': 6 },
+  'INSL-58':    { 'warehouse-north': 16,  'warehouse-houston': 8,  'truck-103': 4,  'truck-107': 4,  'truck-112': 4 }
+};
+
+// par[truckId][sku] = expected quantity
+const PAR = {
+  'truck-103': { 'CAP-35-5': 4, 'CAP-45-5': 4, 'CAP-55-5': 2, 'CAP-7-5': 4, 'CAP-10': 2, 'CONT-1P-30': 3, 'CONT-2P-30': 4, 'CONT-2P-40': 2, 'IGN-SIN': 4, 'TXFR-40': 2, 'FILT-1625': 8, 'REFR-410A': 25 },
+  'truck-107': { 'CAP-35-5': 4, 'CAP-45-5': 4, 'CAP-55-5': 2, 'CAP-7-5': 4, 'CAP-10': 2, 'CONT-1P-30': 2, 'CONT-2P-30': 3, 'CONT-2P-40': 2, 'IGN-SIN': 3, 'TXFR-40': 2, 'FILT-1625': 8, 'REFR-410A': 25 },
+  'truck-112': { 'CAP-35-5': 4, 'CAP-45-5': 4, 'CAP-55-5': 2, 'CAP-7-5': 4, 'CAP-10': 2, 'CONT-1P-30': 3, 'CONT-2P-30': 4, 'CONT-2P-40': 2, 'IGN-SIN': 4, 'TXFR-40': 2, 'FILT-1625': 8, 'REFR-410A': 25 }
+};
+
+const SEED_HISTORY = [
+  { ts: Date.now()-1000*60*14,  worker: 'mike',   sku: 'CAP-45-5', from: 'warehouse-north', to: 'truck-103',         delta: -1, note: 'Customer call — 1213 Magnolia' },
+  { ts: Date.now()-1000*60*42,  worker: 'carlos', sku: 'CONT-2P-30', from: 'truck-107', to: null,                    delta: -1, note: 'Installed on service ticket #4421' },
+  { ts: Date.now()-1000*60*78,  worker: 'eddie',  sku: 'REFR-410A', from: 'truck-112', to: null,                    delta: -3, note: 'EPA log: customer 8854 Oakridge, leak repair' },
+  { ts: Date.now()-1000*60*125, worker: 'dave',   sku: 'FILT-1625', from: 'warehouse-houston', to: 'warehouse-north', delta: 24, note: 'Inter-warehouse transfer' },
+  { ts: Date.now()-1000*60*180, worker: 'dave',   sku: 'CAP-35-5',  from: null, to: 'warehouse-north',                delta: 12, note: 'Received from Johnstone Supply PO #7821' },
+  { ts: Date.now()-1000*60*220, worker: 'mike',   sku: 'IGN-SIN',   from: 'truck-103', to: null,                     delta: -1, note: 'Installed' },
+  { ts: Date.now()-1000*60*340, worker: 'carlos', sku: 'CAP-45-5',  from: 'warehouse-north', to: 'truck-107',        delta: 2,  note: 'Truck restock' }
+];
+
+// ---------- State ----------
+
+const STORE_KEY = 'stockscout.v1.state';
+
+const State = {
+  worker: null,
+  loc: null,        // current viewing location
+  view: 'home',
+  stock: null,
+  history: null,
+
+  load() {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        this.stock = parsed.stock;
+        this.history = parsed.history;
+        this.worker = parsed.worker;
+        this.loc = parsed.loc;
+        if (parsed.view) this.view = parsed.view;
+        if (parsed.viewParams) this.viewParams = parsed.viewParams;
+        return;
+      } catch (_) {}
+    }
+    this.stock = JSON.parse(JSON.stringify(SEED_STOCK));
+    this.history = JSON.parse(JSON.stringify(SEED_HISTORY));
+  },
+  save() {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      stock: this.stock,
+      history: this.history,
+      worker: this.worker,
+      loc: this.loc,
+      view: this.view,
+      viewParams: this.viewParams
+    }));
+  },
+  reset() {
+    localStorage.removeItem(STORE_KEY);
+    this.stock = JSON.parse(JSON.stringify(SEED_STOCK));
+    this.history = JSON.parse(JSON.stringify(SEED_HISTORY));
+    this.worker = null;
+    this.loc = null;
+    render();
+  },
+  qty(sku, loc) {
+    return (this.stock[sku] && this.stock[sku][loc]) || 0;
+  },
+  total(sku) {
+    if (!this.stock[sku]) return 0;
+    return Object.values(this.stock[sku]).reduce((a, b) => a + b, 0);
+  },
+  setQty(sku, loc, qty, note) {
+    const prev = this.qty(sku, loc);
+    const delta = qty - prev;
+    if (!this.stock[sku]) this.stock[sku] = {};
+    this.stock[sku][loc] = Math.max(0, qty);
+    if (delta !== 0) {
+      this.history.unshift({
+        ts: Date.now(), worker: this.worker.id, sku,
+        from: delta < 0 ? loc : null,
+        to: delta > 0 ? loc : null,
+        delta, note: note || 'Manual adjustment'
+      });
+      this.history = this.history.slice(0, 250);
+    }
+    this.save();
+  },
+  moveStock(sku, from, to, delta, note) {
+    if (from) this.stock[sku][from] = Math.max(0, (this.stock[sku][from] || 0) - delta);
+    if (to)   this.stock[sku][to]   = ((this.stock[sku][to] || 0) + delta);
+    this.history.unshift({
+      ts: Date.now(), worker: this.worker.id, sku,
+      from, to, delta: to ? delta : -delta, note: note || 'Stock move'
+    });
+    this.history = this.history.slice(0, 250);
+    this.save();
+  }
+};
+
+const lookupItem = (sku) => ITEMS.find(i => i.sku === sku);
+const lookupItemByBarcode = (bc) => ITEMS.find(i => i.bc === bc);
+const lookupWorker = (id) => WORKERS.find(w => w.id === id);
+const lookupLoc = (id) => LOCATIONS.find(l => l.id === id);
+
+// ---------- View routing ----------
+
+function setView(v, params) {
+  State.view = v;
+  State.viewParams = params || {};
+  render();
+  window.scrollTo(0, 0);
+}
+
+// ---------- Render ----------
+
+function render() {
+  if (!State.worker) return renderSplash();
+  document.getElementById('topbar').outerHTML = renderTopbar();
+  document.getElementById('tabs').outerHTML = renderTabs();
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  const view = ({
+    home: viewHome,
+    inventory: viewInventory,
+    scanner: viewScanner,
+    item: viewItem,
+    par: viewPar,
+    dashboard: viewDashboard,
+    refrig: viewRefrigLog,
+    settings: viewSettings
+  })[State.view] || viewHome;
+  c.appendChild(view());
+  // voice fab only shown to tech/warehouse, not on splash
+  document.getElementById('voice-fab').style.display = State.worker ? 'flex' : 'none';
+}
+
+function renderSplash() {
+  document.body.innerHTML = `
+    <div class="splash">
+      <div class="brandmark">StockScout<span class="dot"></span></div>
+      <div class="brandtag">FIELD INVENTORY · LIVE</div>
+      <div class="panel">
+        <div class="label" style="margin-bottom:12px;">Sign in as</div>
+        ${WORKERS.map(w => `
+          <div class="worker-pick" data-worker="${w.id}">
+            <div class="av">${w.name.split(' ').map(x => x[0]).join('')}</div>
+            <div style="flex:1;">
+              <div class="strong">${w.name}</div>
+              <div class="role-tag">${w.role}${w.defaultLoc ? ' · ' + lookupLoc(w.defaultLoc).name : ''}</div>
+            </div>
+            <div style="color:#bbb;">→</div>
+          </div>
+        `).join('')}
+        <div class="label" style="margin-top:18px; font-size:9px; color:var(--muted); text-align:center;">Demo · Heisenbug LLC · June 2026</div>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('[data-worker]').forEach(el => {
+    el.addEventListener('click', () => {
+      const w = lookupWorker(el.dataset.worker);
+      State.worker = w;
+      State.loc = w.defaultLoc || 'warehouse-north';
+      State.view = w.role === 'owner' ? 'dashboard' : 'home';
+      State.save();
+      // restore layout
+      document.body.innerHTML = `
+        <div class="app">
+          <div id="topbar"></div>
+          <div id="content" class="content"></div>
+          <div id="tabs"></div>
+        </div>
+        <button id="voice-fab" class="voice-fab" title="Voice query">🎙</button>
+      `;
+      bindVoiceFab();
+      render();
+    });
+  });
+}
+
+function renderTopbar() {
+  const loc = lookupLoc(State.loc);
+  return `<div id="topbar" class="topbar">
+    <div>
+      <h1>StockScout</h1>
+      <div class="crumb">${State.worker.name} · ${loc ? loc.name : 'All locations'}</div>
+    </div>
+    <div class="right">
+      ${State.worker.role !== 'owner' ? `
+        <select class="select" style="width:auto;font-size:13px;padding:6px 10px;min-height:auto;" id="loc-switcher">
+          ${LOCATIONS.map(l => `<option value="${l.id}" ${l.id === State.loc ? 'selected' : ''}>${l.name}</option>`).join('')}
+        </select>
+      ` : ''}
+      <button class="btn icon" id="signout-btn" title="Sign out">⎋</button>
+    </div>
+  </div>`;
+}
+
+function renderTabs() {
+  const role = State.worker.role;
+  const tabs = role === 'owner'
+    ? [
+        ['dashboard', '📊', 'Dashboard'],
+        ['inventory', '📦', 'Inventory'],
+        ['refrig', '❄️', 'Refrigerant'],
+        ['settings', '⚙', 'Settings']
+      ]
+    : [
+        ['home', '🏠', 'Home'],
+        ['inventory', '📦', 'Inventory'],
+        ['scanner', '📷', 'Scan'],
+        ['par', '🚚', 'My Truck']
+      ];
+  return `<div id="tabs" class="footer-tabs">
+    ${tabs.map(([v, ic, label]) => `
+      <button class="tab ${State.view === v || (State.view === 'item' && v === 'inventory') ? 'active' : ''}" data-go="${v}">
+        <span class="ic">${ic}</span>
+        <span>${label}</span>
+      </button>
+    `).join('')}
+  </div>`;
+}
+
+// ---------- View: Home ----------
+
+function viewHome() {
+  const loc = lookupLoc(State.loc);
+  const totalValue = Object.entries(State.stock).reduce((sum, [sku, locMap]) => {
+    const item = lookupItem(sku);
+    return sum + ((locMap[State.loc] || 0) * (item ? item.cost : 0));
+  }, 0);
+  const itemCount = Object.entries(State.stock).filter(([_, locMap]) => (locMap[State.loc] || 0) > 0).length;
+  const lowStock = ITEMS.filter(i => {
+    const q = State.qty(i.sku, State.loc);
+    return q > 0 && q <= i.min;
+  });
+
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">${loc.type === 'truck' ? 'Today on' : "You're viewing"}</div>
+    <div class="display" style="margin-bottom:18px;">${loc.name}</div>
+
+    <div class="stat-grid" style="margin-bottom:14px;">
+      <div class="stat"><div class="v">${itemCount}</div><div class="l">SKUs here</div></div>
+      <div class="stat"><div class="v">$${totalValue.toFixed(0)}</div><div class="l">Stock value</div></div>
+    </div>
+
+    <button class="btn primary full lg" data-go="scanner" style="margin-bottom:14px;">
+      📷  Scan a part
+    </button>
+
+    ${lowStock.length > 0 ? `
+      <div class="section-h">
+        <div class="label" style="color:var(--rust);">⚠ Low stock at this location</div>
+        <div class="label">${lowStock.length}</div>
+      </div>
+      ${lowStock.slice(0, 4).map(i => `
+        <div class="item-row" data-sku="${i.sku}">
+          <div class="meta">
+            <div class="name">${i.name}</div>
+            <div class="sub">${i.cat} · min ${i.min} ${i.uom}</div>
+          </div>
+          <div class="qty-block">
+            <div class="qty-here low">${State.qty(i.sku, State.loc)}</div>
+            <div class="qty-total">${State.total(i.sku)} total</div>
+          </div>
+        </div>
+      `).join('')}
+    ` : ''}
+
+    <div class="section-h">
+      <div class="label">Recent activity</div>
+      <div class="label">${State.history.length}</div>
+    </div>
+    <div class="card">
+      ${State.history.slice(0, 6).map(h => historyRow(h)).join('')}
+    </div>
+  `;
+  bindNavs(wrap);
+  return wrap;
+}
+
+function historyRow(h) {
+  const item = lookupItem(h.sku);
+  const worker = lookupWorker(h.worker);
+  const minsAgo = Math.floor((Date.now() - h.ts) / 60000);
+  const when = minsAgo < 1 ? 'now' : minsAgo < 60 ? `${minsAgo}m` : `${Math.floor(minsAgo / 60)}h`;
+  const cls = h.delta > 0 ? 'pos' : 'neg';
+  return `<div class="history-row">
+    <div class="when">${when}</div>
+    <div class="desc">
+      <div class="strong" style="font-size:13px;">${item ? item.name : h.sku}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">
+        ${worker ? worker.name : h.worker} · ${h.from ? lookupLoc(h.from).name : 'Outside'} → ${h.to ? lookupLoc(h.to).name : 'Used'}
+      </div>
+    </div>
+    <div class="delta ${cls}">${h.delta > 0 ? '+' : ''}${h.delta}</div>
+  </div>`;
+}
+
+// ---------- View: Inventory ----------
+
+function viewInventory() {
+  const wrap = document.createElement('div');
+  const categories = [...new Set(ITEMS.map(i => i.cat))];
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">Browse inventory</div>
+    <div class="display" style="margin-bottom:14px;">${lookupLoc(State.loc).name}</div>
+    <input class="input" id="search" placeholder="Search by part, SKU, or barcode…" style="margin-bottom:10px;">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="pill" data-cat="">All</button>
+      ${categories.map(c => `<button class="pill gray" data-cat="${c}">${c}</button>`).join('')}
+    </div>
+    <div id="inv-list"></div>
+  `;
+  const renderList = () => {
+    const q = (wrap.querySelector('#search').value || '').toLowerCase();
+    const cat = wrap.querySelector('.pill[style*="background: var(--indigo-soft)"]')
+      ? wrap.querySelector('.pill[style*="background: var(--indigo-soft)"]').dataset.cat
+      : '';
+    const filtered = ITEMS.filter(i => {
+      if (cat && i.cat !== cat) return false;
+      if (q && !(`${i.name} ${i.sku} ${i.bc}`.toLowerCase().includes(q))) return false;
+      return true;
+    });
+    wrap.querySelector('#inv-list').innerHTML = filtered.map(i => {
+      const here = State.qty(i.sku, State.loc);
+      const total = State.total(i.sku);
+      return `<div class="item-row" data-sku="${i.sku}">
+        <div class="meta">
+          <div class="name">${i.name}</div>
+          <div class="sub">${i.cat} · ${i.uom}${i.refr ? ' · §608' : ''}</div>
+        </div>
+        <div class="qty-block">
+          <div class="qty-here ${here > 0 && here <= i.min ? 'low' : ''}">${here}</div>
+          <div class="qty-total">${total} total</div>
+        </div>
+      </div>`;
+    }).join('') || `<div class="label" style="text-align:center;padding:30px;">Nothing matches</div>`;
+    bindNavs(wrap);
+  };
+  wrap.querySelector('#search').addEventListener('input', renderList);
+  wrap.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => {
+    wrap.querySelectorAll('.pill').forEach(x => x.style.background = '#efe8d8');
+    wrap.querySelectorAll('.pill').forEach(x => x.style.color = 'var(--muted)');
+    p.style.background = 'var(--indigo-soft)';
+    p.style.color = 'var(--indigo)';
+    renderList();
+  }));
+  renderList();
+  return wrap;
+}
+
+// ---------- View: Item detail ----------
+
+function viewItem() {
+  const sku = State.viewParams.sku;
+  const item = lookupItem(sku);
+  const wrap = document.createElement('div');
+  if (!item) { wrap.innerHTML = `<div class="label">Item not found</div>`; return wrap; }
+
+  const locRows = LOCATIONS.map(l => {
+    const q = State.qty(sku, l.id);
+    return `<div class="loc-bar ${q === 0 ? 'zero' : ''}">
+      <div>
+        <div class="nm">${l.name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${l.sub}</div>
+      </div>
+      <div class="v">${q}<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">${item.uom}</span></div>
+    </div>`;
+  }).join('');
+
+  const itemHist = State.history.filter(h => h.sku === sku).slice(0, 15);
+
+  wrap.innerHTML = `
+    <button class="btn" data-go="inventory" style="margin-bottom:12px;">← Back</button>
+    <div class="label">${item.cat}${item.refr ? ' · §608 regulated' : ''}</div>
+    <div class="display" style="margin:6px 0 4px;">${item.name}</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:18px;">
+      <div class="pill gray">${item.sku}</div>
+      <div class="pill gray">bc:${item.bc}</div>
+      <div class="pill gray">$${item.cost.toFixed(2)}/${item.uom}</div>
+    </div>
+
+    <button class="btn primary full lg" id="adjust-here" style="margin-bottom:18px;">
+      Adjust quantity at ${lookupLoc(State.loc).name}
+    </button>
+
+    <div class="section-h"><div class="label">Stock at each location</div><div class="label">${State.total(sku)} ${item.uom} total</div></div>
+    ${locRows}
+
+    <div class="section-h"><div class="label">Movement history</div></div>
+    <div class="card">
+      ${itemHist.length ? itemHist.map(h => historyRow(h)).join('') : '<div style="color:var(--muted);font-size:13px;">No recent movements</div>'}
+    </div>
+  `;
+  wrap.querySelector('#adjust-here').addEventListener('click', () => openAdjust(sku, State.loc));
+  bindNavs(wrap);
+  return wrap;
+}
+
+// ---------- View: Scanner ----------
+
+function viewScanner() {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">Scan to identify</div>
+    <div class="display" style="margin-bottom:14px;">Point camera at barcode</div>
+    <div class="scanner-stage" id="stage">
+      <video id="vid" autoplay muted playsinline></video>
+      <div class="scanner-frame"><span></span></div>
+      <div class="scanner-status" id="status">Initializing camera…</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn full" id="manual-btn">⌨ Enter manually</button>
+      <button class="btn full primary" id="photo-btn">📸 Photo identify</button>
+    </div>
+    <div style="margin-top:18px;font-size:12px;color:var(--muted);line-height:1.5;">
+      <strong>Manual mode:</strong> type or paste a barcode if scanning isn't working (e.g. <code>012345670002</code> for a 45/5 capacitor).<br>
+      <strong>Photo identify:</strong> snap a picture of an unlabeled part — Claude vision identifies probable matches from your catalog.
+    </div>
+  `;
+  // Manual entry button
+  wrap.querySelector('#manual-btn').addEventListener('click', () => {
+    const code = prompt('Enter barcode or SKU:');
+    if (code) handleScan(code.trim());
+  });
+  // Photo identify (mock AI for the demo)
+  wrap.querySelector('#photo-btn').addEventListener('click', () => openPhotoIdentify());
+
+  // Start camera scanner
+  startScanner(wrap);
+  return wrap;
+}
+
+let scannerActive = false;
+let codeReader = null;
+async function startScanner(scope) {
+  if (scannerActive) return;
+  scannerActive = true;
+  const video = scope.querySelector('#vid');
+  const status = scope.querySelector('#status');
+  try {
+    if (!window.ZXingBrowser) { status.textContent = 'Scanner library not loaded'; return; }
+    codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+    const devices = await ZXingBrowser.BrowserCodeReader.listVideoInputDevices();
+    if (!devices.length) { status.textContent = 'No camera detected'; return; }
+    const back = devices.find(d => /back|rear|environment/i.test(d.label)) || devices[devices.length - 1];
+    status.textContent = 'Looking for barcode…';
+    codeReader.decodeFromVideoDevice(back.deviceId, video, (result) => {
+      if (result) {
+        const code = result.getText();
+        status.textContent = 'Got it: ' + code;
+        handleScan(code);
+        stopScanner();
+      }
+    });
+  } catch (err) {
+    status.textContent = 'Camera blocked — use Manual';
+    console.warn('Scanner error', err);
+  }
+}
+function stopScanner() {
+  if (codeReader) { try { codeReader.reset(); } catch (_) {} }
+  scannerActive = false;
+}
+
+function handleScan(code) {
+  const item = lookupItemByBarcode(code) || lookupItem(code);
+  if (item) {
+    openAdjust(item.sku, State.loc, true);
+  } else {
+    showToast(`Unknown code: ${code}`);
+  }
+}
+
+// ---------- Adjust modal ----------
+
+function openAdjust(sku, loc, fromScan) {
+  const item = lookupItem(sku);
+  const current = State.qty(sku, loc);
+  let working = current;
+  const modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  const updateUI = () => {
+    modal.querySelector('#qa-current').textContent = working;
+    modal.querySelector('#qa-delta').textContent = working === current ? '—' : (working > current ? `+${working - current}` : `${working - current}`);
+  };
+  modal.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="grab"></div>
+      ${fromScan ? '<div class="pill green" style="margin-bottom:10px;">✓ Scanned</div>' : ''}
+      <div class="label">${item.cat}${item.refr ? ' · §608' : ''}</div>
+      <h2>${item.name}</h2>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">
+        SKU ${item.sku} · barcode ${item.bc} · adjusting at <strong>${lookupLoc(loc).name}</strong>
+      </div>
+      <div class="qa-row">
+        <button class="qa-btn minus" data-step="-1">−</button>
+        <div class="qa-big" id="qa-current">${current}</div>
+        <button class="qa-btn plus" data-step="+1">+</button>
+      </div>
+      <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:14px;">
+        Change: <span class="strong" id="qa-delta">—</span> ${item.uom}
+      </div>
+      <div style="display:flex;gap:6px;justify-content:center;margin-bottom:14px;">
+        <button class="btn" data-step="-5">−5</button>
+        <button class="btn" data-step="-1">−1</button>
+        <button class="btn" data-step="+1">+1</button>
+        <button class="btn" data-step="+5">+5</button>
+        <button class="btn" id="qa-set">Set…</button>
+      </div>
+      ${item.refr ? `
+        <div class="refrig-banner">
+          <div class="h">⚠ EPA Section 608 regulated</div>
+          You'll be prompted to log the customer site + your certification number when committing.
+        </div>` : ''}
+      <input class="input" id="qa-note" placeholder="Note (e.g. installed on ticket #4421)" style="margin-bottom:12px;">
+      <div style="display:flex;gap:8px;">
+        <button class="btn full" id="qa-cancel">Cancel</button>
+        <button class="btn primary full" id="qa-commit">Commit</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', () => closeModal(modal));
+  modal.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+    working = Math.max(0, working + parseInt(b.dataset.step));
+    updateUI();
+  }));
+  modal.querySelector('#qa-set').addEventListener('click', () => {
+    const v = prompt('Set quantity to:');
+    if (v != null) { working = Math.max(0, parseInt(v) || 0); updateUI(); }
+  });
+  modal.querySelector('#qa-cancel').addEventListener('click', () => closeModal(modal));
+  modal.querySelector('#qa-commit').addEventListener('click', () => {
+    const note = modal.querySelector('#qa-note').value;
+    if (item.refr && working < current) {
+      // Refrigerant decrement → require EPA log
+      closeModal(modal);
+      openRefrigPrompt(sku, loc, current - working, note);
+      return;
+    }
+    State.setQty(sku, loc, working, note);
+    closeModal(modal);
+    showToast(`Updated ${item.name} → ${working}`);
+    render();
+  });
+  updateUI();
+}
+
+function openRefrigPrompt(sku, loc, lbs, note) {
+  const item = lookupItem(sku);
+  const modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  modal.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="grab"></div>
+      <div class="pill rust" style="margin-bottom:10px;">EPA Section 608 log</div>
+      <h2>Refrigerant transfer — ${lbs} lb ${item.refType}</h2>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">
+        Federal regulation requires every transfer of regulated refrigerant be logged with site + technician certification.
+      </div>
+      <label class="label">Customer site / address</label>
+      <input class="input" id="rf-site" placeholder="e.g. 8854 Oakridge Dr" style="margin:6px 0 12px;">
+      <label class="label">Technician certification</label>
+      <input class="input" id="rf-cert" value="${State.worker.cert || ''}" readonly style="margin:6px 0 12px;background:#efe8d8;">
+      <label class="label">Reason (recovery / leak repair / install / etc.)</label>
+      <input class="input" id="rf-reason" placeholder="Leak repair on indoor coil" style="margin:6px 0 14px;">
+      <div style="display:flex;gap:8px;">
+        <button class="btn full" id="rf-cancel">Cancel</button>
+        <button class="btn primary full" id="rf-commit">Log + commit</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', () => closeModal(modal));
+  modal.querySelector('#rf-cancel').addEventListener('click', () => closeModal(modal));
+  modal.querySelector('#rf-commit').addEventListener('click', () => {
+    const site = modal.querySelector('#rf-site').value;
+    const reason = modal.querySelector('#rf-reason').value;
+    if (!site) { showToast('Site required'); return; }
+    const fullNote = `EPA: ${site} · ${reason || 'Unspecified'} · cert ${State.worker.cert}`;
+    State.setQty(sku, loc, State.qty(sku, loc) - lbs, fullNote);
+    closeModal(modal);
+    showToast(`Logged ${lbs} lb ${item.refType} · EPA recorded`);
+    render();
+  });
+}
+
+function openPhotoIdentify() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-bg';
+  modal.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()" style="text-align:center;">
+      <div class="grab"></div>
+      <div class="ai-think">
+        <div class="pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg></div>
+        <div class="strong">Claude vision is identifying the part…</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">Comparing against 80 known SKUs in your catalog</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  setTimeout(() => {
+    // Mock: pick a plausible match (a capacitor)
+    const candidates = [
+      { item: lookupItem('CAP-45-5'), confidence: 0.94, why: 'Round shape, dual terminal, "45/5" label visible' },
+      { item: lookupItem('CAP-35-5'), confidence: 0.81, why: 'Same form factor; "45" could read as "35"' },
+      { item: lookupItem('CAP-55-5'), confidence: 0.62, why: 'Same family of dual-run capacitors' }
+    ];
+    modal.querySelector('.modal').innerHTML = `
+      <div class="grab"></div>
+      <div class="pill green" style="margin-bottom:14px;">✓ Match found</div>
+      <div class="label">Most likely</div>
+      <h2>${candidates[0].item.name}</h2>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">
+        ${(candidates[0].confidence * 100).toFixed(0)}% confidence · ${candidates[0].why}
+      </div>
+      <button class="btn primary full lg" id="ai-confirm" style="margin-bottom:18px;">Adjust quantity at ${lookupLoc(State.loc).name}</button>
+      <div class="section-h"><div class="label">Other possibilities</div></div>
+      ${candidates.slice(1).map(c => `
+        <div class="item-row" data-alt="${c.item.sku}">
+          <div class="meta">
+            <div class="name">${c.item.name}</div>
+            <div class="sub">${(c.confidence * 100).toFixed(0)}% · ${c.why}</div>
+          </div>
+        </div>
+      `).join('')}
+      <div style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.5;">
+        <strong>Demo note:</strong> in production this connects to Claude Haiku 4.5 vision. Demo uses a curated match for a dual-run capacitor.
+      </div>
+    `;
+    modal.querySelector('#ai-confirm').addEventListener('click', () => {
+      closeModal(modal);
+      openAdjust(candidates[0].item.sku, State.loc, true);
+    });
+    modal.querySelectorAll('[data-alt]').forEach(el => el.addEventListener('click', () => {
+      closeModal(modal);
+      openAdjust(el.dataset.alt, State.loc, true);
+    }));
+  }, 1800);
+}
+
+// ---------- View: PAR / Truck check ----------
+
+function viewPar() {
+  const loc = State.loc;
+  const wrap = document.createElement('div');
+  if (!loc.startsWith('truck')) {
+    wrap.innerHTML = `<div class="label">Switch to a truck location to see loadout check.</div>`;
+    return wrap;
+  }
+  const par = PAR[loc] || {};
+  const rows = Object.entries(par).map(([sku, expected]) => {
+    const actual = State.qty(sku, loc);
+    const gap = actual - expected;
+    const item = lookupItem(sku);
+    return { sku, expected, actual, gap, item };
+  }).sort((a, b) => a.gap - b.gap);
+  const short = rows.filter(r => r.gap < 0);
+  const ok = rows.filter(r => r.gap >= 0);
+  const totalShortValue = short.reduce((sum, r) => sum + Math.abs(r.gap) * r.item.cost, 0);
+
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">Truck loadout check</div>
+    <div class="display" style="margin-bottom:14px;">${lookupLoc(loc).name}</div>
+    <div class="stat-grid" style="margin-bottom:14px;">
+      <div class="stat"><div class="v" style="color:${short.length?'var(--red)':'var(--green)'};">${short.length}</div><div class="l">Short of par</div></div>
+      <div class="stat"><div class="v">$${totalShortValue.toFixed(0)}</div><div class="l">Restock value</div></div>
+    </div>
+    ${short.length ? `
+      <div class="section-h"><div class="label" style="color:var(--red);">Need to restock</div></div>
+      ${short.map(r => `
+        <div class="par-row short" data-sku="${r.sku}">
+          <div>
+            <div class="nm">${r.item.name}</div>
+            <div class="vs">par ${r.expected} · have ${r.actual}</div>
+          </div>
+          <div class="gap neg">${r.gap}</div>
+          <div class="pill rust">need ${Math.abs(r.gap)}</div>
+          <div style="color:#bbb;">→</div>
+        </div>
+      `).join('')}
+    ` : ''}
+    <div class="section-h"><div class="label">At or above par</div></div>
+    ${ok.map(r => `
+      <div class="par-row" data-sku="${r.sku}">
+        <div>
+          <div class="nm">${r.item.name}</div>
+          <div class="vs">par ${r.expected} · have ${r.actual}</div>
+        </div>
+        <div class="gap ok">+${r.gap}</div>
+        <div class="pill green">ok</div>
+        <div style="color:#bbb;">→</div>
+      </div>
+    `).join('')}
+    <div style="margin-top:20px;">
+      <button class="btn full lg" id="restock-all">Generate restock pick-list</button>
+    </div>
+  `;
+  wrap.querySelectorAll('[data-sku]').forEach(el => el.addEventListener('click', () => {
+    setView('item', { sku: el.dataset.sku });
+  }));
+  wrap.querySelector('#restock-all').addEventListener('click', () => {
+    if (!short.length) { showToast('Nothing short — truck is at par'); return; }
+    const lines = short.map(r => `${Math.abs(r.gap)} × ${r.item.name}`).join('\\n');
+    alert(`Pick-list for ${lookupLoc(loc).name}:\\n\\n${lines}\\n\\nIn production: this generates a printable pick-list for the warehouse staff + auto-creates a PO if any SKU is below warehouse minimum.`);
+  });
+  return wrap;
+}
+
+// ---------- View: Owner Dashboard ----------
+
+function viewDashboard() {
+  const wrap = document.createElement('div');
+  const totalValue = ITEMS.reduce((s, i) => s + State.total(i.sku) * i.cost, 0);
+  const totalSkus = ITEMS.length;
+  const lowSkus = ITEMS.filter(i => State.total(i.sku) <= i.min).length;
+
+  // Truck shortages
+  const truckShortages = Object.entries(PAR).map(([truckId, par]) => {
+    const short = Object.entries(par).filter(([sku, exp]) => State.qty(sku, truckId) < exp);
+    return { truckId, name: lookupLoc(truckId).name, shortCount: short.length, shortItems: short };
+  });
+
+  // Refrigerant by location
+  const refrigByLoc = LOCATIONS.map(l => ({
+    loc: l,
+    total410a: State.qty('REFR-410A', l.id),
+    total32: State.qty('REFR-32', l.id),
+    total22: State.qty('REFR-22', l.id)
+  }));
+
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">Owner view</div>
+    <div class="display" style="margin-bottom:14px;">All locations</div>
+
+    <div class="stat-grid" style="margin-bottom:14px;">
+      <div class="stat"><div class="v">$${(totalValue/1000).toFixed(1)}k</div><div class="l">Inventory value</div></div>
+      <div class="stat"><div class="v">${totalSkus}</div><div class="l">Tracked SKUs</div></div>
+      <div class="stat"><div class="v" style="color:${lowSkus?'var(--rust)':'var(--green)'};">${lowSkus}</div><div class="l">Low total stock</div></div>
+      <div class="stat"><div class="v">${truckShortages.reduce((s,t)=>s+t.shortCount,0)}</div><div class="l">Truck shortages</div></div>
+    </div>
+
+    <div class="section-h"><div class="label">Truck loadout status</div></div>
+    ${truckShortages.map(t => `
+      <div class="alert-row ${t.shortCount > 3 ? 'red' : t.shortCount > 0 ? 'rust' : ''}">
+        <div class="ic">🚚</div>
+        <div style="flex:1;"><strong>${t.name}</strong> · ${t.shortCount === 0 ? 'at par' : `${t.shortCount} item${t.shortCount > 1 ? 's' : ''} short`}</div>
+        ${t.shortCount > 0 ? `<div class="pill rust">${t.shortCount}</div>` : `<div class="pill green">OK</div>`}
+      </div>
+    `).join('')}
+
+    <div class="section-h"><div class="label">Refrigerant on hand (lb)</div><div class="label">EPA §608</div></div>
+    <div class="card">
+      <table style="width:100%;font-size:13px;">
+        <tr style="text-align:left;color:var(--muted);font-size:11px;letter-spacing:0.5px;text-transform:uppercase;">
+          <th style="padding:4px 0;">Location</th><th>R-410A</th><th>R-32</th><th>R-22</th>
+        </tr>
+        ${refrigByLoc.map(r => `
+          <tr><td style="padding:6px 0;font-weight:600;">${r.loc.name}</td><td>${r.total410a}</td><td>${r.total32}</td><td>${r.total22}</td></tr>
+        `).join('')}
+      </table>
+    </div>
+
+    <div class="section-h"><div class="label">Last 10 movements</div></div>
+    <div class="card">
+      ${State.history.slice(0, 10).map(h => historyRow(h)).join('')}
+    </div>
+  `;
+  return wrap;
+}
+
+// ---------- View: Refrigerant Log ----------
+
+function viewRefrigLog() {
+  const wrap = document.createElement('div');
+  const refrigMoves = State.history.filter(h => {
+    const it = lookupItem(h.sku);
+    return it && it.refr;
+  });
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">EPA §608 — Refrigerant log</div>
+    <div class="display" style="margin-bottom:14px;">Compliance audit trail</div>
+    <div class="refrig-banner" style="margin-bottom:18px;">
+      <div class="h">Federal record-keeping</div>
+      Every regulated refrigerant transfer is logged with site, technician certification, reason, and timestamp. Exportable as PDF or CSV for inspector requests.
+    </div>
+    <div class="card">
+      ${refrigMoves.length ? refrigMoves.map(h => `
+        <div class="history-row">
+          <div class="when">${new Date(h.ts).toLocaleString().slice(5, 21)}</div>
+          <div class="desc">
+            <div class="strong" style="font-size:13px;">${lookupItem(h.sku).name} · ${Math.abs(h.delta)} lb</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">${lookupWorker(h.worker)?.name || h.worker} · ${h.note}</div>
+          </div>
+          <div class="delta neg">${h.delta}</div>
+        </div>
+      `).join('') : '<div style="color:var(--muted);font-size:13px;">No refrigerant movements yet — try decrementing R-410A from any truck to see the EPA log flow.</div>'}
+    </div>
+    <button class="btn full lg" style="margin-top:14px;" onclick="alert('In production: PDF export of this log filtered by date range, technician, refrigerant type, or location — formatted for EPA inspector submission.')">
+      📄 Export log
+    </button>
+  `;
+  return wrap;
+}
+
+// ---------- View: Settings ----------
+
+function viewSettings() {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="label" style="margin-bottom:6px;">Settings</div>
+    <div class="display" style="margin-bottom:14px;">StockScout demo</div>
+    <div class="card">
+      <div class="strong" style="margin-bottom:6px;">About this demo</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5;">
+        StockScout is a Heisenbug prototype showing live, multi-location inventory for HVAC field operations.
+        It uses your device camera for real barcode scanning (try a UPC at home or use Manual entry for the seeded codes),
+        runs offline once installed, and demonstrates AI photo-identification + EPA Section 608 refrigerant tracking.
+      </div>
+    </div>
+    <div class="card">
+      <div class="strong" style="margin-bottom:6px;">Reset demo data</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">
+        Restore the seeded inventory + locations + history. Useful before demoing.
+      </div>
+      <button class="btn rust full" id="reset-btn">Reset to seed data</button>
+    </div>
+    <div class="card">
+      <div class="strong" style="margin-bottom:6px;">Install as app</div>
+      <div style="font-size:13px;color:var(--muted);">
+        iPhone/iPad: Safari → Share → Add to Home Screen.<br>
+        Once installed, runs offline + opens full-screen like a native app.
+      </div>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:24px;letter-spacing:1px;">
+      STOCKSCOUT · HEISENBUG LLC · DEMO v0.1
+    </div>
+  `;
+  wrap.querySelector('#reset-btn').addEventListener('click', () => {
+    if (confirm('Reset all data to demo seed?')) {
+      State.reset();
+      showToast('Demo data reset');
+    }
+  });
+  return wrap;
+}
+
+// ---------- Voice query ----------
+
+let recog = null;
+function bindVoiceFab() {
+  const fab = document.getElementById('voice-fab');
+  fab.addEventListener('click', () => startVoice(fab));
+}
+
+function startVoice(fab) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice not supported in this browser'); return; }
+  if (!recog) {
+    recog = new SR();
+    recog.continuous = false;
+    recog.interimResults = false;
+    recog.lang = 'en-US';
+  }
+  fab.classList.add('listening');
+  fab.textContent = '🔴';
+  showToast('Listening… ask about a part');
+  recog.onresult = (ev) => {
+    const text = ev.results[0][0].transcript.toLowerCase();
+    handleVoiceQuery(text);
+  };
+  recog.onerror = () => { fab.classList.remove('listening'); fab.textContent = '🎙'; };
+  recog.onend = () => { fab.classList.remove('listening'); fab.textContent = '🎙'; };
+  recog.start();
+}
+
+function handleVoiceQuery(text) {
+  // Naive matcher — find any item whose name contains keywords from the query
+  const words = text.split(/\s+/).filter(w => w.length > 2);
+  const matches = ITEMS.filter(i => {
+    const name = i.name.toLowerCase();
+    return words.some(w => name.includes(w));
+  });
+  if (!matches.length) {
+    speakAnswer(`I couldn't find anything matching ${text}`);
+    showToast(`No match: "${text}"`);
+    return;
+  }
+  const top = matches[0];
+  const here = State.qty(top.sku, State.loc);
+  const total = State.total(top.sku);
+  const answer = `You have ${here} ${top.uom} of ${top.name} on ${lookupLoc(State.loc).name}, ${total} total across all locations.`;
+  speakAnswer(answer);
+  showToast(`${here} at ${lookupLoc(State.loc).name} · ${total} total`);
+  setView('item', { sku: top.sku });
+}
+
+function speakAnswer(text) {
+  if (!window.speechSynthesis) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 1.05;
+  speechSynthesis.speak(u);
+}
+
+// ---------- Helpers ----------
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+function closeModal(m) { m.remove(); }
+function bindNavs(scope) {
+  scope.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => setView(el.dataset.go)));
+  scope.querySelectorAll('[data-sku]').forEach(el => el.addEventListener('click', () => setView('item', { sku: el.dataset.sku })));
+}
+
+// Top-level event delegation (tabs, location switcher, signout) — re-bind on every render
+document.addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab[data-go]');
+  if (tab) setView(tab.dataset.go);
+  if (e.target.id === 'signout-btn') {
+    State.worker = null; State.loc = null;
+    localStorage.removeItem(STORE_KEY);
+    document.body.innerHTML = `<div class="app"><div id="topbar"></div><div id="content" class="content"></div><div id="tabs"></div></div><button id="voice-fab" class="voice-fab" style="display:none;">🎙</button>`;
+    renderSplash();
+  }
+});
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'loc-switcher') {
+    State.loc = e.target.value;
+    State.save();
+    render();
+  }
+});
+
+// ---------- Boot ----------
+
+State.load();
+if (State.worker) {
+  bindVoiceFab();
+  render();
+} else {
+  renderSplash();
+}
+
+// PWA service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
