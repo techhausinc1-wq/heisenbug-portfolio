@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Methodology · the operator-cockpit doctrine · Heisenbug</title>
+<meta name="description" content="How we build vertical operator cockpits. The doctrine: one operator at a time, real workflow shape, 7-10 day first version, shared engine across verticals, flat-fee no-SOW commercial model.">
+<meta name="theme-color" content="#0F1F0F">
+<link rel="canonical" href="https://heisenbug.app/methodology/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/heisenbug-square-small.png">
+<link rel="manifest" href="/manifest.json">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://heisenbug.app/methodology/">
+<meta property="og:title" content="Methodology · the operator-cockpit doctrine · Heisenbug">
+<meta property="og:description" content="How we build vertical operator cockpits. One operator at a time, real workflow shape, 7-10 day first version, shared engine across verticals, flat-fee no-SOW commercial.">
+<meta property="og:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Heisenbug">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Methodology · Heisenbug">
+<meta name="twitter:description" content="How we build vertical operator cockpits.">
+<meta name="twitter:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com 'unsafe-inline'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com data:; frame-ancestors 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #fbf8ef; --paper-2: #fff; --dark: #0F1F0F; --green-mid: #3E7B3E; --green-bright: #C6D97A; --cream: #F2EBCB; --ink: #16201a; --muted: #5a6a5a; --line: rgba(15,31,15,0.14); --amber: #b8771d; --sand: #c69856; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; font-size: 15.5px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+.skip-link { position: absolute; left: -9999px; top: 0; background: var(--dark); color: var(--cream); padding: 10px 14px; border-radius: 0 0 6px 0; z-index: 9999; font-weight: 600; text-decoration: none; }
+.skip-link:focus { left: 0; }
+header { background: var(--dark); color: var(--cream); padding: 26px 6%; }
+header .inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+header .brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--cream); text-decoration: none; }
+header nav { margin-left: auto; display: flex; gap: 12px; flex-wrap: wrap; }
+header nav a { color: rgba(242,235,203,0.82); text-decoration: none; font-size: 13.5px; font-weight: 500; padding: 12px 14px; border-radius: 20px; min-height: 44px; display: inline-flex; align-items: center; }
+header nav a:hover { color: var(--green-bright); background: rgba(198,217,122,0.08); }
+header nav a.active { color: var(--green-bright); background: rgba(198,217,122,0.12); }
+main { max-width: 820px; margin: 0 auto; padding: 60px 6%; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-mid); margin-bottom: 16px; }
+h1 { font-family: 'Fraunces', serif; font-size: clamp(38px, 5.2vw, 58px); font-weight: 500; letter-spacing: -0.6px; line-height: 1.04; margin-bottom: 18px; }
+h1 em { color: var(--green-mid); font-style: normal; font-weight: 600; }
+.lead { font-size: 19px; color: var(--muted); margin-bottom: 50px; max-width: 660px; }
+h2 { font-family: 'Fraunces', serif; font-size: clamp(26px, 3vw, 34px); font-weight: 500; letter-spacing: -0.3px; margin: 50px 0 14px; }
+h2 em { color: var(--green-mid); font-style: normal; font-weight: 600; }
+h3 { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 500; margin: 28px 0 8px; }
+p { margin-bottom: 14px; max-width: 720px; }
+.callout { background: var(--paper-2); border-left: 4px solid var(--green-mid); border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 22px 0; font-size: 15px; max-width: 720px; }
+.callout strong { color: var(--green-mid); }
+.bold-num { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 500; color: var(--green-mid); letter-spacing: -0.5px; line-height: 1; }
+.law { background: var(--dark); color: var(--cream); border-radius: 12px; padding: 28px 32px; margin: 32px 0; }
+.law .num { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--green-bright); margin-bottom: 6px; font-weight: 700; }
+.law h3 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: var(--cream); margin: 0 0 10px; letter-spacing: -0.2px; }
+.law p { color: rgba(242,235,203,0.82); margin-bottom: 0; }
+.law em { color: var(--green-bright); font-style: normal; font-weight: 600; }
+.engine { background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px; margin: 22px 0; }
+.engine .row { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: start; font-size: 14.5px; }
+.engine .row:last-child { border-bottom: none; padding-bottom: 0; }
+.engine .row:first-child { padding-top: 0; }
+.engine .k { font-weight: 700; color: var(--green-mid); }
+.cta-block { background: var(--dark); color: var(--cream); border-radius: 14px; padding: 32px 36px; margin: 48px 0 20px; }
+.cta-block h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; margin-bottom: 8px; color: var(--cream); }
+.cta-block h2 em { color: var(--green-bright); font-style: normal; }
+.cta-block p { color: rgba(242,235,203,0.78); margin-bottom: 18px; }
+.cta-block .btn { display: inline-block; background: var(--green-bright); color: var(--dark); padding: 14px 24px; border-radius: 24px; font-weight: 700; text-decoration: none; font-size: 14px; }
+.cta-block .btn:hover { background: #d8e88a; text-decoration: none; }
+.cta-block .btn.secondary { background: transparent; color: var(--cream); border: 1px solid rgba(242,235,203,0.32); margin-left: 8px; }
+.cta-block .btn.secondary:hover { background: rgba(242,235,203,0.06); }
+footer { padding: 40px 6%; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13.5px; }
+footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; padding: 8px 4px; }
+:focus-visible { outline: 3px solid var(--green-mid); outline-offset: 2px; border-radius: 4px; }
+@media (max-width: 700px) { .engine .row { grid-template-columns: 1fr; gap: 4px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "The operator-cockpit doctrine — how Heisenbug builds vertical software",
+  "url": "https://heisenbug.app/methodology/",
+  "datePublished": "2026-06-12",
+  "author": {"@type": "Person", "name": "Ivan Svedov"},
+  "publisher": {"@type": "Organization", "name": "Heisenbug Inc."},
+  "description": "The four laws of the Heisenbug methodology: one operator at a time, real workflow shape, 7-10 day first version, shared engine across verticals.",
+  "mainEntityOfPage": "https://heisenbug.app/methodology/",
+  "inLanguage": "en-US"
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header role="banner">
+  <div class="inner">
+    <a class="brand" href="/">Heisenbug</a>
+    <nav role="navigation" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/built/">Built</a>
+      <a href="/demos/">Demos</a>
+      <a href="/case-studies/">Case studies</a>
+      <a href="/methodology/" class="active">Methodology</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" role="main">
+  <div class="eyebrow">→ The doctrine</div>
+  <h1>How we build <em>operator cockpits</em>.</h1>
+  <p class="lead">Most software shops sell process. We sell shape. The shape of how a real operator actually runs their day — captured in code, fast enough to use tomorrow.</p>
+
+  <p>Operators do not need another generic SaaS bent into their workflow at signup. They need a single screen built around their actual workflow — the accounts they actually have, the data they actually move, the decisions they actually make in the next ten minutes. The methodology below is what makes that economically viable for one independent operator running a single-vertical business, not a $10M-ARR enterprise.</p>
+
+  <h2>The four laws.</h2>
+
+  <div class="law">
+    <div class="num">→ Law 01</div>
+    <h3>One operator at a time.</h3>
+    <p>Every cockpit gets designed with someone who lives in that workflow daily — never a product manager guessing at requirements, never a steering committee, never a focus group. We sit with the operator (usually their kitchen table or their truck), we watch them run an actual day. The cockpit gets built around what we see, not what they describe. Operators are often <em>terrible</em> at describing what hurts. Watching them work is the only reliable signal.</p>
+  </div>
+
+  <div class="law">
+    <div class="num">→ Law 02</div>
+    <h3>Real workflow shape, not generic data model.</h3>
+    <p>The first cockpit version ships with the operator's <em>real account names</em>, their <em>real client list</em>, their <em>real product catalog</em>. Not Lorem Ipsum, not stock photos, not "John Smith." When an HVAC tech opens the cockpit on day one, the screen shows trucks he already knows by license plate and patients he already knows by face. The accounts are familiar before any feature is. That makes the cockpit <em>recognizable</em>, and recognizable software gets used.</p>
+  </div>
+
+  <div class="law">
+    <div class="num">→ Law 03</div>
+    <h3>7-10 day first version. Working, not pretty.</h3>
+    <p>We don't ship Figmas, wireframes, or click-throughs as "the first deliverable." The first deliverable is a real working cockpit running against the operator's real data on the operator's real device. It might be ugly. It might be missing four of seven features the operator asked for. It will <em>work</em>. The operator uses it on day eleven and we watch. Then we fix what's actually wrong, not what we predicted would be wrong. Weekly iteration loops from there.</p>
+    <div class="callout"><strong>Why this works:</strong> the friction operators experience is never where they predicted. The only honest way to find it is to ship and watch. 7-10 days is short enough that operators are still excited about the project and willing to test, long enough to ship something real.</div>
+  </div>
+
+  <div class="law">
+    <div class="num">→ Law 04</div>
+    <h3>The cockpits are different. The engine underneath is one.</h3>
+    <p>The vertical-by-vertical fragmentation is real on the <em>surface</em> — a salon cockpit doesn't look like an HVAC cockpit. But underneath, the engine is shared: scheduling, dispatch, routing, billing, compliance tracking, customer communication, payments, document storage, AI surfacing. When we improve the route optimizer for home health, plumbing and pool service get the improvement next week. Each vertical adds its own surface area. The engine is what makes the catalog economically possible.</p>
+  </div>
+
+  <h2>The shared engine, <em>specifically</em>.</h2>
+  <p>What "shared engine" means in practice — the building blocks that show up across most cockpits, even when the surface vocabulary is wildly different:</p>
+
+  <div class="engine">
+    <div class="row"><div class="k">Identity + multi-tenant</div><div>Supabase Auth + Postgres row-level security. Operators own their data. Roles per cockpit (owner / admin / tech / customer).</div></div>
+    <div class="row"><div class="k">Scheduling + dispatch</div><div>Drag-drop calendar engine with constraint matching (certification, language, location, time window). Powers home health caregiver dispatch, HVAC service routing, pool tech assignment, salon stylist matching, photographer shoot booking.</div></div>
+    <div class="row"><div class="k">Route optimization</div><div>Constraint-aware multi-stop routing. Drive time, time windows, hours-of-service caps, skill match. Powers HVAC, plumbing, pool, vending, landscape, pet services, real estate showings.</div></div>
+    <div class="row"><div class="k">Proof-of-work / verification</div><div>GPS-locked + biometric + task-completion proof. Started as federal EVV (home health Medicaid requirement) — same engine powers HVAC billable-hour verification, plumbing punch-list sign-off, pool chemical-test logs.</div></div>
+    <div class="row"><div class="k">Compliance + license tracker</div><div>Per-person credential expiry tracking with auto-block. HHA training, CPR, TB, background. Same engine: HVAC EPA 608, plumbing master license, auto ASE, dental hygienist, salon, tattoo BBP.</div></div>
+    <div class="row"><div class="k">Billing + payment pipeline</div><div>Verified-work → invoice / claim / payment. Per-vertical claim formats (CMS-1500 for Medicare home health, state EVV aggregator for Medicaid, Stripe for cards, ACH for B2B). The pipeline shape is the same.</div></div>
+    <div class="row"><div class="k">Customer / family comms</div><div>HIPAA-grade secure thread (when needed) or normal SMS/email otherwise. Sanitized post-event summaries. Powers home health family updates, pet-services walk reports, contractor daily homeowner updates, dental recall, salon rebook reminders.</div></div>
+    <div class="row"><div class="k">Recurring task / care plan</div><div>Cadence-driven task generator. Powers pool chemical schedule, HVAC PM, lawn weekly service, pet recurring walks, med-spa treatment series, dental recall, home health patient care plans.</div></div>
+    <div class="row"><div class="k">AI surfacing</div><div>Anthropic + OpenAI APIs for classification (which email needs reply), summarization (this week's exceptions), drafting (reply to this guest). Always human-in-the-loop on customer-facing output. Deterministic glue stays deterministic; AI does the human-shaped work.</div></div>
+    <div class="row"><div class="k">Offline + PWA shell</div><div>Service worker + IndexedDB local cache. Cockpit keeps working when the truck loses signal, when the patient's house has no wifi, when the vending warehouse is a Faraday cage.</div></div>
+  </div>
+
+  <h2>The <em>commercial</em> doctrine.</h2>
+
+  <h3>Flat fee, no SOW.</h3>
+  <p>Most operators have been quoted custom software at $40k - $250k by agencies. They've learned to flinch. We size the first cockpit at the kickoff call after the discovery — typically between $3,500 and $8,500 — and the number is the number. No scope-creep invoices. No change orders. No "professional services" line items. Hosting passes through at the actual cloud cost (usually $30-60/month). After version one ships, the operator decides whether to keep iterating, at what cadence, or just to take the cockpit and run.</p>
+
+  <h3>No monthly retainer.</h3>
+  <p>Operators run on cash flow. A $400/month retainer for "ongoing maintenance" gets cut the first time a slow month hits. We price to respect that. The cockpit is yours, on a flat fee, like any other piece of equipment your business buys.</p>
+
+  <h3>You own your data, your domain, your codebase.</h3>
+  <p>Cockpit code lives in your own Git account. Database lives in infrastructure we operate on your behalf but that you can take elsewhere whenever you want. Domain is your domain. Branding is your branding. We don't trap operators in proprietary platforms because operators don't trust software shops that do — for excellent reasons.</p>
+
+  <div class="cta-block">
+    <h2>Operator? Let's talk shape.</h2>
+    <p>A 30-minute discovery call. We listen. You show us how you actually run the day. We figure out together whether your business is the right fit for the next cockpit, no pitch theater.</p>
+    <a class="btn" href="/contact/">Start a project →</a>
+    <a class="btn secondary" href="/case-studies/">See production case studies</a>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div><a href="/">Heisenbug</a> · <a href="/built/">Built</a> · <a href="/demos/">Demos</a> · <a href="/case-studies/">Case studies</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+  <div style="margin-top: 10px;">Heisenbug Inc. · San Antonio TX · © 2026</div>
+</footer>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  });
+}
+</script>
+</body>
+</html>
