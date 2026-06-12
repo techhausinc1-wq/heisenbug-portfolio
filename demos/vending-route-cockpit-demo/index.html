@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2d1a0a">
+<title>Vending Route Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #faf5ed; --bg-2: #ffffff; --bg-3: #f0e7d5; --ink: #2d1a0a; --text-dim: #5e4a32; --text-mute: #8a7e6a; --line: #e0d4b8; --line-2: #c8b896; --coffee: #6b4226; --amber: #c4880a; --olive: #5e6e3d; --emerald: #2e7d5b; --red: #b53148; --slate: #2d1a0a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; } button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--slate); color: var(--bg); border-bottom: 1px solid var(--ink); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--amber); color: var(--ink); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; border-radius: 50%; }
+  .brand-name { font-weight: 700; font-size: 16px; letter-spacing: 0.5px; color: var(--bg); }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: rgba(250,245,237,0.55); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; font-size: 12px; color: var(--bg); }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--amber); color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(107,66,38,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--coffee); background: var(--bg-2); border-left-color: var(--amber); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--amber); color: var(--ink); padding: 2px 7px; border-radius: 10px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); }
+  .btn.primary { background: var(--amber); color: var(--ink); border-color: var(--amber); font-weight: 700; }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1; font-family: 'JetBrains Mono', monospace; }
+  .stat-delta { font-size: 11px; color: var(--olive); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-size: 16px; font-weight: 700; }
+  .panel-link { font-size: 11px; color: var(--coffee); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .tag.amber { background: rgba(196,136,10,0.18); color: var(--amber); }
+  .tag.coffee { background: rgba(107,66,38,0.15); color: var(--coffee); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--coffee); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '→ '; color: var(--amber); margin-right: 4px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--slate); font-size: 11px; color: rgba(250,245,237,0.6); text-align: center; }
+  footer span { color: var(--amber); font-weight: 700; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">VR</div>
+    <div><div class="brand-name">VENDING ROUTE COCKPIT</div><div class="brand-sub">Coffee + vending · multi-state route</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">R</div><span>Route Op</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="route">Today's Route <span class="nav-badge">23</span></div></div>
+    <div class="nav-section"><div class="nav-label">Locations</div><div class="nav-item" data-view="locations">Active Locations</div><div class="nav-item" data-view="scout">Location Scout</div><div class="nav-item" data-view="machines">Machines</div></div>
+    <div class="nav-section"><div class="nav-label">Supply</div><div class="nav-item" data-view="inventory">Inventory</div><div class="nav-item" data-view="suppliers">Suppliers</div><div class="nav-item" data-view="cash">Cash + DEX/MDB</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="docs">Documents</div><div class="nav-item" data-view="financing">New-Account Financing</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 23 stops today · PA route</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Print route sheet</button><button class="btn primary">+ Log restock</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Today's Stops</div><div class="stat-value">23</div><div class="stat-delta">142 mi · 7 hrs</div></div>
+        <div class="stat"><div class="stat-label">Active Locations</div><div class="stat-value">187</div><div class="stat-delta">PA + FL + TX</div></div>
+        <div class="stat"><div class="stat-label">June Revenue</div><div class="stat-value">$58,420</div><div class="stat-delta">+8% vs May</div></div>
+        <div class="stat"><div class="stat-label">Out-of-Stock %</div><div class="stat-value">2.1%</div><div class="stat-delta">Below 3% target</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's route — order optimized</div><a class="panel-link" onclick="navigate('route')">Full route</a></div>
+            <div class="activity-item"><div class="activity-icon">1</div><div class="activity-text"><div><strong>Stop 1 · 8:00 AM · Bethel Industrial Park (Bldg A)</strong></div><div class="activity-time">CHECK: 2 SNACK + 1 COFFEE · LAST VISIT 4 DAYS AGO</div></div></div>
+            <div class="activity-item"><div class="activity-icon">2</div><div class="activity-text"><div><strong>Stop 2 · 8:35 AM · Bethel (Bldg B)</strong></div><div class="activity-time">1 SNACK · LAST: 5 DAYS · LIKELY 40% SOLD</div></div></div>
+            <div class="activity-item"><div class="activity-icon">3</div><div class="activity-text"><div><strong>Stop 3 · 9:15 AM · Riverside Manufacturing</strong></div><div class="activity-time">3 MACHINES · HIGH-VOLUME · 60% TYPICAL SELL</div></div></div>
+            <div class="activity-item"><div class="activity-icon">4</div><div class="activity-text"><div><strong>Stop 4 · 10:00 AM · Tech Park 12 (Floor 2 + 5)</strong></div><div class="activity-time">COFFEE FLAGGED: WATER FILTER REMINDER · 60-DAY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">5</div><div class="activity-text"><div><strong>Stop 5 · 10:45 AM · Mercy Hospital (Cafeteria + 3 break rooms)</strong></div><div class="activity-time">4 MACHINES · ANCHOR ACCOUNT · TOP REVENUE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">…</div><div class="activity-text"><div><strong>18 more stops</strong></div><div class="activity-time">FINISH ESTIMATED 3 PM · DROP CASH AT BANK 3:30</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Location Scout — new opportunities</div><a class="panel-link" onclick="navigate('scout')">All leads</a></div>
+            <div class="activity-item"><div class="activity-icon">★</div><div class="activity-text"><div><strong>New medical office · Cedar Crest Plaza</strong> · 80 employees</div><div class="activity-time">PERMIT FILED LAST MONTH · OPENS JULY · IDEAL FIT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">★</div><div class="activity-text"><div><strong>Construction site · Sunset commercial build</strong></div><div class="activity-time">9-MONTH PROJECT · 40 WORKERS · GC INTRODUCED · WARM LEAD</div></div></div>
+            <div class="activity-item"><div class="activity-icon">★</div><div class="activity-text"><div><strong>Self-storage facility · Hillcrest</strong> · drive-up tenants</div><div class="activity-time">UNDERSERVED · CASH-FRIENDLY · 2 SNACK + 1 COFFEE FIT</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Top accounts — this week</div></div>
+            <div class="activity-item"><div class="activity-icon">$$</div><div class="activity-text"><div><strong>Mercy Hospital</strong> · $2,840 weekly</div><div class="activity-time">4 MACHINES · ANCHOR ACCOUNT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$$</div><div class="activity-text"><div><strong>Riverside Mfg</strong> · $1,940 weekly</div><div class="activity-time">3 MACHINES · 24-HOUR PLANT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$$</div><div class="activity-text"><div><strong>Tech Park 12</strong> · $1,420 weekly</div><div class="activity-time">2 FLOORS · COFFEE-HEAVY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Bethel Industrial (A+B)</strong> · $980 weekly</div><div class="activity-time">2 BUILDINGS · STEADY</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Service alerts</div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--red);">!</div><div class="activity-text"><div><strong>Mercy 2nd-floor coffee</strong> · DEX error code 13</div><div class="activity-time">JAM IN CUP DISPENSER · CALL TECH</div></div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--amber);">!</div><div class="activity-text"><div><strong>Tech Park snack #2</strong> · refrigeration warning</div><div class="activity-time">TEMP RISING · CHECK COMPRESSOR ON ROUTE</div></div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--amber);">!</div><div class="activity-text"><div><strong>Riverside Mfg coffee #1</strong> · water filter due</div><div class="activity-time">60-DAY MILESTONE · BRING FILTER</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-route"><div class="page-header"><div><div class="page-subtitle">23 stops · 142 mi · 7 hrs · route auto-optimized</div><div class="page-title">Today's Route</div></div></div><div class="coming-soon"><h3>Route Optimization</h3><p>Daily route auto-built from machine telemetry (predicted sell-through), priorities (anchor accounts, problem machines), and geography.</p><ul><li>DEX/MDB telemetry → predicted sell-through per machine</li><li>Anchor accounts always served first</li><li>Service alerts inserted into route</li><li>New-lead drop-by suggestions when geography matches</li><li>Driver mobile app: turn-by-turn + log restock + photo proof</li></ul></div></div>
+    <div class="view" id="view-locations"><div class="page-header"><div><div class="page-subtitle">187 active · 142 PA · 28 FL · 17 TX · 92% retention</div><div class="page-title">Active Locations</div></div></div><div class="coming-soon"><h3>Location Database</h3><p>Every location, every machine, every contact, every contract.</p><ul><li>Per-location contract terms (commission %, exclusivity, term length)</li><li>Per-location machine count + type</li><li>Per-location revenue history + trend</li><li>Decision-maker contact + visit notes</li><li>Renewal calendar with auto-reminders</li></ul></div></div>
+    <div class="view" id="view-scout"><div class="page-header"><div><div class="page-subtitle">38 active leads · scored by fit + warmth · auto-surfaced from public data</div><div class="page-title">Location Scout</div></div></div><div class="coming-soon"><h3>Location Scout Engine</h3><p>Auto-surface new prospects from permits, business openings, and 50-mile-radius queries.</p><ul><li>New business permits in your radius</li><li>Construction sites (temporary route opportunity)</li><li>Employee-count thresholds for vending fit (40+ for snack, 80+ for combo)</li><li>Competitor-displacement signals (competitor exit announcements)</li><li>Per-lead fit + warmth scoring</li><li>One-tap call list for the next free hour</li></ul></div></div>
+    <div class="view" id="view-machines"><div class="page-header"><div><div class="page-subtitle">412 machines deployed · 318 snack · 84 coffee · 10 cold</div><div class="page-title">Machines</div></div></div><div class="coming-soon"><h3>Machine Fleet Operations</h3><p>Per-machine: telemetry, par levels, service history, profitability.</p><ul><li>Per-machine sell-through % vs target</li><li>DEX/MDB error code monitoring</li><li>Per-machine cost basis (purchase / lease / depreciation)</li><li>Service-call history + MTBF tracking</li><li>Replacement scheduling for aging fleet</li></ul></div></div>
+    <div class="view" id="view-inventory"><div class="page-header"><div><div class="page-subtitle">$18,400 inventory on hand · 240 SKUs · warehouse + truck</div><div class="page-title">Inventory</div></div></div><div class="coming-soon"><h3>Two-Tier Inventory</h3><p>Warehouse + truck inventory tracked separately. Auto-reorder when warehouse hits par.</p><ul><li>Warehouse + truck inventory split</li><li>Auto-restock from warehouse to truck pre-route</li><li>Auto-purchase from supplier when warehouse below par</li><li>Velocity tracking per SKU (fast vs slow movers)</li><li>Expiration tracking with shrinkage alerts</li></ul></div></div>
+    <div class="view" id="view-suppliers"><div class="page-header"><div><div class="page-subtitle">5 active suppliers · weekly orders · pricing locked quarterly</div><div class="page-title">Suppliers</div></div></div><div class="coming-soon"><h3>Supplier Management</h3><p>Per-supplier accounts, pricing, ordering, reconciliation.</p><ul><li>Vistar / Coremark / Pepsi / Coke / local roaster</li><li>Per-supplier ordering schedule</li><li>Price-change alerts (penny per unit matters at volume)</li><li>Receiving + invoice reconciliation</li></ul></div></div>
+    <div class="view" id="view-cash"><div class="page-header"><div><div class="page-subtitle">Coin + bill + cashless (NayaX) · per-machine reconciliation</div><div class="page-title">Cash + DEX/MDB</div></div></div><div class="coming-soon"><h3>Cash Operations + Telemetry</h3><p>Cash collected vs expected (per DEX read) — surface shrink immediately.</p><ul><li>Cash drop reconciliation vs DEX expected</li><li>Cashless (NayaX / Cantaloupe) integration</li><li>Per-machine variance alert when cash &lt; expected</li><li>Bank deposit tracking</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-location · per-machine · per-route profitability</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Business Reports</h3><p>Numbers that matter for a route operator.</p><ul><li>Per-location gross profit + commission to landlord</li><li>Per-machine ROI (capex / lease vs net)</li><li>Route efficiency (revenue per mile, revenue per hour)</li><li>SKU velocity + margin</li><li>Account churn risk scoring</li></ul></div></div>
+
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">Sales tax per state · multi-state nexus · 1099 commissions to landlords</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · vending-flavored: per-state vending sales tax (varies wildly), commissions paid to landlords (1099-NEC), nexus across multi-state routes</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Sales Tax MTD</div><div class="stat-value">$3,420</div><div class="stat-delta">Across PA · FL · TX</div></div>
+        <div class="stat"><div class="stat-label">Commission Paid</div><div class="stat-value">$4,800</div><div class="stat-delta">To 23 host locations</div></div>
+        <div class="stat"><div class="stat-label">1099 Hosts</div><div class="stat-value">22</div><div class="stat-delta">All earning &gt; $600 YTD</div></div>
+        <div class="stat"><div class="stat-label">States with Nexus</div><div class="stat-value">3</div><div class="stat-delta">PA (home) · FL · TX</div></div>
+      </div>
+      <div class="panel"><div class="panel-header"><div class="panel-title">Per-state tax — current month</div></div><table class="table"><thead><tr><th>State</th><th>Locations</th><th>Sales</th><th>Tax Rate (vending)</th><th>Tax Due</th></tr></thead><tbody><tr><td><strong>Pennsylvania</strong></td><td>142</td><td>$38,400</td><td>6% (food-exempt threshold)</td><td>$2,304</td></tr><tr><td><strong>Florida</strong></td><td>28</td><td>$12,200</td><td>State 6% + county avg 1%</td><td>$854</td></tr><tr><td><strong>Texas</strong></td><td>17</td><td>$7,820</td><td>6.25% state + local avg 2%</td><td>$626</td></tr></tbody></table></div>
+    </div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Location contracts · health permits · DOT · machine warranties</div><div class="page-title">Documents</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · vending-flavored: location agreements, health-dept permits, DOT requirements for the truck, machine warranties</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Document</th><th>Type</th><th>Linked to</th><th>Status</th></tr></thead><tbody><tr><td><strong>Mercy Hospital - Agreement.pdf</strong></td><td>Location contract</td><td>Mercy Hospital</td><td><span class="tag emerald">5-yr · 2 yrs in</span></td></tr><tr><td><strong>Riverside Mfg - Agreement.pdf</strong></td><td>Location contract</td><td>Riverside</td><td><span class="tag amber">Renews Sep</span></td></tr><tr><td><strong>PA Health Dept Vending Permit.pdf</strong></td><td>State permit</td><td>All PA machines</td><td><span class="tag emerald">Current</span></td></tr><tr><td><strong>Truck DOT Inspection.pdf</strong></td><td>DOT</td><td>Service truck</td><td><span class="tag emerald">Annual passed</span></td></tr><tr><td><strong>Vistar Master Supply Agreement.pdf</strong></td><td>Supplier</td><td>Vistar</td><td><span class="tag emerald">Active</span></td></tr></tbody></table></div></div>
+
+    <div class="view" id="view-financing"><div class="page-header"><div><div class="page-subtitle">Equipment financing for new accounts · acquisition deals · machine leases</div><div class="page-title">New-Account Financing</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Furniture cockpit · vending-flavored: new-machine equipment financing for landing big accounts, route acquisitions, fleet replacement</p>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Active financing</div></div><table class="table"><thead><tr><th>Project</th><th>Amount</th><th>Lender</th><th>Status</th></tr></thead><tbody><tr><td><strong>3 new coffee machines for Cedar Crest medical</strong></td><td>$18,400</td><td>Crest Capital (vending-specialist)</td><td><span class="tag amber">Pending</span></td></tr><tr><td><strong>Route acquisition · 14 locations in adjacent territory</strong></td><td>$84,000</td><td>SBA-backed</td><td><span class="tag amber">Application in</span></td></tr><tr><td><strong>2 cashless retrofit · NayaX</strong></td><td>$1,800</td><td>NayaX in-house</td><td><span class="tag emerald">Approved · 0% promo</span></td></tr></tbody></table></div></div>
+
+  </main>
+</div>
+<footer>Vending Route Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
