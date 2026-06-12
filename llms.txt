@@ -37,6 +37,8 @@ Flat-fee builds, typically $3,500 to $8,500 for a first cockpit. Hosting passes 
 
 - [Home](https://heisenbug.app/): hero, thesis, commercial terms, approach.
 - [Catalog](https://heisenbug.app/built/): all 28 cockpit demos, click-through to interact.
+- [Case studies](https://heisenbug.app/case-studies/): three production deployments — HVAC inventory cockpit (San Antonio HVAC contractor), vending route ops cockpit (Pennsylvania route operator), home health agency cockpit (Texas home health agency). Anonymized, honest.
+- [Methodology](https://heisenbug.app/methodology/): the four laws of the operator-cockpit doctrine plus the shared-engine breakdown.
 - [Home Health detail](https://heisenbug.app/home-health/): deep-dive on the home-health cockpit with cross-vertical engine matrix.
 - [About](https://heisenbug.app/about/): founder, story, how we ship.
 - [Contact](https://heisenbug.app/contact/): commercial terms, what to expect after reaching out.
