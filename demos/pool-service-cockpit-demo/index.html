@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a2540">
+<title>Pool Service Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f8fb;
+    --bg-2: #ffffff;
+    --bg-3: #eef4f9;
+    --ink: #0f1c2e;
+    --ink-2: #243651;
+    --text-dim: #56708c;
+    --text-mute: #8a9cb3;
+    --line: #d8e3ed;
+    --line-2: #b8cad9;
+    --primary: #0a6cb0;
+    --primary-bright: #0d85d4;
+    --teal: #0e8a8a;
+    --emerald: #2e7d5b;
+    --amber: #c2820a;
+    --red: #b8324f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  input, select, textarea { font-family: inherit; font-size: 14px; background: var(--bg-2); color: var(--ink); border: 1px solid var(--line); padding: 10px 14px; outline: none; border-radius: 6px; }
+
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; border-radius: 8px; }
+  .brand-name { font-weight: 700; font-size: 16px; letter-spacing: 0.3px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; }
+    .nav-label { display: none; }
+    .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; background: transparent; }
+    .nav-item.active { background: rgba(10,108,176,0.12); }
+    .nav-item .ic { display: none; }
+  }
+
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; transition: all 120ms; cursor: pointer; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--primary); background: var(--bg-2); border-left-color: var(--primary); font-weight: 500; }
+  .nav-item .ic { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+  .nav-item.active .ic { opacity: 1; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--red); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-size: 28px; font-weight: 700; line-height: 1.1; letter-spacing: -0.4px; color: var(--ink); }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 6px; transition: all 120ms; background: var(--bg-2); }
+  .btn:hover { border-color: var(--primary); }
+  .btn.primary { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
+  .btn.primary:hover { background: var(--primary-bright); border-color: var(--primary-bright); }
+  .btn.ghost { background: transparent; border-color: transparent; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1; color: var(--ink); }
+  .stat-delta { font-size: 11px; color: var(--emerald); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-size: 16px; font-weight: 600; }
+  .panel-link { font-size: 11px; color: var(--primary); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 500; }
+
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.primary { background: rgba(10,108,176,0.13); color: var(--primary); }
+  .tag.teal { background: rgba(14,138,138,0.15); color: var(--teal); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.amber { background: rgba(194,130,10,0.15); color: var(--amber); }
+  .tag.red { background: rgba(184,50,79,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  /* Stop card */
+  .stop-row { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .stop-row:last-child { border: 0; }
+  .stop-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink); font-weight: 500; width: 70px; flex-shrink: 0; }
+  .stop-body { flex: 1; }
+  .stop-name { font-weight: 500; font-size: 14px; }
+  .stop-meta { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  /* Chemistry chip */
+  .chem-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  @media (max-width: 760px) { .chem-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  .chem { background: var(--bg-3); border: 1px solid var(--line); border-radius: 6px; padding: 12px; text-align: center; }
+  .chem-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-mute); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .chem-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .chem-target { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .chem.warn .chem-val { color: var(--amber); }
+  .chem.crit .chem-val { color: var(--red); }
+
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 8px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '— '; color: var(--primary); margin-right: 6px; }
+
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--primary); font-weight: 600; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">~</div>
+    <div>
+      <div class="brand-name">Pool Service Cockpit</div>
+      <div class="brand-sub">Operator Cockpit · Residential + Commercial</div>
+    </div>
+  </div>
+  <div class="user-chip">
+    <div class="user-avatar">O</div>
+    <span>Owner</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active" data-view="dashboard">Dashboard</div>
+      <div class="nav-item" data-view="routes">Routes <span class="nav-badge">14</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pools</div>
+      <div class="nav-item" data-view="pools">Pools</div>
+      <div class="nav-item" data-view="chemistry">Chemistry Log</div>
+      <div class="nav-item" data-view="equipment">Equipment</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Business</div>
+      <div class="nav-item" data-view="customers">Customers</div>
+      <div class="nav-item" data-view="invoicing">Invoicing</div>
+      <div class="nav-item" data-view="techs">Technicians</div>
+      <div class="nav-item" data-view="reports">Reports</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Shared Engine</div>
+      <div class="nav-item" data-view="tax">Tax &amp; Compliance</div>
+      <div class="nav-item" data-view="docs">Document Inbox</div>
+      <div class="nav-item" data-view="financing">Financing (new builds)</div>
+    </div>
+  </aside>
+
+  <main>
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Saturday · June 7, 2026 · weather 84°F sunny</div>
+          <div class="page-title">Good afternoon</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Today's route</button>
+          <button class="btn primary">+ Log visit</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Today's Stops</div>
+          <div class="stat-value">14</div>
+          <div class="stat-delta">11 done · 3 remaining</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Active Customers</div>
+          <div class="stat-value">187</div>
+          <div class="stat-delta">+4 this month</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">June Revenue</div>
+          <div class="stat-value">$42,840</div>
+          <div class="stat-delta">+11% vs May</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Chem Alerts</div>
+          <div class="stat-value">3</div>
+          <div class="stat-delta neg">Need attention this week</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Today's route — remaining stops</div>
+              <a class="panel-link" onclick="navigate('routes')">Full route</a>
+            </div>
+            <div class="stop-row">
+              <div class="stop-time">2:15 PM</div>
+              <div class="stop-body">
+                <div class="stop-name">Maple Drive — residential · weekly</div>
+                <div class="stop-meta">In-ground 18×36 · gunite · saltwater · last visit Tue clean</div>
+              </div>
+              <span class="tag teal">En route</span>
+            </div>
+            <div class="stop-row">
+              <div class="stop-time">3:00 PM</div>
+              <div class="stop-body">
+                <div class="stop-name">Lakewood Ct — residential · weekly</div>
+                <div class="stop-meta">Above-ground 24ft · vinyl · chlorine · pump making noise per last note</div>
+              </div>
+              <span class="tag muted">Scheduled</span>
+            </div>
+            <div class="stop-row">
+              <div class="stop-time">4:00 PM</div>
+              <div class="stop-body">
+                <div class="stop-name">Pinewood Apartments — commercial · bi-weekly</div>
+                <div class="stop-meta">Community pool · 60K gallons · full chem panel + filter backwash</div>
+              </div>
+              <span class="tag muted">Scheduled</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Chem alerts — this week</div>
+              <a class="panel-link" onclick="navigate('chemistry')">All readings</a>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--red);">!</div>
+              <div class="activity-text">
+                <div><strong>Oak Lane #4327</strong> — pH dropped to 7.0, CYA at 12 (low)</div>
+                <div class="activity-time">FRI READING · ACID DOSED · NEEDS CYA TOP-UP TUE</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--amber);">!</div>
+              <div class="activity-text">
+                <div><strong>Hilltop Estate</strong> — calcium hardness 380 (high), warning zone</div>
+                <div class="activity-time">PARTIAL DRAIN + REFILL RECOMMENDED · MONITOR</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--amber);">!</div>
+              <div class="activity-text">
+                <div><strong>Brook Hollow community</strong> — combined chlorine 0.6, shock needed</div>
+                <div class="activity-time">SHOCK SCHEDULED FOR NEXT BI-WEEKLY · CUSTOMER NOTIFIED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Equipment service queue</div>
+              <a class="panel-link" onclick="navigate('equipment')">All work orders</a>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">P</div>
+              <div class="activity-text">
+                <div>Pump replacement — Lakewood Ct</div>
+                <div class="activity-time">PARTS ORDERED · INSTALL TUE</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">F</div>
+              <div class="activity-text">
+                <div>Filter cartridge change — 6 customers</div>
+                <div class="activity-time">BATCHED FOR THIS WEEK</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">H</div>
+              <div class="activity-text">
+                <div>Heater diagnostic — Maple Estates HOA</div>
+                <div class="activity-time">SCHEDULED THU MORNING</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">L</div>
+              <div class="activity-text">
+                <div>Liner repair quote — Sunset Pl</div>
+                <div class="activity-time">QUOTE SENT · AWAITING APPROVAL</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">This week at a glance</div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">71 of 92 weekly stops complete · on track. 3 work orders open. June MTD ahead of pace.</p>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--emerald);">✓</div>
+              <div class="activity-text">
+                <div>Monday — 18 stops · all complete</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--emerald);">✓</div>
+              <div class="activity-text">
+                <div>Tuesday — 16 stops · all complete</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--emerald);">✓</div>
+              <div class="activity-text">
+                <div>Wednesday — 21 stops · all complete</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--emerald);">✓</div>
+              <div class="activity-text">
+                <div>Thursday — 22 stops · all complete</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="color: var(--teal);">→</div>
+              <div class="activity-text">
+                <div>Friday — 14 stops · 11 done</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROUTES -->
+    <div class="view" id="view-routes">
+      <div class="page-header"><div><div class="page-subtitle">14 stops today · 11 complete · 3 remaining · 47 mi</div><div class="page-title">Routes</div></div><div class="page-actions"><button class="btn ghost">Print sheet</button><button class="btn primary">Re-optimize</button></div></div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Today — Friday June 7</div></div>
+        <div class="stop-row"><div class="stop-time">8:00 AM</div><div class="stop-body"><div class="stop-name">Riverside #421</div><div class="stop-meta">Weekly · chlorine · clean</div></div><span class="tag emerald">Done · 8:22</span></div>
+        <div class="stop-row"><div class="stop-time">8:30 AM</div><div class="stop-body"><div class="stop-name">Riverside #427</div><div class="stop-meta">Weekly · chlorine · brush + vac</div></div><span class="tag emerald">Done · 8:51</span></div>
+        <div class="stop-row"><div class="stop-time">9:00 AM</div><div class="stop-body"><div class="stop-name">Oak Lane #4327</div><div class="stop-meta">Weekly · saltwater · acid dose</div></div><span class="tag emerald">Done · 9:34</span></div>
+        <div class="stop-row"><div class="stop-time">9:45 AM</div><div class="stop-body"><div class="stop-name">Oak Lane #4341</div><div class="stop-meta">Weekly · saltwater · routine</div></div><span class="tag emerald">Done · 10:02</span></div>
+        <div class="stop-row"><div class="stop-time">10:15 AM</div><div class="stop-body"><div class="stop-name">Hilltop Estate</div><div class="stop-meta">Bi-weekly · large 25K gal · full panel</div></div><span class="tag emerald">Done · 10:58</span></div>
+        <div class="stop-row"><div class="stop-time">11:15 AM</div><div class="stop-body"><div class="stop-name">Sunset Pl #12</div><div class="stop-meta">Weekly · vinyl · liner repair quote</div></div><span class="tag emerald">Done · 11:34</span></div>
+        <div class="stop-row"><div class="stop-time">11:45 AM</div><div class="stop-body"><div class="stop-name">Sunset Pl #16</div><div class="stop-meta">Weekly · vinyl · routine</div></div><span class="tag emerald">Done · 12:08</span></div>
+        <div class="stop-row"><div class="stop-time">12:30 PM</div><div class="stop-body"><div class="stop-name">Brook Hollow community</div><div class="stop-meta">Bi-weekly · 40K gal commercial · shock</div></div><span class="tag emerald">Done · 1:14</span></div>
+        <div class="stop-row"><div class="stop-time">1:30 PM</div><div class="stop-body"><div class="stop-name">Beaver Lake Estates HOA</div><div class="stop-meta">Weekly commercial · 60K gal</div></div><span class="tag emerald">Done · 2:02</span></div>
+        <div class="stop-row"><div class="stop-time">2:15 PM</div><div class="stop-body"><div class="stop-name">Maple Drive</div><div class="stop-meta">Weekly · in-ground 18×36 · saltwater</div></div><span class="tag teal">En route</span></div>
+        <div class="stop-row"><div class="stop-time">3:00 PM</div><div class="stop-body"><div class="stop-name">Lakewood Ct</div><div class="stop-meta">Weekly · above-ground · pump check</div></div><span class="tag muted">Scheduled</span></div>
+        <div class="stop-row"><div class="stop-time">4:00 PM</div><div class="stop-body"><div class="stop-name">Pinewood Apartments</div><div class="stop-meta">Bi-weekly commercial · 60K gal · backwash</div></div><span class="tag muted">Scheduled</span></div>
+      </div>
+    </div>
+
+    <!-- CHEMISTRY -->
+    <div class="view" id="view-chemistry">
+      <div class="page-header"><div><div class="page-subtitle">Free + Combined chlorine · pH · alkalinity · CYA · hardness · TDS</div><div class="page-title">Chemistry Log</div></div></div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Latest reading — Maple Drive · 2:34 PM</div><span class="tag teal">Just logged</span></div>
+        <div class="chem-grid">
+          <div class="chem"><div class="chem-name">Free Cl</div><div class="chem-val">3.2</div><div class="chem-target">Target 1.0–3.0</div></div>
+          <div class="chem"><div class="chem-name">Comb Cl</div><div class="chem-val">0.1</div><div class="chem-target">Target &lt; 0.4</div></div>
+          <div class="chem"><div class="chem-name">pH</div><div class="chem-val">7.6</div><div class="chem-target">Target 7.4–7.6</div></div>
+          <div class="chem warn"><div class="chem-name">Alk</div><div class="chem-val">125</div><div class="chem-target">Target 80–120</div></div>
+          <div class="chem"><div class="chem-name">CYA</div><div class="chem-val">42</div><div class="chem-target">Target 30–50</div></div>
+          <div class="chem"><div class="chem-name">Hard</div><div class="chem-val">210</div><div class="chem-target">Target 200–400</div></div>
+        </div>
+        <p style="margin-top: 14px; font-size: 12px; color: var(--text-dim); line-height: 1.6;">Recommended: muriatic acid 1 cup to bring alkalinity into range. Customer notified via auto-text with reading photo. Next check Tue.</p>
+      </div>
+      <div class="panel" style="padding: 0;">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Pool</th><th>Free Cl</th><th>pH</th><th>Alk</th><th>CYA</th><th>Hard</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Today 2:34 PM</td><td><strong>Maple Drive</strong></td><td>3.2</td><td>7.6</td><td>125 ⚠</td><td>42</td><td>210</td><td>Acid 1 cup</td></tr>
+            <tr><td>Today 11:34 AM</td><td><strong>Sunset Pl #12</strong></td><td>2.1</td><td>7.4</td><td>105</td><td>38</td><td>240</td><td>Routine</td></tr>
+            <tr><td>Today 10:58 AM</td><td><strong>Hilltop Estate</strong></td><td>2.8</td><td>7.5</td><td>110</td><td>45</td><td>380 ⚠</td><td>Partial drain rec.</td></tr>
+            <tr><td>Today 9:34 AM</td><td><strong>Oak Lane #4327</strong></td><td>1.4</td><td>7.0 ⚠</td><td>90</td><td>12 ⚠</td><td>220</td><td>Acid dosed · CYA Tue</td></tr>
+            <tr><td>Yest 4:18 PM</td><td><strong>Maple Estates HOA</strong></td><td>2.4</td><td>7.5</td><td>100</td><td>40</td><td>260</td><td>Routine</td></tr>
+            <tr><td>Yest 3:02 PM</td><td><strong>Brook Hollow community</strong></td><td>1.2</td><td>7.5</td><td>105</td><td>45</td><td>320</td><td>Comb Cl 0.6 — shock pending</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Other placeholders -->
+    <div class="view" id="view-pools"><div class="page-header"><div><div class="page-subtitle">187 active pools · 142 residential · 45 commercial</div><div class="page-title">Pools</div></div></div><div class="coming-soon"><h3>Per-pool Profile + History</h3><p>Full pool spec, equipment list, every chem reading, photo timeline, and service history.</p><ul><li>Spec sheet: gallons, surface, sanitizer, filter type, pump HP</li><li>Equipment inventory with install date + warranty status</li><li>Photo timeline (visit photos in chronological order)</li><li>Customer preferences (gate code, dog warning, payment method)</li><li>Seasonal open/close history</li></ul></div></div>
+
+    <div class="view" id="view-equipment"><div class="page-header"><div><div class="page-subtitle">11 active work orders</div><div class="page-title">Equipment Service</div></div></div><div class="coming-soon"><h3>Work Order Pipeline</h3><p>Quote → approval → parts → install → invoice — every equipment job tracked end-to-end.</p><ul><li>One-click quote PDF generation</li><li>Parts ordering integration (Pentair, Hayward, Jandy)</li><li>Tech time tracking per job</li><li>Photo proof of repair</li><li>Warranty claim filing</li></ul></div></div>
+
+    <div class="view" id="view-customers"><div class="page-header"><div><div class="page-subtitle">187 active · $42,840 MTD · 94% retention</div><div class="page-title">Customers</div></div></div><div class="coming-soon"><h3>Customer Database</h3><p>Every household, every pool, every dollar invoiced — searchable, sortable, filterable.</p><ul><li>Residential / commercial / HOA segmentation</li><li>Billing preferences (auto-pay, invoice, check)</li><li>Service schedule (weekly / bi-weekly / on-call)</li><li>Communication log (call, text, email history)</li><li>Lifetime value and tenure</li></ul></div></div>
+
+    <div class="view" id="view-invoicing"><div class="page-header"><div><div class="page-subtitle">$8,420 outstanding · 5 invoices &gt; 30 days</div><div class="page-title">Invoicing</div></div></div><div class="coming-soon"><h3>Auto-Invoicing + Payments</h3><p>Auto-bill monthly service plus per-visit extras. Stripe + ACH + checks all reconciled.</p><ul><li>Auto-monthly recurring billing</li><li>Per-visit upcharges added automatically</li><li>Stripe + ACH payment processing</li><li>Aged receivables surfaced as collection priorities</li><li>QuickBooks sync</li></ul></div></div>
+
+    <div class="view" id="view-techs"><div class="page-header"><div><div class="page-subtitle">3 techs on roster · today: 2 routes, 1 service calls</div><div class="page-title">Technicians</div></div></div><div class="coming-soon"><h3>Tech Management</h3><p>Schedule, certifications, route assignments, mobile app.</p><ul><li>Per-tech daily route assignment</li><li>CPO + state-license tracking with expiration alerts</li><li>Mobile tech app: visit logging, photo capture, chem entry</li><li>Tech scorecard (visits/day, customer feedback, retention)</li></ul></div></div>
+
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Monthly · seasonal · YoY</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Business Reporting</h3><p>The numbers an operator actually needs to run a pool service.</p><ul><li>Monthly revenue by customer type</li><li>Service vs equipment revenue split</li><li>Tech utilization (visits per hour, drive time)</li><li>Chemical cost per pool per visit</li><li>Customer retention cohorts</li><li>Seasonal capacity planning</li></ul></div></div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">Service tax · use tax · 1099 contractors · chemical-purchase tracking</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · pool-service flavored: service-only states vs goods+service, tech 1099s, chemical use-tax tracking</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Sales Tax MTD</div><div class="stat-value">$2,184</div><div class="stat-delta">From equipment installs + chemicals</div></div>
+        <div class="stat"><div class="stat-label">Service-Only Revenue</div><div class="stat-value">$31,200</div><div class="stat-delta">Tax-exempt in this state</div></div>
+        <div class="stat"><div class="stat-label">1099 Techs</div><div class="stat-value">3</div><div class="stat-delta">All W-9s on file</div></div>
+        <div class="stat"><div class="stat-label">Chemical Use-Tax</div><div class="stat-value">$840</div><div class="stat-delta">Inbound from out-of-state suppliers</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Current period — tax breakdown</div></div>
+        <table class="table">
+          <thead><tr><th>Category</th><th>Revenue</th><th>Taxable?</th><th>Rate</th><th>Tax Due</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Weekly service (residential)</strong></td><td>$18,400</td><td>Exempt (service-only state)</td><td>—</td><td>$0</td></tr>
+            <tr><td><strong>Weekly service (commercial)</strong></td><td>$12,800</td><td>Exempt</td><td>—</td><td>$0</td></tr>
+            <tr><td><strong>Equipment installs</strong></td><td>$28,400</td><td>Taxable (goods)</td><td>6%</td><td>$1,704</td></tr>
+            <tr><td><strong>Chemicals sold separately</strong></td><td>$8,000</td><td>Taxable</td><td>6%</td><td>$480</td></tr>
+            <tr><td><strong>Equipment service labor</strong></td><td>$5,200</td><td>Exempt (labor)</td><td>—</td><td>$0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-docs">
+      <div class="page-header"><div><div class="page-subtitle">HOA contracts · insurance · warranties · COA from chemical suppliers</div><div class="page-title">Document Inbox</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · pool-service flavored: HOA contracts, equipment warranties, chemical COAs, CPO certifications</p>
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead><tr><th>Document</th><th>Type</th><th>Linked to</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HOA-PinewoodApts-2026.pdf</strong></td><td>Service contract</td><td>Pinewood Apartments</td><td><span class="tag emerald">Renewed</span></td></tr>
+            <tr><td><strong>Pentair-Warranty-Pump-S04231.pdf</strong></td><td>Equipment warranty</td><td>Lakewood Ct pump</td><td><span class="tag emerald">Active 5 yrs</span></td></tr>
+            <tr><td><strong>COA-Chlorine-Batch4421.pdf</strong></td><td>Chemical COA</td><td>This week's deliveries</td><td><span class="tag emerald">Filed</span></td></tr>
+            <tr><td><strong>CPO-Cert-MikeRodriguez.pdf</strong></td><td>Tech certification</td><td>Mike R. · expires Aug 2027</td><td><span class="tag emerald">Current</span></td></tr>
+            <tr><td><strong>Insurance-GL-2026.pdf</strong></td><td>General liability</td><td>Business · annual</td><td><span class="tag gold">Renews Aug</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Furniture cockpit ===== -->
+    <div class="view" id="view-financing">
+      <div class="page-header"><div><div class="page-subtitle">New-build financing waterfall · equipment loans · service-contract financing</div><div class="page-title">Financing</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Furniture cockpit · pool-flavored: new-pool-build financing (typical $35-75K range), equipment replacement financing, pre-paid annual-service plans</p>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Current applications — this week</div></div>
+        <table class="table">
+          <thead><tr><th>Customer</th><th>Project</th><th>Approved</th><th>Limit</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Beaver Lake Estates HOA</strong></td><td>New filter + pump system</td><td>Synchrony</td><td>$18,400</td><td><span class="tag emerald">Closed</span></td></tr>
+            <tr><td><strong>Sunset Pl #12</strong></td><td>Liner replacement</td><td>Snap</td><td>$3,200</td><td><span class="tag emerald">Closed</span></td></tr>
+            <tr><td><strong>Hilltop Estate</strong></td><td>Heater + auto-cleaner</td><td>Wells Fargo</td><td>$8,800</td><td><span class="tag amber">Pending docs</span></td></tr>
+            <tr><td><strong>New homeowner — Mercer</strong></td><td>New pool build (in-ground)</td><td>—</td><td>$58,000 requested</td><td><span class="tag amber">In waterfall</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>Pool Service Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+
+<script>
+  function navigate(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const t = document.getElementById('view-' + viewId);
+    if (t) t.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === viewId));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.nav-item').forEach(n => n.addEventListener('click', () => navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
