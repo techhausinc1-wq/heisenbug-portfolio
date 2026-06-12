@@ -1,0 +1,37 @@
+# Heisenbug security + cache headers
+# Activates automatically when site is served via Cloudflare Pages or similar header-aware host.
+# GitHub Pages ignores this file (no impact).
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://static.cloudflareinsights.com https://formsubmit.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none';
+  X-XSS-Protection: 1; mode=block
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+# Static assets — long-term cache (one year)
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML — short cache, must-revalidate
+/*.html
+  Cache-Control: public, max-age=600, must-revalidate
+/
+  Cache-Control: public, max-age=600, must-revalidate
+
+# Service Worker — never cache (always fresh)
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
