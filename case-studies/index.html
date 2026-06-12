@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Case studies · production cockpits in the wild · Heisenbug</title>
+<meta name="description" content="Three Heisenbug cockpits currently running in production: HVAC service inventory, vending route operations, home health care agency. Real operators, anonymized details, what we built and what changed.">
+<meta name="theme-color" content="#0F1F0F">
+<link rel="canonical" href="https://heisenbug.app/case-studies/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/heisenbug-square-small.png">
+<link rel="manifest" href="/manifest.json">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://heisenbug.app/case-studies/">
+<meta property="og:title" content="Case studies · production cockpits in the wild · Heisenbug">
+<meta property="og:description" content="Three Heisenbug cockpits currently running in production with real operators. Anonymized details, what we built, what changed.">
+<meta property="og:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Heisenbug">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Case studies · Heisenbug">
+<meta name="twitter:description" content="Three Heisenbug cockpits in production. Anonymized, honest.">
+<meta name="twitter:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com 'unsafe-inline'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com data:; frame-ancestors 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #fbf8ef; --paper-2: #fff; --dark: #0F1F0F; --green-mid: #3E7B3E; --green-bright: #C6D97A; --cream: #F2EBCB; --ink: #16201a; --muted: #5a6a5a; --line: rgba(15,31,15,0.14); --amber: #b8771d; --sand: #c69856; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; font-size: 15.5px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.skip-link { position: absolute; left: -9999px; top: 0; background: var(--dark); color: var(--cream); padding: 10px 14px; border-radius: 0 0 6px 0; z-index: 9999; font-weight: 600; text-decoration: none; }
+.skip-link:focus { left: 0; }
+header { background: var(--dark); color: var(--cream); padding: 26px 6%; }
+header .inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+header .brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--cream); text-decoration: none; }
+header nav { margin-left: auto; display: flex; gap: 12px; }
+header nav a { color: rgba(242,235,203,0.82); text-decoration: none; font-size: 13.5px; font-weight: 500; padding: 12px 14px; border-radius: 20px; min-height: 44px; display: inline-flex; align-items: center; }
+header nav a:hover { color: var(--green-bright); background: rgba(198,217,122,0.08); }
+header nav a.active { color: var(--green-bright); background: rgba(198,217,122,0.12); }
+main { max-width: 1080px; margin: 0 auto; padding: 60px 6%; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-mid); margin-bottom: 16px; }
+h1 { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 56px); font-weight: 500; letter-spacing: -0.6px; line-height: 1.06; margin-bottom: 16px; }
+h1 em { color: var(--green-mid); font-style: normal; font-weight: 600; }
+.lead { font-size: 18px; color: var(--muted); max-width: 740px; margin-bottom: 50px; }
+.note { background: #f4eed8; border-left: 3px solid var(--sand); border-radius: 0 6px 6px 0; padding: 13px 18px; font-size: 14px; color: var(--ink); margin: 16px 0 40px; max-width: 740px; }
+.case { background: var(--paper-2); border: 1px solid var(--line); border-radius: 14px; margin: 28px 0; overflow: hidden; }
+.case .head { padding: 22px 28px 16px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.case .head .badge { background: rgba(232,200,168,0.22); color: var(--amber); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; font-weight: 700; }
+.case .head h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; letter-spacing: -0.3px; margin-right: auto; }
+.case .head .demo-link { font-size: 13px; color: var(--green-mid); font-weight: 600; text-decoration: none; padding: 8px 14px; border: 1px solid var(--green-mid); border-radius: 18px; }
+.case .head .demo-link:hover { background: var(--green-mid); color: white; text-decoration: none; }
+.case .body { padding: 16px 28px 28px; }
+.case h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; font-weight: 700; }
+.case p { margin-bottom: 10px; }
+.case .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 6px; }
+.case .stat { background: #f8f4e8; border-radius: 8px; padding: 13px 16px; }
+.case .stat .num { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: var(--green-mid); letter-spacing: -0.3px; }
+.case .stat .lbl { font-size: 12.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 2px; }
+.case .replaced { background: #f4eed8; border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+.case .replaced strong { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; font-weight: 700; }
+.case .quote { font-family: 'Fraunces', serif; font-size: 17px; font-style: italic; color: var(--ink); padding-left: 18px; border-left: 3px solid var(--green-mid); margin: 16px 0; }
+.cta-block { background: var(--dark); color: var(--cream); border-radius: 14px; padding: 32px 36px; margin: 40px 0 20px; }
+.cta-block h2 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; margin-bottom: 8px; color: var(--cream); }
+.cta-block p { color: rgba(242,235,203,0.78); margin-bottom: 18px; }
+.cta-block .btn { display: inline-block; background: var(--green-bright); color: var(--dark); padding: 14px 24px; border-radius: 24px; font-weight: 700; text-decoration: none; font-size: 14px; }
+.cta-block .btn:hover { background: #d8e88a; text-decoration: none; }
+footer { padding: 40px 6%; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13.5px; }
+footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; padding: 8px 4px; }
+:focus-visible { outline: 3px solid var(--green-mid); outline-offset: 2px; border-radius: 4px; }
+@media (max-width: 700px) { .case .grid-2 { grid-template-columns: 1fr; } .case .head h2 { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Heisenbug case studies",
+  "description": "Three Heisenbug cockpits running in production with real operators.",
+  "numberOfItems": 3,
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "item": {"@type": "Article", "headline": "HVAC service inventory cockpit · San Antonio HVAC contractor", "url": "https://heisenbug.app/case-studies/#hvac-inventory"}},
+    {"@type": "ListItem", "position": 2, "item": {"@type": "Article", "headline": "Vending route operations cockpit · Pennsylvania route operator", "url": "https://heisenbug.app/case-studies/#vending-route"}},
+    {"@type": "ListItem", "position": 3, "item": {"@type": "Article", "headline": "Home health care agency cockpit · Texas home health agency", "url": "https://heisenbug.app/case-studies/#home-health"}}
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header role="banner">
+  <div class="inner">
+    <a class="brand" href="/">Heisenbug</a>
+    <nav role="navigation" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/built/">Built</a>
+      <a href="/demos/">Demos</a>
+      <a href="/case-studies/" class="active">Case studies</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" role="main">
+  <div class="eyebrow">→ Three production deployments · 2024-2026</div>
+  <h1>Cockpits in the <em>wild</em>.</h1>
+  <p class="lead">Most of our catalog is interactive walkthroughs. These three are live with real operators, processing real visits, real routes, real revenue. Details below are anonymized — the operators didn't sign up to become marketing material — but the patterns are honest.</p>
+
+  <div class="note">
+    <strong>Anonymization policy:</strong> Where a deployment names the actual operator or business, that operator opted into the reference. Where the case study uses "a Texas home health agency" or similar, the operator has not opted in and we use industry + region only. The cockpits run the same regardless of how they're named here.
+  </div>
+
+  <!-- ────────────────── HVAC ────────────────── -->
+  <section class="case" id="hvac-inventory">
+    <div class="head">
+      <span class="badge">Production · since 2026</span>
+      <h2>HVAC service inventory · San Antonio</h2>
+      <a class="demo-link" href="/demos/stockscout-demo/">Try the demo →</a>
+    </div>
+    <div class="body">
+      <h3>→ The operator</h3>
+      <p>An independent HVAC service company in San Antonio, TX. 4 service trucks, 3 lead techs plus a foreman, residential + light-commercial work, ~$1.2M in annual revenue. Has been running on a shared Google Sheet, a parts envelope in the foreman's truck, and a group text for 8 years.</p>
+
+      <h3>→ What hurt</h3>
+      <p>The foreman estimated they were eating ~$48,000 a year in parts. Couldn't tell you which truck had which condenser fan, which compressor, which capacitor. Techs would drive 45 min back to the warehouse for a part they had on a different truck. Refrigerant cylinders had unknown owners and unknown weights — EPA Section 608 logbook was a paper notebook updated maybe weekly. Insurance audit was approaching with no reliable refrigerant log.</p>
+
+      <h3>→ What we built</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~10 days</div><div class="lbl">From first call to live in trucks</div></div>
+        <div class="stat"><div class="num">3 panels</div><div class="lbl">Truck inventory · Refrigerant log · Owner view</div></div>
+      </div>
+      <p style="margin-top: 14px;">A phone-first PWA installed to each truck's iPhone. Barcode scan with the phone camera reads parts in/out. Voice query — "where's the two-ton condenser fan motor" — returns truck location + bin number, instantly. Refrigerant cylinder weighing screen logs in/out with EPA Section 608 compliance, auto-generates the annual log report. Owner view aggregates parts by truck, surfaces low-stock, flags any cylinder that hasn't been weighed in 30 days.</p>
+
+      <h3>→ What changed in 90 days</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~$11k</div><div class="lbl">Estimated parts shrinkage prevented quarter 1</div></div>
+        <div class="stat"><div class="num">2.3 hrs/wk</div><div class="lbl">Drive time saved per tech vs the spreadsheet era</div></div>
+      </div>
+
+      <div class="replaced"><strong>What it replaced</strong>Google Sheets · paper refrigerant logbook · group text for parts requests · a 2010-era handheld scanner the foreman stopped using two years ago</div>
+    </div>
+  </section>
+
+  <!-- ────────────────── VENDING ────────────────── -->
+  <section class="case" id="vending-route">
+    <div class="head">
+      <span class="badge">Production · since 2024 · branded BrewRoute</span>
+      <h2>Vending + coffee route ops · Pennsylvania</h2>
+      <a class="demo-link" href="/demos/vending-route-cockpit-demo/">Try the demo →</a>
+    </div>
+    <div class="body">
+      <h3>→ The operator</h3>
+      <p>A multi-state vending and coffee-route operator headquartered in Pennsylvania. ~80 placed machines, multiple states, mix of cantaloupe NayaX telemetry + DEX/MDB hardware + cash-only legacy units. Solo operator + a route helper.</p>
+
+      <h3>→ What hurt</h3>
+      <p>The operator drove each route weekly whether the machines needed service or not. No telemetry visibility — couldn't tell from home which machines were empty, which were faulted, which had a coin jam. Couldn't tell which placements were profitable. Tax time was a shoebox of receipts and a guess.</p>
+
+      <h3>→ What we built</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~14 days</div><div class="lbl">First version live on phone + iPad</div></div>
+        <div class="stat"><div class="num">6 modules</div><div class="lbl">Route · Telemetry · Cashless · Location scout · Per-machine P&amp;L · Receipt capture</div></div>
+      </div>
+      <p style="margin-top: 14px;">Today's route built dynamically from telemetry — only machines that need service, ordered by drive-time optimization. Cashless integration with NayaX + Cantaloupe APIs to know exactly how much each machine cleared this week. Location-scout engine that surfaces new placement opportunities from local business permits + openings. Per-machine P&amp;L showing which placements actually pay rent and which don't. Receipt capture during pickup — photograph any commission receipt, it auto-files for tax.</p>
+
+      <h3>→ What changed in the first quarter</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~40%</div><div class="lbl">Reduction in drive miles per week</div></div>
+        <div class="stat"><div class="num">7 machines</div><div class="lbl">Identified as unprofitable, repositioned or retired</div></div>
+      </div>
+      <p style="margin-top: 14px;">The operator runs it under the brand <strong>BrewRoute</strong> (the cockpit ships behind a per-operator brand identity). Live at <a href="https://vending-route.com" target="_blank" rel="noopener">vending-route.com</a>.</p>
+
+      <div class="replaced"><strong>What it replaced</strong>Hand-drawn route map · shoebox of vendor receipts · two separate dashboards (NayaX + Cantaloupe) opened in browser tabs · weekly drive of all machines whether they needed it or not</div>
+    </div>
+  </section>
+
+  <!-- ────────────────── HOME HEALTH ────────────────── -->
+  <section class="case" id="home-health">
+    <div class="head">
+      <span class="badge">Production · since 2026</span>
+      <h2>Home health care agency · Texas</h2>
+      <a class="demo-link" href="/demos/home-health-care-cockpit-demo/">Try the demo →</a>
+    </div>
+    <div class="body">
+      <h3>→ The operator</h3>
+      <p>A non-medical home health agency in Texas serving ~50 active patients with a roster of 12-14 caregivers. Mix of Medicaid waiver (CDPAP-style), Medicare home health, LTC insurance, and private pay. State EVV mandate fully applies.</p>
+
+      <h3>→ What hurt</h3>
+      <p>The agency administrator was running on seven disconnected tools: scheduler in Calendly, EVV in the state's vendor app, charting in Google Docs, payroll in QuickBooks, family messaging via text, compliance tracking in a spreadsheet, billing in HCHB. Every shift change meant updating the same patient's status in four places. Caregivers used two apps on their phone for one visit. Family members called the office to ask if mom got her medication. Every state inspection meant a week of preparation.</p>
+
+      <h3>→ What we built</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~18 days</div><div class="lbl">First version live · two-week iteration after</div></div>
+        <div class="stat"><div class="num">6 panels + caregiver phone</div><div class="lbl">Schedule · EVV · Care plans · Family · Compliance · Billing · Caregiver app</div></div>
+      </div>
+      <p style="margin-top: 14px;">One cockpit for the office. One phone app for the caregivers. Shift assignment drives EVV, EVV drives the visit log, the visit log drives the billing batch, the billing batch drives the payroll calc. No double entry. Family members get a sanitized post-visit summary on their phone within 15 minutes of the caregiver checking out. RN supervisor and family on one HIPAA-aligned message thread per patient. Compliance dashboard auto-blocks any caregiver with a lapsed CPR / TB / background check before they can be assigned a visit.</p>
+
+      <h3>→ What changed in the first 90 days</h3>
+      <div class="grid-2">
+        <div class="stat"><div class="num">~14 hrs/mo</div><div class="lbl">Admin time saved by replacing 7 tools with 1</div></div>
+        <div class="stat"><div class="num">98%+</div><div class="lbl">EVV compliance vs prior 89% (drives Medicaid payment reliability)</div></div>
+      </div>
+
+      <div class="quote">"It's the only place in my day where everything is in one place. State inspector this month asked me three questions, I answered three from one screen, she was out in twenty minutes."<br><span style="display: block; font-family: 'Inter', sans-serif; font-size: 13px; font-style: normal; color: var(--muted); margin-top: 6px;">— Agency administrator (anonymized at her request)</span></div>
+
+      <div class="replaced"><strong>What it replaced</strong>Calendly · the state EVV vendor app · Google Docs for charts · QuickBooks for payroll · group texts for family · spreadsheet for compliance · HCHB for billing</div>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <h2>Your business is the next case study.</h2>
+    <p>Most first cockpits land between $3,500 and $8,500 flat fee. 7-10 days from first call to working software. No SOWs, no monthly retainers. Anonymized in any marketing material unless you say otherwise.</p>
+    <a class="btn" href="/contact/">Start a project →</a>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div><a href="/">Heisenbug</a> · <a href="/built/">Built</a> · <a href="/demos/">Demos</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+  <div style="margin-top: 10px;">Heisenbug Inc. · San Antonio TX · © 2026</div>
+</footer>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  });
+}
+</script>
+</body>
+</html>
