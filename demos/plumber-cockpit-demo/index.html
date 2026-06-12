@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plumbing Service Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f8fb;--bg-2:#fff;--bg-3:#e6eef5;--ink:#0a1828;--text-dim:#52647a;--text-mute:#84909e;--line:#d4dde8;--line-2:#b0bcca;--blue:#0a4a8a;--bright:#1565b8;--orange:#d97825;--olive:#5e6e3d;--emerald:#2e7d5b;--red:#b53148}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column;min-height:100vh}
+  a{color:inherit;text-decoration:none}button{cursor:pointer;font-family:inherit;border:0;background:none;color:inherit}
+  header{background:var(--bg-2);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:14px}
+  @media(max-width:760px){header{padding:12px 16px;flex-wrap:wrap}}
+  .brand{display:flex;align-items:center;gap:12px}.brand-mark{width:38px;height:38px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;border-radius:4px}.brand-name{font-weight:700;font-size:16px}.brand-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-top:1px}
+  .user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border:1px solid var(--line);border-radius:24px;font-size:12px}.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .layout{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;flex-direction:row;overflow-x:auto;padding:12px 16px;background:var(--bg-3);border-right:0;border-bottom:1px solid var(--line);gap:6px;scrollbar-width:none}.sidebar::-webkit-scrollbar{display:none}.nav-section{margin-bottom:0;display:flex;flex-direction:row;gap:6px}.nav-label{display:none}.nav-item{padding:6px 14px;font-size:12px;white-space:nowrap;border-left:0;border-radius:16px}.nav-item.active{background:rgba(10,74,138,0.1)}}
+  .sidebar{background:var(--bg-3);border-right:1px solid var(--line);padding:22px 0;overflow-y:auto}
+  .nav-section{margin-bottom:26px}.nav-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.8px;color:var(--text-mute);text-transform:uppercase;padding:0 28px 8px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:9px 28px;color:var(--text-dim);font-size:13.5px;border-left:2px solid transparent;cursor:pointer;transition:all 120ms}.nav-item:hover{color:var(--ink);background:var(--bg-2)}.nav-item.active{color:var(--blue);background:var(--bg-2);border-left-color:var(--blue);font-weight:600}.nav-badge{margin-left:auto;font-size:10px;background:var(--blue);color:#fff;padding:2px 7px;border-radius:10px;font-weight:600}
+  main{padding:28px 36px;overflow-y:auto}@media(max-width:900px){main{padding:20px}}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}@media(max-width:600px){.page-actions{width:100%}.page-actions .btn{flex:1;text-align:center}}
+  .page-subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.6px;color:var(--text-mute);text-transform:uppercase;margin-bottom:6px}.page-title{font-size:26px;font-weight:700;line-height:1.1}
+  .page-actions{display:flex;gap:10px}.btn{padding:9px 16px;border:1px solid var(--line-2);color:var(--ink);font-size:12.5px;font-weight:500;border-radius:4px;background:var(--bg-2)}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}.btn.ghost{background:transparent;border-color:transparent}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}@media(max-width:760px){.stat-grid{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:18px}.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:10px}.stat-value{font-size:26px;font-weight:700;line-height:1}.stat-delta{font-size:11px;color:var(--olive);margin-top:6px}.stat-delta.neg{color:var(--red)}
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:22px;margin-bottom:16px}.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.panel-title{font-size:16px;font-weight:700}.panel-link{font-size:11px;color:var(--blue);letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;font-weight:600}
+  .table{width:100%;border-collapse:collapse;font-size:13px}.table th{text-align:left;padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;border-bottom:1px solid var(--line);font-weight:500}.table td{padding:13px 14px;border-bottom:1px solid var(--line)}.table tr:hover td{background:var(--bg-3)}.table tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;font-weight:600}.tag.blue{background:rgba(10,74,138,0.15);color:var(--blue)}.tag.orange{background:rgba(217,120,37,0.15);color:var(--orange)}.tag.emerald{background:rgba(46,125,91,0.15);color:var(--emerald)}.tag.red{background:rgba(181,49,72,0.15);color:var(--red)}.tag.muted{background:var(--bg-3);color:var(--text-dim)}
+  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px}@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+  .activity-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.activity-item:last-child{border:0}.activity-icon{width:26px;height:26px;border-radius:50%;background:var(--bg-3);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}.activity-text{flex:1}.activity-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-mute);margin-top:2px}
+  .coming-soon{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:6px;padding:50px 40px;text-align:center}.coming-soon h3{font-size:20px;font-weight:700;margin-bottom:8px}.coming-soon p{color:var(--text-dim);font-size:13px;max-width:460px;margin:0 auto 18px;line-height:1.6}.coming-soon ul{text-align:left;max-width:380px;margin:0 auto;list-style:none}.coming-soon li{padding:7px 0;font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--line)}.coming-soon li::before{content:'→ ';color:var(--blue);margin-right:4px}
+  footer{padding:14px 28px;border-top:1px solid var(--line);background:var(--bg-3);font-size:11px;color:var(--text-mute);text-align:center}footer span{color:var(--blue);font-weight:700}
+  .view{display:none}.view.active{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-mark">PL</div><div><div class="brand-name">Plumbing Service Cockpit</div><div class="brand-sub">Residential + commercial · service + new construction</div></div></div>
+  <div class="user-chip"><div class="user-avatar">O</div><span>Owner</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="dispatch">Dispatch <span class="nav-badge">12</span></div></div>
+    <div class="nav-section"><div class="nav-label">Work</div><div class="nav-item" data-view="calls">Service Calls</div><div class="nav-item" data-view="estimates">Estimates</div><div class="nav-item" data-view="techs">Techs + Vans</div></div>
+    <div class="nav-section"><div class="nav-label">Customers</div><div class="nav-item" data-view="customers">Customers</div><div class="nav-item" data-view="maintenance">Maintenance Plans</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="invoicing">Invoicing</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="docs">Documents</div><div class="nav-item" data-view="financing">Customer Financing</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 12 calls today · 1 emergency · 4 techs out</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Open dispatch</button><button class="btn primary">+ New Call</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Calls Today</div><div class="stat-value">12</div><div class="stat-delta">1 emergency · 8 scheduled · 3 walk-in</div></div>
+        <div class="stat"><div class="stat-label">June Revenue</div><div class="stat-value">$84K</div><div class="stat-delta">+15% vs May</div></div>
+        <div class="stat"><div class="stat-label">Avg Ticket</div><div class="stat-value">$485</div><div class="stat-delta">Mixed service + replace</div></div>
+        <div class="stat"><div class="stat-label">Maintenance Plans</div><div class="stat-value">184</div><div class="stat-delta">$11K/mo recurring</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Live dispatch · today</div><a class="panel-link" onclick="navigate('dispatch')">Board</a></div>
+            <table class="table">
+              <thead><tr><th>Time</th><th>Customer</th><th>Issue</th><th>Tech</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>7:00 AM</strong></td><td>Adler (emergency)</td><td>Pipe burst basement</td><td>Mike (T1)</td><td><span class="tag emerald">Done · $1,840</span></td></tr>
+                <tr><td><strong>9:00 AM</strong></td><td>Williams</td><td>Water heater no hot water</td><td>Carlos</td><td><span class="tag blue">On site · 30 min</span></td></tr>
+                <tr><td><strong>10:00 AM</strong></td><td>Garcia</td><td>Garbage disposal jam</td><td>Eddie</td><td><span class="tag blue">En route</span></td></tr>
+                <tr><td><strong>11:30 AM</strong></td><td>Sterling</td><td>Toilet rebuild + faucet</td><td>Mike</td><td><span class="tag muted">Scheduled</span></td></tr>
+                <tr><td><strong>1:00 PM</strong></td><td>Cooper · estimate</td><td>Whole-house repipe quote</td><td>Owner</td><td><span class="tag muted">Estimate visit · $12K target</span></td></tr>
+                <tr><td><strong>2:30 PM</strong></td><td>Bergman</td><td>Annual maint · maintenance plan</td><td>Carlos</td><td><span class="tag muted">Plan member</span></td></tr>
+                <tr><td><strong>4:00 PM</strong></td><td>Hilltop HOA</td><td>Common-area leak diagnosis</td><td>Mike</td><td><span class="tag muted">Commercial · billable hr</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">After-hours emergency queue</div></div>
+            <p style="font-size:12px;color:var(--text-dim);line-height:1.6">Always-on call routing. After 6 PM, calls hit on-call tech directly. Emergency dispatch fee: $200 + standard service.</p>
+            <div class="activity-item"><div class="activity-icon">!</div><div class="activity-text"><div><strong>Tonight's on-call: Carlos</strong></div><div class="activity-time">PHONE TREE LIVE · 0 OVERNIGHT CALLS SO FAR</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📞</div><div class="activity-text"><div><strong>4 emergency calls past 30 days</strong></div><div class="activity-time">$8,400 EMERGENCY REVENUE</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Maintenance plan members</div></div>
+            <div class="activity-item"><div class="activity-icon">G</div><div class="activity-text"><div><strong>Gold tier</strong> · 84 households · $39/mo</div><div class="activity-time">2 ANNUAL VISITS · PRIORITY DISPATCH · 15% DISCOUNT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">S</div><div class="activity-text"><div><strong>Silver tier</strong> · 100 households · $19/mo</div><div class="activity-time">1 ANNUAL VISIT · 10% DISCOUNT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>MRR: $4,876</strong></div><div class="activity-time">RECURRING + 65% PULL-THROUGH ON SERVICE CALLS</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Tech productivity · today</div></div>
+            <div class="activity-item"><div class="activity-icon">MR</div><div class="activity-text"><div><strong>Mike · 6 jobs · $4,200 revenue</strong></div><div class="activity-time">EMERGENCY MORNING · 4 SCHEDULED</div></div></div>
+            <div class="activity-item"><div class="activity-icon">CR</div><div class="activity-text"><div><strong>Carlos · 4 jobs · $2,840 revenue</strong></div></div></div>
+            <div class="activity-item"><div class="activity-icon">EP</div><div class="activity-text"><div><strong>Eddie · 4 jobs · $1,640 revenue</strong></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-dispatch"><div class="page-header"><div><div class="page-subtitle">Live dispatch board · drag-drop · GPS-aware routing</div><div class="page-title">Dispatch</div></div></div><div class="coming-soon"><h3>Dispatch Operations</h3><p>Real-time dispatch with GPS-aware tech selection.</p><ul><li>Drag-drop dispatch board (calls → techs)</li><li>GPS-based nearest-tech routing</li><li>Skill-match dispatch (drain vs water heater vs gas)</li><li>Real-time customer ETA texts</li><li>Auto-replacement on tech delay</li></ul></div></div>
+    <div class="view" id="view-calls"><div class="page-header"><div><div class="page-subtitle">12 today · 4 emergency past 30 days · avg response 47 min</div><div class="page-title">Service Calls</div></div></div><div class="coming-soon"><h3>Service Call Pipeline</h3><p>From phone ring to invoice paid.</p><ul><li>Auto-capture from phone (Aircall/Dialpad integration)</li><li>Triage scripting (emergency / urgent / standard)</li><li>Skills-required tagging</li><li>Photo + video capture on site</li><li>Invoice generated on completion</li></ul></div></div>
+    <div class="view" id="view-estimates"><div class="page-header"><div><div class="page-subtitle">8 estimates open · re-pipe + heater install + sewer line repair</div><div class="page-title">Estimates</div></div></div><div class="coming-soon"><h3>Big-Job Estimating</h3><p>For jobs over $1,500 — re-pipes, heater swaps, sewer lines.</p><ul><li>On-site photo capture</li><li>Materials + labor estimating</li><li>3-option estimate (good/better/best)</li><li>Customer-side e-sign</li><li>Financing offered at presentation</li></ul></div></div>
+    <div class="view" id="view-techs"><div class="page-header"><div><div class="page-subtitle">3 techs · 3 vans · master + journeyman licenses tracked</div><div class="page-title">Techs + Vans</div></div></div><div class="coming-soon"><h3>Tech + Fleet Management</h3><p>Per-tech licensing + per-van inventory + maintenance.</p><ul><li>Per-tech master/journeyman license tracking</li><li>Per-van inventory (parts + tools)</li><li>Van maintenance scheduling</li><li>GPS tracking</li><li>Per-tech revenue scorecard</li></ul></div></div>
+    <div class="view" id="view-customers"><div class="page-header"><div><div class="page-subtitle">2,400 customers · per-home plumbing history · service frequency</div><div class="page-title">Customers</div></div></div><div class="coming-soon"><h3>Customer Database</h3><p>Per-customer history + per-home plumbing layout + lifetime value.</p><ul><li>Per-customer service history</li><li>Per-home fixture inventory + age</li><li>Recommendation engine (anode rod replace, etc.)</li><li>Maintenance plan eligibility</li><li>LTV + visit frequency</li></ul></div></div>
+    <div class="view" id="view-maintenance"><div class="page-header"><div><div class="page-subtitle">184 members · $11K/mo MRR · 92% retention</div><div class="page-title">Maintenance Plans</div></div></div><div class="coming-soon"><h3>Maintenance Plan Engine</h3><p>The lifeblood of a modern plumbing business. Recurring revenue + service-call pull-through.</p><ul><li>Gold + Silver tier auto-bill</li><li>Annual + bi-annual visit scheduling</li><li>Member-only pricing applied auto</li><li>Failed-payment recovery</li><li>Churn risk scoring</li></ul></div></div>
+    <div class="view" id="view-invoicing"><div class="page-header"><div><div class="page-subtitle">On-site invoice + tap-to-pay · QuickBooks sync · aged AR</div><div class="page-title">Invoicing</div></div></div><div class="coming-soon"><h3>Invoicing</h3><p>Tech captures invoice on tablet, customer taps to pay on the spot.</p><ul><li>Per-job invoice generation</li><li>Tap-to-pay on site (Stripe Terminal)</li><li>Auto-text invoice if customer prefers</li><li>QuickBooks Online sync</li><li>Aged AR collection sequence</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-tech revenue · marketing source ROI · maintenance plan growth</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Business Reports</h3><p>Numbers a plumbing operator needs.</p><ul><li>Per-tech revenue + efficiency</li><li>Per-marketing-source CPA</li><li>Maintenance plan growth + retention</li><li>Service-vs-replace mix</li><li>Emergency vs scheduled mix</li></ul></div></div>
+
+    <div class="view" id="view-tax"><div class="page-header"><div><div class="page-subtitle">Sales tax on materials · labor exempt (most states) · 1099 sublet · vehicle deductions</div><div class="page-title">Tax &amp; Compliance</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Audit Practice · plumber-flavored: materials taxable, labor varies by state, sublet 1099s, master-plumber license, EPA backflow cert</p>
+    <div class="stat-grid"><div class="stat"><div class="stat-label">Sales Tax MTD</div><div class="stat-value">$2,100</div></div><div class="stat"><div class="stat-label">1099 Subs</div><div class="stat-value">3</div></div><div class="stat"><div class="stat-label">Vehicle Deduction</div><div class="stat-value">$8,200</div></div><div class="stat"><div class="stat-label">Licensing</div><div class="stat-value">Current</div></div></div></div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Licensing · insurance · permits · backflow certs</div><div class="page-title">Documents</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Audit Practice · plumber-flavored: master/journeyman licenses, GL + WC insurance, per-job permits, backflow certifications</p>
+    <div class="panel" style="padding:0"><table class="table"><thead><tr><th>Doc</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td><strong>Master Plumber License.pdf</strong></td><td>Licensure</td><td><span class="tag emerald">Current</span></td></tr><tr><td><strong>Workers Comp.pdf</strong></td><td>Insurance</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>Backflow Tester Cert.pdf</strong></td><td>Specialty</td><td><span class="tag emerald">Annual renewed</span></td></tr></tbody></table></div></div>
+    <div class="view" id="view-financing"><div class="page-header"><div><div class="page-subtitle">GreenSky · EnerBank · for repipe + heater + sewer line jobs</div><div class="page-title">Customer Financing</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Furniture cockpit · plumber-flavored: GreenSky, EnerBank, Synchrony for jobs &gt; $1,500</p>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Active financing</div></div><table class="table"><thead><tr><th>Customer</th><th>Job</th><th>Amount</th><th>Lender</th><th>Status</th></tr></thead><tbody><tr><td><strong>Cooper</strong></td><td>Whole-house repipe</td><td>$12,400</td><td>GreenSky</td><td><span class="tag emerald">Approved 18-mo SAC</span></td></tr><tr><td><strong>Williams</strong></td><td>Tankless heater install</td><td>$4,800</td><td>EnerBank</td><td><span class="tag orange">App pending</span></td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Plumbing Service Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
