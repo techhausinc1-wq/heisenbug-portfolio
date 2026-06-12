@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All cockpit demos · Heisenbug</title>
+<meta name="description" content="29 interactive cockpit demos · click any to try the cockpit pattern for that industry.">
+<meta name="theme-color" content="#0F1F0F">
+<link rel="canonical" href="https://heisenbug.app/demos/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/heisenbug-square-small.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://heisenbug.app/demos/">
+<meta property="og:title" content="All cockpit demos · Heisenbug">
+<meta property="og:description" content="29 interactive cockpit demos · click any to try the cockpit pattern for that industry.">
+<meta property="og:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --paper: #fbf8ef; --dark: #0F1F0F; --green-mid: #3E7B3E; --green-bright: #C6D97A; --cream: #F2EBCB; --ink: #16201a; --muted: #5a6a5a; --line: rgba(15,31,15,0.14); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.skip-link { position: absolute; left: -9999px; top: 0; background: var(--dark); color: var(--cream); padding: 10px 14px; border-radius: 0 0 6px 0; z-index: 9999; font-weight: 600; text-decoration: none; }
+.skip-link:focus { left: 0; }
+header { background: var(--dark); color: var(--cream); padding: 26px 6%; }
+header .inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+header .brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; color: var(--cream); text-decoration: none; }
+header nav { margin-left: auto; display: flex; gap: 20px; }
+header nav a { color: rgba(242,235,203,0.82); text-decoration: none; font-size: 13.5px; font-weight: 500; padding: 8px 12px; border-radius: 8px; }
+header nav a:hover { color: var(--green-bright); background: rgba(198,217,122,0.08); }
+header nav a.active { color: var(--green-bright); background: rgba(198,217,122,0.12); }
+main { max-width: 1180px; margin: 0 auto; padding: 50px 6%; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-mid); margin-bottom: 16px; }
+h1 { font-family: 'Fraunces', serif; font-size: clamp(34px, 4.5vw, 50px); font-weight: 500; letter-spacing: -0.6px; line-height: 1.08; margin-bottom: 14px; }
+.lead { font-size: 17px; color: var(--muted); max-width: 720px; margin-bottom: 36px; }
+.lead a { color: var(--green-mid); font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.tile { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px; text-decoration: none; color: var(--ink); transition: all 140ms; display: block; }
+.tile:hover { border-color: var(--green-mid); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(15,31,15,0.07); }
+.tile .industry { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--green-mid); margin-bottom: 6px; font-weight: 600; }
+.tile .name { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; margin-bottom: 4px; letter-spacing: -0.2px; }
+.tile .desc { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.tile .badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; margin-top: 10px; font-weight: 700; }
+.tile .badge.prod { background: rgba(232,200,168,0.22); color: #b8771d; }
+.tile .badge.demo { background: rgba(198,217,122,0.22); color: var(--green-mid); }
+footer { padding: 40px 6%; border-top: 1px solid var(--line); margin-top: 60px; text-align: center; color: var(--muted); font-size: 13px; }
+footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; }
+:focus-visible { outline: 3px solid var(--green-mid); outline-offset: 2px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header role="banner">
+  <div class="inner">
+    <a class="brand" href="/">Heisenbug</a>
+    <nav role="navigation" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/built/">Built</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+      <a href="/demos/" class="active">Demos</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" role="main">
+  <div class="eyebrow">→ All 29 interactive cockpits</div>
+  <h1>The demo catalog.</h1>
+  <p class="lead">Click any cockpit to try it. Each demo runs in your browser — buttons work, panels switch, lists persist via localStorage. Designed to give you 5 minutes of hands-on feel for the pattern before you ever talk to us. <a href="/contact/">Start a project →</a></p>
+
+  <div class="grid">
+    <a class="tile" href="stockscout-demo/"><div class="industry">HVAC service · field inventory</div><div class="name">HVAC Inventory · StockScout</div><div class="desc">Barcode scan, voice queries, EPA 608 logging, offline-capable. Live at a San Antonio HVAC contractor.</div><span class="badge prod">Production · client</span></a>
+    <a class="tile" href="home-health-care-cockpit-demo/"><div class="industry">Home health · agency ops</div><div class="name">Home Health Care</div><div class="desc">Caregiver dispatch, EVV, care plans, family messaging, Medicare/Medicaid billing. Live with an agency.</div><span class="badge prod">Production · client</span></a>
+    <a class="tile" href="vending-route-cockpit-demo/"><div class="industry">Vending · coffee + snack route</div><div class="name">Vending Route · BrewRoute</div><div class="desc">Telemetry-driven route optimization, location scout, cashless integration, per-machine P&amp;L. Live with a route operator.</div><span class="badge prod">Production · client</span></a>
+    <a class="tile" href="plumber-cockpit-demo/"><div class="industry">Plumbing · residential + commercial</div><div class="name">Plumbing Service</div><div class="desc">Dispatch board, service-call pipeline, maintenance plans, big-job estimating.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="auto-repair-cockpit-demo/"><div class="industry">Independent auto shop · ASE</div><div class="name">Auto Repair Shop</div><div class="desc">Bay status, digital vehicle inspections, text-based estimate approval.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="contractor-cockpit-demo/"><div class="industry">General contractor</div><div class="name">Contractor (GC)</div><div class="desc">Project pipeline, change orders, sub coordination, draw schedule.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="insulation-cockpit-demo/"><div class="industry">Spray foam · weatherization</div><div class="name">Insulation</div><div class="desc">Job pipeline, R-value materials calc, energy audit reporting.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="landscape-cockpit-demo/"><div class="industry">Landscape · lawn care</div><div class="name">Landscape + Lawn</div><div class="desc">Route optimization, recurring service schedule, supplies inventory.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="pool-service-cockpit-demo/"><div class="industry">Pool service</div><div class="name">Pool Service</div><div class="desc">Chemical schedule, route optimizer, state-mandated chemical logs.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="pet-services-cockpit-demo/"><div class="industry">Pet · grooming + boarding + walking</div><div class="name">Pet Services</div><div class="desc">Booking + window optimization, daily-walk GPS verify, owner notifications.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="vacation-rental-cockpit-demo/"><div class="industry">Short-term rental · Airbnb + VRBO</div><div class="name">Vacation Rental</div><div class="desc">Multi-property calendar, unified inbox with AI replies, bank-linked P&amp;L.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="property-mgmt-cockpit-demo/"><div class="industry">Residential + commercial PM</div><div class="name">Property Mgmt</div><div class="desc">Maintenance pipeline, rent collection with auto-ACH, owner statements.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="audit-practice-cockpit-demo/"><div class="industry">CPA / tax practice</div><div class="name">Audit / CPA Practice</div><div class="desc">Client pipeline, return prep workflow, IOLTA three-way reconciliation.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="legal-practice-cockpit-demo/"><div class="industry">Law firm · litigation + transactional</div><div class="name">Legal Practice</div><div class="desc">Matter pipeline, time tracking, IOLTA-grade trust accounting.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="realtor-cockpit-demo/"><div class="industry">Real estate · residential agent</div><div class="name">Realtor</div><div class="desc">Lead intake, showings calendar, transaction tracker.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="realtor-launch-kit-demo/"><div class="industry">Real estate · brand-new agent</div><div class="name">New Realtor Launch Kit</div><div class="desc">Day-zero realtor pack: brand, lead-flow, contract templates.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="photographer-cockpit-demo/"><div class="industry">Photo / video · wedding · portrait</div><div class="name">Photographer</div><div class="desc">Inquiry intake, booking calendar, Lightroom-integrated workflow.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="furniture-cockpit-demo/"><div class="industry">Discount furniture · multi-account retail</div><div class="name">Furniture &amp; Mattress</div><div class="desc">Multi-account retail, no-credit financing pipeline, inventory.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="diamond-cockpit-demo/"><div class="industry">Diamond &amp; fine jewelry</div><div class="name">Diamond Atelier</div><div class="desc">Multi-client memo tracking, appraisal pipeline, milestone workflow.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="jewelry-video-studio-demo/"><div class="industry">Jewelry video studio</div><div class="name">Jewelry Video Studio</div><div class="desc">Multi-camera setup, lighting presets, shoot logs.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="florist-cockpit-demo/"><div class="industry">Florist · retail + event + subscription</div><div class="name">Florist</div><div class="desc">Order pipeline, event proposals, subscription delivery.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="auto-parts-cockpit-demo/"><div class="industry">Auto parts · salvage + aftermarket</div><div class="name">Auto Parts Pipeline</div><div class="desc">Hollander interchange mapping, salvage triage, photo pipeline at scale.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="restaurant-cockpit-demo/"><div class="industry">Full-service hospitality</div><div class="name">Restaurant</div><div class="desc">FOH/BOH coordination, 86 list management, reservations.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="dental-practice-cockpit-demo/"><div class="industry">Dental · general + cosmetic + ortho</div><div class="name">Dental Practice</div><div class="desc">Chair schedule, recall engine, treatment plan tracking, insurance pre-auth.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="med-spa-cockpit-demo/"><div class="industry">Aesthetics · injectables · skin</div><div class="name">Med Spa</div><div class="desc">Multi-provider scheduling, injectables inventory, patient memberships.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="fitness-studio-cockpit-demo/"><div class="industry">Boutique fitness · group class</div><div class="name">Fitness Studio</div><div class="desc">Class schedule with waitlist, member retention engine, trial conversion.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="daycare-cockpit-demo/"><div class="industry">Childcare · infant + toddler + pre-K</div><div class="name">Daycare + Preschool</div><div class="desc">QR check-in/out, USDA CACFP meal planning, immunization compliance.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="salon-cockpit-demo/"><div class="industry">Hair salon · color · barber</div><div class="name">Salon + Barbershop</div><div class="desc">Per-stylist booking, rebook engine, retail attach tracking, commissions.</div><span class="badge demo">Live demo</span></a>
+    <a class="tile" href="tattoo-cockpit-demo/"><div class="industry">Tattoo · custom + flash + piercing</div><div class="name">Tattoo Studio</div><div class="desc">Per-artist booking, consult pipeline, aftercare auto-text, BBP compliance.</div><span class="badge demo">Live demo</span></a>
+  </div>
+</main>
+
+<footer role="contentinfo">
+  <div><a href="/">Heisenbug</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
+  <div style="margin-top: 8px;">Heisenbug Inc. · San Antonio TX · © 2026</div>
+</footer>
+</body>
+</html>
