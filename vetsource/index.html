@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VetSource &middot; a free hub for U.S. veterans &middot; built by Heisenbug</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com 'unsafe-inline'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline'; font-src https://fonts.gstatic.com data:; frame-ancestors 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+<meta name="description" content="VetSource is a free, no-login hub for U.S. veterans. The right phone number on the first try instead of the fifteenth. Crisis support, housing, benefits, records, local programs. Built by Heisenbug, run at cost, free for vets forever.">
+<meta name="theme-color" content="#0F1F0F">
+<link rel="canonical" href="https://heisenbug.app/vetsource/">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="icon" sizes="192x192" href="/heisenbug-icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/heisenbug-square-small.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://heisenbug.app/vetsource/">
+<meta property="og:title" content="VetSource &middot; a free hub for U.S. veterans">
+<meta property="og:description" content="The right phone number on the first try instead of the fifteenth. Crisis, housing, benefits, records, local programs. Free, no login, no data collection.">
+<meta property="og:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Heisenbug">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VetSource &middot; a free hub for U.S. veterans">
+<meta name="twitter:description" content="The right phone number on the first try instead of the fifteenth. Built by Heisenbug. Free for vets forever.">
+<meta name="twitter:image" content="https://heisenbug.app/heisenbug-og-1200x630.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --dark:        #0F1F0F;
+  --dark-2:      #111111;
+  --dark-3:      #1a2e1a;
+  --green-mid:   #3E7B3E;
+  --green-bright:#C6D97A;
+  --green-glow:  rgba(198,217,122,0.18);
+  --cream:       #F2EBCB;
+  --cream-soft:  #faf5dc;
+  --ink:         #0a0f0a;
+  --ink-soft:    #2a3a2a;
+  --ink-dim:     #5a6a5a;
+  --rule-dark:   rgba(198,217,122,0.18);
+  --rule-light:  rgba(15,31,15,0.14);
+  --olive:       #4A5A3A;
+  --tan:         #B8A572;
+  --ochre:       #B07E2E;
+  --crisis:      #A53929;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--dark);
+  color: var(--cream);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--green-bright); text-decoration: none; transition: color 140ms; }
+a:hover { color: #d8e88a; text-decoration: underline; }
+
+.sec-dark  { background: var(--dark); color: var(--cream); }
+.sec-light { background: var(--cream); color: var(--ink); }
+.sec-light a { color: var(--green-mid); }
+.sec-light a:hover { color: #2c5a2c; }
+
+header {
+  background: rgba(15,31,15,0.92);
+  border-bottom: 0.5px solid var(--rule-dark);
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(12px);
+}
+.header-inner {
+  max-width: 1240px; margin: 0 auto;
+  padding: 14px 6%;
+  display: flex; align-items: center; gap: 14px;
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--cream); }
+.brand:hover { text-decoration: none; color: var(--cream); }
+.brand-mark {
+  width: 54px; height: 54px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+}
+.brand-mark img {
+  width: 100%; height: 100%;
+  object-fit: contain; display: block;
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 0 8px rgba(198,217,122,0.25));
+}
+.brand-text { line-height: 1.1; }
+.brand-name {
+  font-family: 'Fraunces', serif; font-size: 22px;
+  font-weight: 500; letter-spacing: -0.3px; color: var(--cream);
+}
+.brand-sub {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; color: var(--green-bright);
+  text-transform: uppercase; margin-top: 2px;
+}
+.header-spacer { flex: 1; }
+.nav { display: flex; align-items: center; gap: 4px; }
+.nav a {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.2px;
+  color: rgba(242,235,203,0.82);
+  padding: 12px 14px; border-radius: 20px; min-height: 44px;
+  display: inline-flex; align-items: center;
+}
+.nav a:hover { color: var(--cream); background: rgba(198,217,122,0.06); text-decoration: none; }
+.header-cta {
+  background: var(--green-bright); color: var(--dark);
+  padding: 10px 20px; border-radius: 24px;
+  font-size: 13px; font-weight: 700; margin-left: 6px;
+}
+.header-cta:hover { background: #d8e88a; color: var(--dark); text-decoration: none; }
+
+.sec { padding: 90px 6%; text-align: center; }
+.sec-inner { max-width: 1240px; margin: 0 auto; }
+.sec-narrow { max-width: 920px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--green-mid); margin-bottom: 22px;
+}
+.sec-dark .section-eyebrow { color: var(--green-bright); }
+
+h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 500; line-height: 1.13;
+  letter-spacing: -0.018em; margin: 0 auto 22px;
+  max-width: 22em;
+}
+.sec-dark h2 { color: var(--cream); }
+
+.sec p {
+  font-size: 18px; line-height: 1.65;
+  color: var(--ink-soft); margin: 0 auto 18px;
+  max-width: 38em; text-align: left;
+}
+.sec-dark p { color: rgba(242,235,203,0.78); }
+
+.btn-primary, .btn-secondary {
+  display: inline-block; padding: 14px 28px; border-radius: 28px;
+  font-size: 14px; font-weight: 700; letter-spacing: 0.2px;
+  cursor: pointer; border: none;
+}
+.btn-primary {
+  background: var(--green-bright); color: var(--dark);
+}
+.btn-primary:hover {
+  background: #d8e88a; color: var(--dark); text-decoration: none;
+}
+.btn-secondary {
+  background: transparent; color: var(--cream);
+  border: 1px solid rgba(242,235,203,0.28);
+}
+.btn-secondary:hover {
+  background: rgba(242,235,203,0.06); color: var(--cream); text-decoration: none;
+}
+
+.crisis-stripe {
+  background: var(--crisis);
+  color: #FBEFE4;
+  text-align: center;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  border-bottom: 1px solid #6B1810;
+}
+.crisis-stripe a {
+  color: #FBEFE4;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin: 0 8px;
+}
+.crisis-stripe .label { opacity: 0.85; margin-right: 6px; font-weight: 500; letter-spacing: 0.04em; }
+@media (max-width: 600px) {
+  .crisis-stripe { font-size: 12px; padding: 9px 10px; }
+}
+
+.cabinet-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 32px; text-align: left;
+}
+@media (max-width: 900px) { .cabinet-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .cabinet-grid { grid-template-columns: 1fr; } }
+.cabinet {
+  background: var(--dark-3);
+  border: 0.5px solid var(--rule-dark);
+  border-left: 3px solid var(--green-mid);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+.cabinet.crisis { border-left-color: var(--crisis); }
+.cabinet.action { border-left-color: var(--ochre); }
+.cabinet.paper  { border-left-color: var(--tan); }
+.cabinet-name {
+  font-family: 'Fraunces', serif; font-size: 18px;
+  font-weight: 500; color: var(--cream); margin: 0 0 6px;
+}
+.cabinet-desc {
+  font-size: 13.5px; line-height: 1.5;
+  color: rgba(242,235,203,0.7); margin: 0;
+}
+
+.pledge {
+  background: var(--dark-3);
+  border: 0.5px solid var(--rule-dark);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin: 28px auto 0;
+  max-width: 720px;
+  text-align: left;
+}
+.pledge h3 {
+  font-family: 'Fraunces', serif; font-size: 20px;
+  font-weight: 600; margin: 0 0 12px; color: var(--green-bright);
+}
+.pledge ul {
+  margin: 14px 0 0; padding-left: 18px;
+  font-size: 14.5px; line-height: 1.7;
+  color: rgba(242,235,203,0.75);
+}
+.pledge li { margin-bottom: 6px; }
+
+footer {
+  background: var(--dark-2);
+  color: rgba(242,235,203,0.55);
+  padding: 50px 6% 40px;
+  text-align: center;
+  font-size: 13px;
+  border-top: 0.5px solid var(--rule-dark);
+}
+footer .brand-mark {
+  width: 56px; height: 56px;
+  margin: 0 auto 14px;
+  background: transparent;
+  border: none;
+}
+.foot-name {
+  font-family: 'Fraunces', serif; font-size: 18px;
+  font-weight: 500; color: var(--cream); margin-bottom: 4px;
+}
+.foot-tagline {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--green-bright); margin: 8px 0;
+}
+.foot-meta {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: rgba(242,235,203,0.4); margin-top: 14px;
+}
+.foot-links {
+  margin-top: 14px; font-size: 13px;
+  display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;
+}
+.foot-links a { color: rgba(242,235,203,0.4); text-decoration: none; }
+.foot-links a:hover { color: var(--green-bright); }
+
+@media (max-width: 720px) {
+  .header-inner { flex-wrap: wrap; gap: 10px; }
+  .header-spacer { display: none; }
+  .nav { order: 3; width: 100%; justify-content: center; gap: 2px; }
+  .nav a { padding: 7px 11px; font-size: 12px; }
+  .header-cta { margin-left: auto; padding: 9px 16px; font-size: 12px; }
+  .brand-name { font-size: 19px; }
+  .brand-mark { width: 44px; height: 44px; }
+}
+
+:focus-visible {
+  outline: 3px solid var(--green-bright);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+a:focus-visible { text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "VetSource — a free hub for U.S. veterans",
+  "url": "https://heisenbug.app/vetsource/",
+  "description": "VetSource is a free, no-login hub for U.S. veterans. Crisis support, housing, benefits, records, local programs. Built by Heisenbug, run at cost.",
+  "isPartOf": { "@type": "WebSite", "name": "Heisenbug", "url": "https://heisenbug.app" },
+  "about": {
+    "@type": "Thing",
+    "name": "VetSource",
+    "description": "Free, no-login resource hub for U.S. military veterans."
+  },
+  "publisher": { "@type": "Organization", "name": "Heisenbug Inc." }
+}
+</script>
+<link rel="manifest" href="/manifest.json">
+</head><body>
+
+<a class="skip-link" href="#main" style="position:absolute;left:-9999px;top:0;background:#1f5b3a;color:#fff;padding:10px 14px;z-index:9999;text-decoration:none;font-weight:600;" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
+
+<header role="banner">
+  <div class="header-inner">
+    <a class="brand" href="/">
+      <div class="brand-mark"><img loading="lazy" decoding="async" src="/heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
+      <div class="brand-text">
+        <div class="brand-name">Heisenbug</div>
+        <div class="brand-sub">Vertical Software</div>
+      </div>
+    </a>
+    <div class="header-spacer"></div>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/built/">Built</a>
+      <a href="/case-studies/">Case studies</a>
+      <a href="/methodology/">Methodology</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/about/">About</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <a class="header-cta" href="/contact/">Start a project &rarr;</a>
+  </div>
+</header>
+
+<main id="main" role="main">
+
+  <section class="sec sec-dark" style="padding-top:70px; padding-bottom:50px;">
+    <div class="sec-inner sec-narrow">
+      <div class="section-eyebrow">&rarr; A free hub for U.S. veterans</div>
+      <h1 style="font-family:'Fraunces',serif; font-size:clamp(38px,5.8vw,68px); font-weight:500; line-height:1.04; letter-spacing:-0.02em; margin:0 auto 24px; max-width:14em;">Straight lines to <span style="color:var(--green-bright); font-weight:600;">real help</span>.</h1>
+      <p style="font-size:19px; max-width:30em; margin:0 auto 18px; color:rgba(242,235,203,0.85); text-align:center;">VetSource points a U.S. veteran to the right phone number on the first try instead of the fifteenth.</p>
+      <p style="font-size:16px; max-width:32em; margin:0 auto 32px; color:rgba(242,235,203,0.7); text-align:center;">Crisis support, housing, benefits, records, local programs. Plain language. No login. No paperwork. No data collection. Free for vets, forever.</p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a class="btn-primary" href="https://vetsource.tiiny.site/" target="_blank" rel="noopener">Visit VetSource &rarr;</a>
+        <a class="btn-secondary" href="#story">Why we built it</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="crisis-stripe">
+    <span class="label">If you or a vet you know is in crisis:</span>
+    <a href="tel:988">Call 988, press 1</a>
+    &middot;
+    <a href="sms:838255">Text 838255</a>
+    &middot;
+    <a href="https://www.veteranscrisisline.net/" target="_blank" rel="noopener">Chat online</a>
+  </div>
+
+  <section class="sec sec-light" id="story">
+    <div class="sec-inner sec-narrow">
+      <div class="section-eyebrow" style="color:var(--green-mid);">&rarr; The why</div>
+      <h2>One civilian who owes this country something.</h2>
+      <p>VetSource is built and run by Ivan Svedov, founder of Heisenbug, with domain expertise from a Marine who knows the system from the inside. Neither of us are vets. The site exists because the path from "I need help" to actually getting it shouldn't take twelve hours of phone tag, a half-broken government portal, and a war story for every gatekeeper.</p>
+      <p>The right phone number, the right form, the right local program &mdash; on the first try. That's the whole product. No SaaS, no upsell, no subscription, no premium tier. The build is funded out of pocket. It will stay that way.</p>
+    </div>
+  </section>
+
+  <section class="sec sec-dark">
+    <div class="sec-inner">
+      <div class="section-eyebrow">&rarr; What's in it</div>
+      <h2>Nine cabinets. The things that matter on the worst day.</h2>
+      <p style="text-align:center; max-width:34em; margin:0 auto 8px;">Each cabinet collapses a category of help into one page: the phone number that actually gets a human, the form that actually moves, the local door that actually opens.</p>
+
+      <div class="cabinet-grid">
+        <div class="cabinet crisis">
+          <div class="cabinet-name">Crisis &amp; mental health</div>
+          <p class="cabinet-desc">988 press 1 (Veterans Crisis Line), text 838255, chat. Local crisis options. No-cost counseling routes. What to do in the next thirty minutes.</p>
+        </div>
+        <div class="cabinet">
+          <div class="cabinet-name">Housing &amp; homelessness</div>
+          <p class="cabinet-desc">HUD-VASH vouchers, SSVF rapid re-housing, GPD transitional housing, National Call Center for Homeless Veterans (877-424-3838). Tonight, this week, this month.</p>
+        </div>
+        <div class="cabinet action">
+          <div class="cabinet-name">Benefits &amp; claims</div>
+          <p class="cabinet-desc">VA disability claims, appeals, the difference between PACT Act and pre-PACT filings. Free VSO (Veterans Service Officer) lookup &mdash; you don't pay a lawyer for this.</p>
+        </div>
+        <div class="cabinet paper">
+          <div class="cabinet-name">ID &amp; records</div>
+          <p class="cabinet-desc">DD-214 replacement, VA ID card, state veteran ID. eBenefits, Vets.gov, the National Personnel Records Center. The exact link, not three layers of menus.</p>
+        </div>
+        <div class="cabinet">
+          <div class="cabinet-name">Healthcare</div>
+          <p class="cabinet-desc">VA enrollment, community care eligibility, the local VA medical center. Toxic exposure registry. What's free, what's not, what the wait actually is.</p>
+        </div>
+        <div class="cabinet action">
+          <div class="cabinet-name">Jobs &amp; transition</div>
+          <p class="cabinet-desc">Vocational Rehabilitation (Chapter 31), VA Work-Study, federal hiring preference, veteran-owned business certification (VOSB / SDVOSB). The doors that exist that you weren't told about.</p>
+        </div>
+        <div class="cabinet paper">
+          <div class="cabinet-name">Education &amp; GI Bill</div>
+          <p class="cabinet-desc">Post-9/11 GI Bill, transfer to dependents, Yellow Ribbon, VR&amp;E. The schools that actually honor it. The schools that don't.</p>
+        </div>
+        <div class="cabinet">
+          <div class="cabinet-name">Women, MST, family</div>
+          <p class="cabinet-desc">Women veteran call center (855-829-6636), Military Sexual Trauma counselors, family caregiver support, survivor benefits. Specific lines, specific advocates.</p>
+        </div>
+        <div class="cabinet crisis">
+          <div class="cabinet-name">The community</div>
+          <p class="cabinet-desc">A future peer space where vets talk to vets, reviewed by a real person, no algorithm. Currently a waitlist. Will not ship until it can ship safely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-light">
+    <div class="sec-inner sec-narrow">
+      <div class="section-eyebrow" style="color:var(--green-mid);">&rarr; What this isn't, and never will be</div>
+      <h2>The pledge.</h2>
+      <div class="pledge" style="background:#1a2e1a; color:rgba(242,235,203,0.85); border:0.5px solid rgba(198,217,122,0.18);">
+        <h3>Free, forever. No exceptions.</h3>
+        <ul>
+          <li>No login, no account, no email capture as the price of entry.</li>
+          <li>No tracking. No Google Analytics, no Facebook pixel, no third-party scripts following anyone around the internet.</li>
+          <li>No data sold. Nothing typed into VetSource is stored. Nothing is shared.</li>
+          <li>No paid tier. There is no "premium" version. There never will be.</li>
+          <li>No affiliation with the VA. VetSource is independent. It just points to the right doors.</li>
+          <li>No AI hallucinations dressed up as advice. Every phone number, link, and program description is checked against a primary source.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-dark">
+    <div class="sec-inner sec-narrow">
+      <div class="section-eyebrow">&rarr; Why it's on heisenbug.app</div>
+      <h2>One cockpit pattern, applied to a different problem.</h2>
+      <p style="text-align:center; max-width:36em; margin:0 auto;">VetSource is built on the same toolkit as every other Heisenbug cockpit &mdash; single-file frontend, fast on a five-year-old phone, offline-capable, accessible, no dependency on a server we might shut off in three years. The catalog charges for that toolkit. This one doesn't. Same engine, different posture.</p>
+      <p style="text-align:center; max-width:36em; margin:18px auto 0; color:rgba(242,235,203,0.6); font-size:15px;">If you run an operation that helps veterans &mdash; a county VSO, a 501(c)(3), a transitional housing org &mdash; and there's something missing or wrong on VetSource, tell us. The fix usually ships the same day.</p>
+    </div>
+  </section>
+
+  <section class="sec sec-dark" style="padding-top:30px;">
+    <div class="sec-inner sec-narrow" style="text-align:center;">
+      <div class="section-eyebrow">&rarr; Go use it</div>
+      <h2 style="margin-bottom:14px;">Open VetSource.</h2>
+      <p style="text-align:center; max-width:30em; margin:0 auto 26px;">Bookmark it. Send it to a vet you know. Send it to the next person who asks you what to do.</p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a class="btn-primary" href="https://vetsource.tiiny.site/" target="_blank" rel="noopener">vetsource.tiiny.site &rarr;</a>
+        <a class="btn-secondary" href="mailto:hello@heisenbug.app?subject=VetSource%20%E2%80%94%20feedback%20or%20a%20missing%20resource">Tell us what's missing</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <div class="brand-mark"><img loading="lazy" decoding="async" src="/heisenbug-square-small.png" alt="Heisenbug" width="56" height="56"></div>
+  <div class="foot-name">Heisenbug Software</div>
+  <div class="foot-tagline">Vertical software for operators</div>
+  <div class="foot-meta">Heisenbug Inc. &middot; San Antonio TX &middot; © 2026</div>
+  <div class="foot-links">
+    <a href="/built/">Built</a>
+    <a href="/case-studies/">Case studies</a>
+    <a href="/methodology/">Methodology</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+    <a href="/vetsource/">VetSource</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="mailto:hello@heisenbug.app">hello@heisenbug.app</a>
+  </div>
+</footer>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  });
+}
+</script>
+</body>
+</html>
