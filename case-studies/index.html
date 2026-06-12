@@ -85,9 +85,9 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
   "description": "Three Heisenbug cockpits running in production with real operators.",
   "numberOfItems": 3,
   "itemListElement": [
-    {"@type": "ListItem", "position": 1, "item": {"@type": "Article", "headline": "HVAC service inventory cockpit · San Antonio HVAC contractor", "url": "https://heisenbug.app/case-studies/#hvac-inventory"}},
-    {"@type": "ListItem", "position": 2, "item": {"@type": "Article", "headline": "Vending route operations cockpit · Pennsylvania route operator", "url": "https://heisenbug.app/case-studies/#vending-route"}},
-    {"@type": "ListItem", "position": 3, "item": {"@type": "Article", "headline": "Home health care agency cockpit · Texas home health agency", "url": "https://heisenbug.app/case-studies/#home-health"}}
+    {"@type": "ListItem", "position": 1, "item": {"@type": "Article", "headline": "HVAC service inventory cockpit · production deployment with an independent HVAC contractor", "url": "https://heisenbug.app/case-studies/#hvac-inventory"}},
+    {"@type": "ListItem", "position": 2, "item": {"@type": "Article", "headline": "Vending route operations cockpit · production deployment branded BrewRoute", "url": "https://heisenbug.app/case-studies/#vending-route"}},
+    {"@type": "ListItem", "position": 3, "item": {"@type": "Article", "headline": "Home health care agency cockpit · production deployment with a home health agency", "url": "https://heisenbug.app/case-studies/#home-health"}}
   ]
 }
 </script>
@@ -111,107 +111,67 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
 </header>
 
 <main id="main" role="main">
-  <div class="eyebrow">→ Three production deployments · 2024-2026</div>
+  <div class="eyebrow">→ Three production deployments</div>
   <h1>Cockpits in the <em>wild</em>.</h1>
-  <p class="lead">Most of our catalog is interactive walkthroughs. These three are live with real operators, processing real visits, real routes, real revenue. Details below are anonymized — the operators didn't sign up to become marketing material — but the patterns are honest.</p>
+  <p class="lead">Most of the catalog is interactive walkthroughs. These three are live with real operators today. What's documented below is the shape of the cockpit — what it does and what it replaced. No fabricated metrics, no fabricated geography, no invented quotes.</p>
 
   <div class="note">
-    <strong>Anonymization policy:</strong> Where a deployment names the actual operator or business, that operator opted into the reference. Where the case study uses "a Texas home health agency" or similar, the operator has not opted in and we use industry + region only. The cockpits run the same regardless of how they're named here.
+    <strong>Honesty policy:</strong> we don't make up numbers, locations, or customer quotes for marketing. Performance details are between us and the operator. What you read below is verifiable from the code and from the operator on request.
   </div>
 
   <!-- ────────────────── HVAC ────────────────── -->
   <section class="case" id="hvac-inventory">
     <div class="head">
-      <span class="badge">Production · since 2026</span>
-      <h2>HVAC service inventory · San Antonio</h2>
+      <span class="badge">Production · branded StockScout</span>
+      <h2>HVAC service inventory</h2>
       <a class="demo-link" href="/demos/stockscout-demo/">Try the demo →</a>
     </div>
     <div class="body">
       <h3>→ The operator</h3>
-      <p>An independent HVAC service company in San Antonio, TX. 4 service trucks, 3 lead techs plus a foreman, residential + light-commercial work, ~$1.2M in annual revenue. Has been running on a shared Google Sheet, a parts envelope in the foreman's truck, and a group text for 8 years.</p>
-
-      <h3>→ What hurt</h3>
-      <p>The foreman estimated they were eating ~$48,000 a year in parts. Couldn't tell you which truck had which condenser fan, which compressor, which capacitor. Techs would drive 45 min back to the warehouse for a part they had on a different truck. Refrigerant cylinders had unknown owners and unknown weights — EPA Section 608 logbook was a paper notebook updated maybe weekly. Insurance audit was approaching with no reliable refrigerant log.</p>
+      <p>An independent HVAC service contractor running multiple service trucks. Residential and light-commercial work. Had been running on a shared spreadsheet, a parts envelope, and a group text.</p>
 
       <h3>→ What we built</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~10 days</div><div class="lbl">From first call to live in trucks</div></div>
-        <div class="stat"><div class="num">3 panels</div><div class="lbl">Truck inventory · Refrigerant log · Owner view</div></div>
-      </div>
-      <p style="margin-top: 14px;">A phone-first PWA installed to each truck's iPhone. Barcode scan with the phone camera reads parts in/out. Voice query — "where's the two-ton condenser fan motor" — returns truck location + bin number, instantly. Refrigerant cylinder weighing screen logs in/out with EPA Section 608 compliance, auto-generates the annual log report. Owner view aggregates parts by truck, surfaces low-stock, flags any cylinder that hasn't been weighed in 30 days.</p>
+      <p>A phone-first PWA installed to each truck's phone. Barcode scan with the phone camera reads parts in and out of truck inventory. Voice query — "where's the two-ton condenser fan motor" — returns the answer instantly. Refrigerant cylinder weighing screen logs in/out with EPA Section 608 compliance and auto-generates the annual log report. Owner view aggregates parts by truck, surfaces low-stock, flags any cylinder that hasn't been weighed in 30 days. Works offline.</p>
 
-      <h3>→ What changed in 90 days</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~$11k</div><div class="lbl">Estimated parts shrinkage prevented quarter 1</div></div>
-        <div class="stat"><div class="num">2.3 hrs/wk</div><div class="lbl">Drive time saved per tech vs the spreadsheet era</div></div>
-      </div>
-
-      <div class="replaced"><strong>What it replaced</strong>Google Sheets · paper refrigerant logbook · group text for parts requests · a 2010-era handheld scanner the foreman stopped using two years ago</div>
+      <div class="replaced"><strong>What it replaced</strong>Shared spreadsheet for parts · paper refrigerant logbook · group text for parts requests · an old handheld scanner the foreman stopped using long ago</div>
     </div>
   </section>
 
   <!-- ────────────────── VENDING ────────────────── -->
   <section class="case" id="vending-route">
     <div class="head">
-      <span class="badge">Production · since 2024 · branded BrewRoute</span>
-      <h2>Vending + coffee route ops · Pennsylvania</h2>
+      <span class="badge">Production · branded BrewRoute</span>
+      <h2>Vending + coffee route ops</h2>
       <a class="demo-link" href="/demos/vending-route-cockpit-demo/">Try the demo →</a>
     </div>
     <div class="body">
       <h3>→ The operator</h3>
-      <p>A multi-state vending and coffee-route operator headquartered in Pennsylvania. ~80 placed machines, multiple states, mix of cantaloupe NayaX telemetry + DEX/MDB hardware + cash-only legacy units. Solo operator + a route helper.</p>
-
-      <h3>→ What hurt</h3>
-      <p>The operator drove each route weekly whether the machines needed service or not. No telemetry visibility — couldn't tell from home which machines were empty, which were faulted, which had a coin jam. Couldn't tell which placements were profitable. Tax time was a shoebox of receipts and a guess.</p>
+      <p>A multi-state vending and coffee-route operator. Mix of telemetry-equipped hardware (NayaX, Cantaloupe DEX/MDB) and cash-only legacy units.</p>
 
       <h3>→ What we built</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~14 days</div><div class="lbl">First version live on phone + iPad</div></div>
-        <div class="stat"><div class="num">6 modules</div><div class="lbl">Route · Telemetry · Cashless · Location scout · Per-machine P&amp;L · Receipt capture</div></div>
-      </div>
-      <p style="margin-top: 14px;">Today's route built dynamically from telemetry — only machines that need service, ordered by drive-time optimization. Cashless integration with NayaX + Cantaloupe APIs to know exactly how much each machine cleared this week. Location-scout engine that surfaces new placement opportunities from local business permits + openings. Per-machine P&amp;L showing which placements actually pay rent and which don't. Receipt capture during pickup — photograph any commission receipt, it auto-files for tax.</p>
+      <p>Today's route is built dynamically from telemetry — only machines that need service, ordered by drive-time optimization. Cashless integration with NayaX and Cantaloupe APIs surfaces per-machine sales without opening separate dashboards. Location-scout engine surfaces new placement opportunities from local business permits and openings. Per-machine P&amp;L shows which placements actually pay rent and which don't. Receipt capture during pickup — photograph any commission receipt, it auto-files for tax season.</p>
 
-      <h3>→ What changed in the first quarter</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~40%</div><div class="lbl">Reduction in drive miles per week</div></div>
-        <div class="stat"><div class="num">7 machines</div><div class="lbl">Identified as unprofitable, repositioned or retired</div></div>
-      </div>
-      <p style="margin-top: 14px;">The operator runs it under the brand <strong>BrewRoute</strong> (the cockpit ships behind a per-operator brand identity). Live at <a href="https://vending-route.com" target="_blank" rel="noopener">vending-route.com</a>.</p>
+      <p>The operator runs it under the brand <strong>BrewRoute</strong>. The cockpit ships behind a per-operator brand identity. Live at <a href="https://vending-route.com" target="_blank" rel="noopener">vending-route.com</a>.</p>
 
-      <div class="replaced"><strong>What it replaced</strong>Hand-drawn route map · shoebox of vendor receipts · two separate dashboards (NayaX + Cantaloupe) opened in browser tabs · weekly drive of all machines whether they needed it or not</div>
+      <div class="replaced"><strong>What it replaced</strong>Hand-drawn route map · shoebox of vendor receipts · two separate dashboards (NayaX + Cantaloupe) opened in browser tabs · weekly drive of all machines whether they needed service or not</div>
     </div>
   </section>
 
   <!-- ────────────────── HOME HEALTH ────────────────── -->
   <section class="case" id="home-health">
     <div class="head">
-      <span class="badge">Production · since 2026</span>
-      <h2>Home health care agency · Texas</h2>
+      <span class="badge">Production · home health agency</span>
+      <h2>Home health care agency</h2>
       <a class="demo-link" href="/demos/home-health-care-cockpit-demo/">Try the demo →</a>
     </div>
     <div class="body">
       <h3>→ The operator</h3>
-      <p>A non-medical home health agency in Texas serving ~50 active patients with a roster of 12-14 caregivers. Mix of Medicaid waiver (CDPAP-style), Medicare home health, LTC insurance, and private pay. State EVV mandate fully applies.</p>
-
-      <h3>→ What hurt</h3>
-      <p>The agency administrator was running on seven disconnected tools: scheduler in Calendly, EVV in the state's vendor app, charting in Google Docs, payroll in QuickBooks, family messaging via text, compliance tracking in a spreadsheet, billing in HCHB. Every shift change meant updating the same patient's status in four places. Caregivers used two apps on their phone for one visit. Family members called the office to ask if mom got her medication. Every state inspection meant a week of preparation.</p>
+      <p>A home health agency. Mix of Medicaid waiver, Medicare home health, LTC insurance, and private pay patients. State Electronic Visit Verification mandate applies.</p>
 
       <h3>→ What we built</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~18 days</div><div class="lbl">First version live · two-week iteration after</div></div>
-        <div class="stat"><div class="num">6 panels + caregiver phone</div><div class="lbl">Schedule · EVV · Care plans · Family · Compliance · Billing · Caregiver app</div></div>
-      </div>
-      <p style="margin-top: 14px;">One cockpit for the office. One phone app for the caregivers. Shift assignment drives EVV, EVV drives the visit log, the visit log drives the billing batch, the billing batch drives the payroll calc. No double entry. Family members get a sanitized post-visit summary on their phone within 15 minutes of the caregiver checking out. RN supervisor and family on one HIPAA-aligned message thread per patient. Compliance dashboard auto-blocks any caregiver with a lapsed CPR / TB / background check before they can be assigned a visit.</p>
+      <p>One cockpit for the office. One phone app for the caregivers. Shift assignment drives EVV, EVV drives the visit log, the visit log drives the billing batch, the billing batch drives the payroll calculation. No double entry. Family members get a sanitized post-visit summary on their phone within minutes of the caregiver checking out. RN supervisor and family communicate on one secure thread per patient. Compliance dashboard auto-blocks any caregiver with a lapsed CPR, TB, or background check before they can be assigned a visit.</p>
 
-      <h3>→ What changed in the first 90 days</h3>
-      <div class="grid-2">
-        <div class="stat"><div class="num">~14 hrs/mo</div><div class="lbl">Admin time saved by replacing 7 tools with 1</div></div>
-        <div class="stat"><div class="num">98%+</div><div class="lbl">EVV compliance vs prior 89% (drives Medicaid payment reliability)</div></div>
-      </div>
-
-      <div class="quote">"It's the only place in my day where everything is in one place. State inspector this month asked me three questions, I answered three from one screen, she was out in twenty minutes."<br><span style="display: block; font-family: 'Inter', sans-serif; font-size: 13px; font-style: normal; color: var(--muted); margin-top: 6px;">— Agency administrator (anonymized at her request)</span></div>
-
-      <div class="replaced"><strong>What it replaced</strong>Calendly · the state EVV vendor app · Google Docs for charts · QuickBooks for payroll · group texts for family · spreadsheet for compliance · HCHB for billing</div>
+      <div class="replaced"><strong>What it replaced</strong>Separate scheduling tool · the state EVV vendor app · charting in Google Docs · payroll in a separate accounting tool · group texts for family · spreadsheet for compliance · a separate billing platform</div>
     </div>
   </section>
 
