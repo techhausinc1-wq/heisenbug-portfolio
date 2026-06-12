@@ -16,7 +16,7 @@ Each "cockpit" is a single-screen operational tool that replaces the typical sma
 - **Vending Route** (BrewRoute, deployed) — DEX/MDB telemetry-driven route optimization for coffee/snack operators.
 - **Home Health Care** (deployed) — caregiver dispatch, EVV (federal Electronic Visit Verification), care plans, family secure messaging, Medicare/Medicaid waiver billing.
 - **Vacation Rental** (demo) — multi-property calendar across Airbnb/VRBO/direct, unified inbox with AI-drafted replies, bank-connected per-property P&L.
-- **Plumbing Service**, **Auto Repair**, **Pool Service**, **Landscape**, **Pet Services**, **Diamond Atelier**, **Furniture & Mattress retail**, **Audit/CPA Practice**, **Legal Practice**, **Realtor**, **Property Management**, **Photographer**, **Florist**, **Auto Parts Pipeline**, **Restaurant**, **Dental Practice**, **Med Spa**, **Fitness Studio**, **Daycare + Preschool**, **Salon + Barbershop**, **Tattoo Studio**, **Insulation**, **Contractor (GC)**, **New Realtor Launch Kit** — all viewable at heisenbug.app/#/built.
+- **Plumbing Service**, **Auto Repair**, **Pool Service**, **Landscape**, **Pet Services**, **Diamond Atelier**, **Furniture & Mattress retail**, **Audit/CPA Practice**, **Legal Practice**, **Realtor**, **Property Management**, **Photographer**, **Florist**, **Auto Parts Pipeline**, **Restaurant**, **Dental Practice**, **Med Spa**, **Fitness Studio**, **Daycare + Preschool**, **Salon + Barbershop**, **Tattoo Studio**, **Insulation**, **Contractor (GC)**, **New Realtor Launch Kit** — all viewable at https://heisenbug.app/built/.
 
 ## How we build
 
@@ -36,8 +36,8 @@ Flat-fee builds, typically $3,500 to $8,500 for a first cockpit. Hosting passes 
 ## Pages
 
 - [Home](https://heisenbug.app/): hero, thesis, commercial terms, approach.
-- [Catalog](https://heisenbug.app/#/built): all 28 cockpit demos, click-through to interact.
-- [Home Health detail](https://heisenbug.app/#/home-health): deep-dive on the home-health cockpit with cross-vertical engine matrix.
-- [About](https://heisenbug.app/#/about): founder, story, how we ship.
-- [Contact](https://heisenbug.app/#/contact): commercial terms, what to expect after reaching out.
+- [Catalog](https://heisenbug.app/built/): all 28 cockpit demos, click-through to interact.
+- [Home Health detail](https://heisenbug.app/home-health/): deep-dive on the home-health cockpit with cross-vertical engine matrix.
+- [About](https://heisenbug.app/about/): founder, story, how we ship.
+- [Contact](https://heisenbug.app/contact/): commercial terms, what to expect after reaching out.
 - [Privacy](https://heisenbug.app/privacy.html) · [Terms](https://heisenbug.app/terms.html)
