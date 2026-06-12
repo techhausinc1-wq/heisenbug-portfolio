@@ -1502,5 +1502,205 @@ document.addEventListener('click', e => {
 })();
 </script>
 
+
+<script id="hb-state-script">
+(function() {
+  // ── persistent state (localStorage) ────────────────────────
+  const STORE_KEY = 'hh-cockpit-state-v1';
+  const state = JSON.parse(localStorage.getItem(STORE_KEY) || '{"referrals":[],"patients":[]}');
+  function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+  // ── sample data generators ─────────────────────────────────
+  const FIRST = ['Maya','Lena','Sofia','Carla','Joaquín','Ezra','Ramón','Ines','Yuri','Linnea','Theo','Dax','Anya','Jonah','Mira','Kofi','Hideo','Esther','Carlos','Adelaide','Petra','Nikolai','Sienna','Reza'];
+  const LAST = ['Bautista','Hollander','Vance','Okeke','Park','Brennan','Faris','Kowalski','Diaz','Eriksson','Adair','Liu','Talbot','Marston','Hadid','Nakamura','Patel','Olson','Mendez','Cohen','Rao'];
+  const SOURCES = [
+    ['Methodist Hosp', 'source'], ['Baptist Disch', 'source'],
+    ['Dr. Garcia', 'source physician'], ['Dr. Carter', 'source physician'],
+    ['Family · self-refer', 'source self'], ['San Antonio Reg', 'source']
+  ];
+  const CONDITIONS = [
+    ['74 · post-op hip · skilled HH','Medicare HH · F2F pending'],
+    ['68 · CHF · medication mgmt','Medicaid waiver · STAR+PLUS'],
+    ['82 · diabetic wound care','Medicare HH · order signed'],
+    ['77 · falls risk · safety eval','Medicare HH'],
+    ['81 · companion + bath assist','Private pay · $34/hr'],
+    ['71 · post-stroke PT','Medicare HH'],
+    ['85 · oncology · palliative','Medicare HH · auth pending'],
+    ['76 · post-op knee · PT','Medicare HH']
+  ];
+  const SPECIALTIES = [
+    ['PCA · 5x/wk','5 visits/week · personal care, medication reminder, light housekeeping'],
+    ['Skilled · 3x/wk','3 visits/week · wound care, vitals capture, RN supervision'],
+    ['Non-medical companion','5 visits/week · companion + meal prep + medication reminder'],
+    ['PT · 3x/wk','Post-discharge mobility, gait training, fall prevention'],
+    ['HHA · 5x/wk','Personal care, bathing assist, transfers']
+  ];
+  function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function genReferral() {
+    const [meta, ins] = rnd(CONDITIONS);
+    const [src, cls] = rnd(SOURCES);
+    return {
+      id: 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+      nm: rnd(FIRST) + ' ' + rnd(LAST),
+      meta, ins, src, cls,
+      created: new Date().toISOString()
+    };
+  }
+  function genPatient() {
+    const [meta, ins] = rnd(SPECIALTIES);
+    return {
+      id: 'p-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+      nm: rnd(FIRST) + ' ' + rnd(LAST),
+      meta, ins,
+      created: new Date().toISOString()
+    };
+  }
+
+  // ── render helpers ─────────────────────────────────────────
+  function renderReferral(r) {
+    return '<div class="kcard" data-id="' + r.id + '" style="border:1.5px solid #4a7d3e; background:linear-gradient(135deg, #f0f7e8, #fff); position:relative;"><span style="position:absolute; top:6px; right:8px; font-family:Inter,sans-serif; font-size:9px; background:#1f6b3a; color:white; padding:2px 6px; border-radius:8px; font-weight:700;">NEW</span><span class="days">' + new Date(r.created).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}) + '</span><div class="nm">' + r.nm + '</div><div class="meta">' + r.meta + '</div><div><span class="' + r.cls + '">' + r.src + '</span></div><div class="insurance">' + r.ins + '</div></div>';
+  }
+  function renderPatient(p) {
+    return '<div class="pt" data-id="' + p.id + '" style="background:linear-gradient(90deg, rgba(31,107,58,0.06), transparent); border-left:3px solid #1f6b3a;"><div class="nm" style="color:#1f6b3a;">' + p.nm + ' <span style="font-family:Inter,sans-serif; font-size:9px; background:#1f6b3a; color:white; padding:1px 5px; border-radius:6px; font-weight:700; vertical-align:2px;">NEW</span></div><div class="meta">' + p.meta + '</div></div>';
+  }
+
+  // ── inject saved state on load ─────────────────────────────
+  function hydrate() {
+    // Referrals → top of "New referrals" kcol
+    const newRefCol = document.querySelector('.kcol.hot .kbody');
+    if (newRefCol && state.referrals.length) {
+      state.referrals.forEach(function(r) {
+        if (!newRefCol.querySelector('[data-id="' + r.id + '"]')) {
+          newRefCol.insertAdjacentHTML('afterbegin', renderReferral(r));
+        }
+      });
+      // Update count badge
+      const ct = document.querySelector('.kcol.hot .kh .ct');
+      if (ct) ct.textContent = state.referrals.length + parseInt(ct.dataset.base || ct.textContent, 10);
+      if (ct && !ct.dataset.base) ct.dataset.base = ct.textContent.replace(String(state.referrals.length), '');
+    }
+    // Patients → top of patient list
+    const ptList = document.querySelector('.pt-list');
+    if (ptList && state.patients.length) {
+      // Find first .pt to insert before
+      const firstPt = ptList.querySelector('.pt');
+      if (firstPt) {
+        state.patients.forEach(function(p) {
+          if (!ptList.querySelector('[data-id="' + p.id + '"]')) {
+            firstPt.insertAdjacentHTML('beforebegin', renderPatient(p));
+          }
+        });
+      }
+      // Update header count "47 active patients" → bump
+      const lh = ptList.querySelector('.lh');
+      if (lh && lh.textContent.match(/^\d+/)) {
+        const base = parseInt(lh.dataset.base || lh.textContent.match(/^\d+/)[0], 10);
+        if (!lh.dataset.base) lh.dataset.base = base;
+        lh.textContent = (base + state.patients.length) + lh.textContent.replace(/^\d+/, '');
+      }
+    }
+  }
+
+  // ── wire the "+ New referral" button ───────────────────────
+  function wire() {
+    document.querySelectorAll('button, .btn').forEach(function(b) {
+      const txt = (b.textContent || '').trim();
+      if (txt === '+ New referral' && !b.dataset.hbWired) {
+        b.dataset.hbWired = '1';
+        b.addEventListener('click', function(e) {
+          e.preventDefault(); e.stopPropagation();
+          const r = genReferral();
+          state.referrals.unshift(r);
+          save();
+          // Insert into DOM
+          const newRefCol = document.querySelector('.kcol.hot .kbody');
+          if (newRefCol) {
+            newRefCol.insertAdjacentHTML('afterbegin', renderReferral(r));
+            const ct = document.querySelector('.kcol.hot .kh .ct');
+            if (ct) {
+              const base = parseInt(ct.dataset.base || ct.textContent, 10);
+              if (!ct.dataset.base) ct.dataset.base = base;
+              ct.textContent = base + state.referrals.length;
+            }
+            // Brief highlight on the new card
+            const newCard = newRefCol.firstElementChild;
+            if (newCard) {
+              newCard.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+              newCard.style.transition = 'all 240ms';
+              newCard.style.boxShadow = '0 6px 24px rgba(31,107,58,0.35)';
+              setTimeout(function() { newCard.style.boxShadow = ''; }, 1200);
+            }
+          }
+          // Toast confirmation
+          const t = document.getElementById('hb-toast');
+          if (t) {
+            t.innerHTML = '<span class="h">✓ Referral added</span><span class="m">' + r.nm + ' · ' + r.meta + ' · persisted to localStorage</span>';
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 3600);
+          }
+        }, true);  // capture phase
+      }
+      if (txt === '+ New patient' && !b.dataset.hbWired) {
+        b.dataset.hbWired = '1';
+        b.addEventListener('click', function(e) {
+          e.preventDefault(); e.stopPropagation();
+          const p = genPatient();
+          state.patients.unshift(p);
+          save();
+          const ptList = document.querySelector('.pt-list');
+          if (ptList) {
+            const firstPt = ptList.querySelector('.pt');
+            if (firstPt) {
+              firstPt.insertAdjacentHTML('beforebegin', renderPatient(p));
+              const lh = ptList.querySelector('.lh');
+              if (lh && lh.textContent.match(/^\d+/)) {
+                const base = parseInt(lh.dataset.base || lh.textContent.match(/^\d+/)[0], 10);
+                if (!lh.dataset.base) lh.dataset.base = base;
+                lh.textContent = (base + state.patients.length) + lh.textContent.replace(/^\d+/, '');
+              }
+              // Highlight + scroll
+              const newPt = ptList.querySelector('[data-id="' + p.id + '"]');
+              if (newPt) {
+                newPt.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                newPt.style.transition = 'all 240ms';
+                newPt.style.boxShadow = '0 4px 16px rgba(31,107,58,0.3)';
+                setTimeout(function() { newPt.style.boxShadow = ''; }, 1200);
+              }
+            }
+          }
+          const t = document.getElementById('hb-toast');
+          if (t) {
+            t.innerHTML = '<span class="h">✓ Patient added</span><span class="m">' + p.nm + ' · ' + p.meta + ' · persisted</span>';
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 3600);
+          }
+        }, true);
+      }
+    });
+  }
+
+  // Hydrate state then wire buttons
+  function init() { hydrate(); wire(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Re-wire after panel switches (the nav-btn pattern rebuilds visibility)
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-btn')) {
+      setTimeout(wire, 50);
+    }
+  });
+
+  // Expose a reset for testing
+  window.hbResetDemo = function() {
+    localStorage.removeItem(STORE_KEY);
+    location.reload();
+  };
+})();
+</script>
+
 </body>
 </html>
