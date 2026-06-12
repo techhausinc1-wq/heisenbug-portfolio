@@ -152,6 +152,138 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
   .addon .a-price { text-align: left; margin-top: 6px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* === SPA brand header (unified across all pages) === */
+:root {
+  --hb-dark:        #0F1F0F;
+  --hb-dark-2:      #111111;
+  --hb-green-mid:   #3E7B3E;
+  --hb-green-bright:#C6D97A;
+  --hb-cream:       #F2EBCB;
+  --hb-rule-dark:   rgba(198,217,122,0.18);
+}
+header[role="banner"] {
+  background: rgba(15,31,15,0.92) !important;
+  border-bottom: 0.5px solid var(--hb-rule-dark) !important;
+  position: sticky !important; top: 0 !important; z-index: 50 !important;
+  backdrop-filter: blur(12px) !important;
+  padding: 0 !important;
+  display: block !important;
+}
+header[role="banner"] .inner {
+  max-width: 1240px !important; margin: 0 auto !important;
+  padding: 14px 6% !important;
+  display: flex !important; align-items: center !important; gap: 14px !important;
+}
+header[role="banner"] .brand {
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  text-decoration: none !important; color: var(--hb-cream) !important;
+  font-family: 'Fraunces', serif !important; font-size: 22px !important;
+  font-weight: 500 !important;
+}
+header[role="banner"] .brand-mark {
+  width: 54px !important; height: 54px !important;
+  flex-shrink: 0 !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  background: transparent !important; border: none !important;
+  overflow: visible !important;
+}
+header[role="banner"] .brand-mark img {
+  width: 100% !important; height: 100% !important;
+  object-fit: contain !important; display: block !important;
+  margin: 0 !important; vertical-align: baseline !important;
+  mix-blend-mode: lighten !important;
+  filter: drop-shadow(0 0 8px rgba(198,217,122,0.25)) !important;
+}
+header[role="banner"] .brand-text { line-height: 1.1 !important; }
+header[role="banner"] .brand-name {
+  font-family: 'Fraunces', serif !important; font-size: 22px !important;
+  font-weight: 500 !important; letter-spacing: -0.3px !important;
+  color: var(--hb-cream) !important;
+}
+header[role="banner"] .brand-sub {
+  font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important;
+  letter-spacing: 2px !important; color: var(--hb-green-bright) !important;
+  text-transform: uppercase !important; margin-top: 2px !important;
+}
+header[role="banner"] .header-spacer { flex: 1 !important; }
+header[role="banner"] nav {
+  margin-left: 0 !important;
+  display: flex !important; align-items: center !important; gap: 4px !important;
+}
+header[role="banner"] nav a {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important; font-weight: 500 !important;
+  letter-spacing: 0.2px !important;
+  color: rgba(242,235,203,0.82) !important;
+  padding: 12px 14px !important; border-radius: 20px !important;
+  min-height: 44px !important; display: inline-flex !important; align-items: center !important;
+  background: transparent !important;
+}
+header[role="banner"] nav a:hover {
+  color: var(--hb-cream) !important; background: rgba(198,217,122,0.06) !important;
+}
+header[role="banner"] nav a.is-active, header[role="banner"] nav a.active {
+  color: var(--hb-green-bright) !important; background: rgba(198,217,122,0.10) !important;
+}
+header[role="banner"] .header-cta {
+  background: var(--hb-green-bright) !important; color: var(--hb-dark) !important;
+  padding: 10px 20px !important; border-radius: 24px !important;
+  font-size: 13px !important; font-weight: 700 !important;
+  margin-left: 6px !important;
+  text-decoration: none !important;
+}
+header[role="banner"] .header-cta:hover {
+  background: #d8e88a !important; color: var(--hb-dark) !important;
+}
+
+/* === SPA brand footer (unified) === */
+footer[role="contentinfo"] {
+  background: var(--hb-dark-2) !important;
+  color: rgba(242,235,203,0.55) !important;
+  padding: 50px 6% 40px !important;
+  text-align: center !important;
+  font-size: 13px !important;
+  border-top: 0.5px solid var(--hb-rule-dark) !important;
+}
+footer[role="contentinfo"] .brand-mark-foot {
+  width: 56px !important; height: 56px !important;
+  margin: 0 auto 14px !important;
+  background: transparent !important; border: none !important;
+}
+footer[role="contentinfo"] .brand-mark-foot img {
+  width: 100% !important; height: 100% !important;
+  object-fit: contain !important; display: block !important;
+  mix-blend-mode: lighten !important;
+  filter: drop-shadow(0 0 8px rgba(198,217,122,0.25)) !important;
+}
+footer[role="contentinfo"] .foot-name {
+  font-family: 'Fraunces', serif !important; font-size: 18px !important;
+  font-weight: 500 !important; color: var(--hb-cream) !important; margin-bottom: 4px !important;
+}
+footer[role="contentinfo"] .foot-tagline {
+  font-family: 'JetBrains Mono', monospace !important; font-size: 11.5px !important;
+  letter-spacing: 1.5px !important; text-transform: uppercase !important;
+  color: var(--hb-green-bright) !important; margin: 8px 0 !important;
+}
+footer[role="contentinfo"] .foot-meta {
+  font-family: 'JetBrains Mono', monospace !important; font-size: 11.5px !important;
+  letter-spacing: 1.5px !important; text-transform: uppercase !important;
+  color: rgba(242,235,203,0.4) !important; margin-top: 14px !important;
+}
+footer[role="contentinfo"] .foot-links {
+  margin-top: 14px !important; font-size: 13px !important;
+  display: flex !important; gap: 18px !important;
+  justify-content: center !important; flex-wrap: wrap !important;
+  background: transparent !important; border: none !important;
+}
+footer[role="contentinfo"] .foot-links a {
+  color: rgba(242,235,203,0.4) !important; text-decoration: none !important;
+  background: transparent !important; padding: 0 !important;
+  margin: 0 !important;
+}
+footer[role="contentinfo"] .foot-links a:hover { color: var(--hb-green-bright) !important; }
+
 </style>
 
 <script type="application/ld+json">
@@ -187,16 +319,24 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
 
 <header role="banner">
   <div class="inner">
-    <a class="brand" href="/"><img src="/heisenbug-square-small.png" alt="" width="40" height="40" style="vertical-align: middle; margin-right: 8px; mix-blend-mode: lighten; filter: drop-shadow(0 0 6px rgba(198,217,122,0.25));">Heisenbug</a>
+    <a class="brand" href="/">
+      <div class="brand-mark"><img loading="lazy" decoding="async" src="/heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
+      <div class="brand-text">
+        <div class="brand-name">Heisenbug</div>
+        <div class="brand-sub">Vertical Software</div>
+      </div>
+    </a>
+    <div class="header-spacer"></div>
     <nav role="navigation" aria-label="Primary">
       <a href="/">Home</a>
       <a href="/built/">Built</a>
       <a href="/case-studies/">Case studies</a>
       <a href="/methodology/">Methodology</a>
-      <a href="/pricing/" class="active">Pricing</a>
+      <a class="is-active" href="/pricing/">Pricing</a>
       <a href="/about/">About</a>
       <a href="/contact/">Contact</a>
     </nav>
+    <a class="header-cta" href="/contact/">Start a project →</a>
   </div>
 </header>
 
@@ -330,6 +470,17 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
       </div>
     </div>
     <p style="margin: 18px 0 0; font-size: 13.5px; color: var(--muted);">After 24 months, exclusivity renews automatically unless you've stopped using the cockpit. National exclusivity is available on request for specific verticals; we'd rather talk about it than auto-publish a price.</p>
+  </div>
+
+  <!-- ─────────────────────── Veteran program ─────────────────────── -->
+  <h2>Veteran operator program.</h2>
+  <p>If you served in the United States military, or you run a veteran-owned business (51%+), the build fee is discounted <strong>15%</strong>. Same scope, same delivery timeline, same exclusivity. No paperwork beyond a copy of your DD-214 or your SBA Veteran-Owned Small Business certificate at kickoff.</p>
+
+  <div class="exclusivity" style="background: linear-gradient(135deg, #f8eaea, #fdf4f4); border-color: var(--rust);">
+    <h3 style="color: var(--rust);">Veteran discount <span class="badge" style="background: var(--rust);">15% off</span></h3>
+    <p>The trades and service-business world we build for is full of veterans — that's not separate from our audience, that's the core of it. The discount is a flat 15% off the build fee on every tier. Applies to active duty, veterans (all branches), reservists, and 51%+ veteran-owned businesses. Honored on a handshake at kickoff — we don't want anyone uploading military records to a website form.</p>
+
+    <p style="font-size: 14px; margin-top: 14px; color: var(--ink);"><strong>Stacking rule:</strong> stacks with installment payments. Doesn't stack with sliding-scale arrangements (no point — we'd just be reducing twice from the same baseline).</p>
   </div>
 
   <!-- ─────────────────────── Hosting ─────────────────────── -->
@@ -482,8 +633,22 @@ footer a { color: var(--green-mid); text-decoration: none; margin: 0 10px; paddi
 </main>
 
 <footer role="contentinfo">
-  <div><a href="/">Heisenbug</a> · <a href="/built/">Built</a> · <a href="/case-studies/">Case studies</a> · <a href="/methodology/">Methodology</a> · <a href="/pricing/">Pricing</a> · <a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/home-health/">Home Health cockpit</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div>
-  <div style="margin-top: 10px;">Heisenbug Inc. · San Antonio TX · © 2026</div>
+  <div class="brand-mark-foot"><img loading="lazy" decoding="async" src="/heisenbug-square-small.png" alt="Heisenbug" width="56" height="56"></div>
+  <div class="foot-name">Heisenbug Software</div>
+  <div class="foot-tagline">Vertical software for operators</div>
+  <div class="foot-meta">Heisenbug Inc. &middot; San Antonio TX &middot; © 2026</div>
+  <div class="foot-links">
+    <a href="/built/">Built</a>
+    <a href="/case-studies/">Case studies</a>
+    <a href="/methodology/">Methodology</a>
+    <a href="/pricing/">Pricing</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+    <a href="/home-health/">Home Health cockpit</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="mailto:hello@heisenbug.app">hello@heisenbug.app</a>
+  </div>
 </footer>
 
 <script>
