@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salon + Barbershop Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#fdf9f4;--bg-2:#fff;--bg-3:#f0e9de;--ink:#1f1812;--text-dim:#6e5a4a;--text-mute:#9a8878;--line:#e2d8c8;--line-2:#c8b8a0;--rose:#b8597a;--gold:#a87838;--olive:#5e6e3d;--emerald:#2e7d5b;--red:#b53148}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column;min-height:100vh}
+  a{color:inherit;text-decoration:none}button{cursor:pointer;font-family:inherit;border:0;background:none;color:inherit}
+  header{background:var(--bg-2);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:14px}
+  @media(max-width:760px){header{padding:12px 16px;flex-wrap:wrap}}
+  .brand{display:flex;align-items:center;gap:12px}.brand-mark{width:38px;height:38px;background:var(--rose);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;border-radius:50%}.brand-name{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:18px}.brand-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-top:1px}
+  .user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border:1px solid var(--line);border-radius:24px;font-size:12px}.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--rose);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .layout{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;flex-direction:row;overflow-x:auto;padding:12px 16px;background:var(--bg-3);border-right:0;border-bottom:1px solid var(--line);gap:6px;scrollbar-width:none}.sidebar::-webkit-scrollbar{display:none}.nav-section{margin-bottom:0;display:flex;flex-direction:row;gap:6px}.nav-label{display:none}.nav-item{padding:6px 14px;font-size:12px;white-space:nowrap;border-left:0;border-radius:16px}.nav-item.active{background:rgba(184,89,122,0.1)}}
+  .sidebar{background:var(--bg-3);border-right:1px solid var(--line);padding:22px 0;overflow-y:auto}
+  .nav-section{margin-bottom:26px}.nav-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.8px;color:var(--text-mute);text-transform:uppercase;padding:0 28px 8px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:9px 28px;color:var(--text-dim);font-size:13.5px;border-left:2px solid transparent;cursor:pointer;transition:all 120ms}.nav-item:hover{color:var(--ink);background:var(--bg-2)}.nav-item.active{color:var(--rose);background:var(--bg-2);border-left-color:var(--rose);font-weight:600}.nav-badge{margin-left:auto;font-size:10px;background:var(--rose);color:#fff;padding:2px 7px;border-radius:10px;font-weight:600}
+  main{padding:28px 36px;overflow-y:auto}@media(max-width:900px){main{padding:20px}}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}@media(max-width:600px){.page-actions{width:100%}.page-actions .btn{flex:1;text-align:center}}
+  .page-subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.6px;color:var(--text-mute);text-transform:uppercase;margin-bottom:6px}.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;line-height:1.1}
+  .page-actions{display:flex;gap:10px}.btn{padding:9px 16px;border:1px solid var(--line-2);color:var(--ink);font-size:12.5px;font-weight:500;border-radius:4px;background:var(--bg-2)}.btn.primary{background:var(--rose);color:#fff;border-color:var(--rose);font-weight:600}.btn.ghost{background:transparent;border-color:transparent}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}@media(max-width:760px){.stat-grid{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:18px}.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:10px}.stat-value{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;line-height:1}.stat-delta{font-size:11px;color:var(--olive);margin-top:6px}.stat-delta.neg{color:var(--red)}
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:22px;margin-bottom:16px}.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.panel-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500}.panel-link{font-size:11px;color:var(--rose);letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;font-weight:600}
+  .table{width:100%;border-collapse:collapse;font-size:13px}.table th{text-align:left;padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;border-bottom:1px solid var(--line);font-weight:500}.table td{padding:13px 14px;border-bottom:1px solid var(--line)}.table tr:hover td{background:var(--bg-3)}.table tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;font-weight:600}.tag.rose{background:rgba(184,89,122,0.15);color:var(--rose)}.tag.gold{background:rgba(168,120,56,0.15);color:var(--gold)}.tag.emerald{background:rgba(46,125,91,0.15);color:var(--emerald)}.tag.red{background:rgba(181,49,72,0.15);color:var(--red)}.tag.muted{background:var(--bg-3);color:var(--text-dim)}
+  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px}@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+  .activity-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.activity-item:last-child{border:0}.activity-icon{width:26px;height:26px;border-radius:50%;background:var(--bg-3);color:var(--rose);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}.activity-text{flex:1}.activity-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-mute);margin-top:2px}
+  .coming-soon{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:6px;padding:50px 40px;text-align:center}.coming-soon h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:8px}.coming-soon p{color:var(--text-dim);font-size:13px;max-width:460px;margin:0 auto 18px;line-height:1.6}.coming-soon ul{text-align:left;max-width:380px;margin:0 auto;list-style:none}.coming-soon li{padding:7px 0;font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--line)}.coming-soon li::before{content:'— ';color:var(--rose);margin-right:6px}
+  footer{padding:14px 28px;border-top:1px solid var(--line);background:var(--bg-3);font-size:11px;color:var(--text-mute);text-align:center}footer span{color:var(--rose);font-weight:600}
+  .view{display:none}.view.active{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-mark">S</div><div><div class="brand-name">Salon + Barbershop Cockpit</div><div class="brand-sub">Hair · color · waxing · barber · booth-rental or commission</div></div></div>
+  <div class="user-chip"><div class="user-avatar">O</div><span>Owner</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="appts">Appointments <span class="nav-badge">42</span></div></div>
+    <div class="nav-section"><div class="nav-label">People</div><div class="nav-item" data-view="clients">Clients</div><div class="nav-item" data-view="stylists">Stylists / Barbers</div><div class="nav-item" data-view="rebook">Rebook Engine</div></div>
+    <div class="nav-section"><div class="nav-label">Operations</div><div class="nav-item" data-view="retail">Retail Products</div><div class="nav-item" data-view="inventory">Color + Supply Inventory</div><div class="nav-item" data-view="reviews">Reviews</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="milestones">Milestone Outreach</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 42 appts today · weekend peak · 6 stylists + 2 barbers</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Today's chairs</button><button class="btn primary">+ Walk-in</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Today's Bookings</div><div class="stat-value">42</div><div class="stat-delta">12 color · 18 cuts · 6 highlights · 6 barber</div></div>
+        <div class="stat"><div class="stat-label">June Revenue</div><div class="stat-value">$48,400</div><div class="stat-delta">+8% vs May · color trending up</div></div>
+        <div class="stat"><div class="stat-label">Retail Sales MTD</div><div class="stat-value">$8,200</div><div class="stat-delta">17% of revenue · industry 12%</div></div>
+        <div class="stat"><div class="stat-label">Rebook Rate</div><div class="stat-value">68%</div><div class="stat-delta">Industry avg 38% · strong</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's chair · live status</div><a class="panel-link" onclick="navigate('appts')">All today</a></div>
+            <table class="table">
+              <thead><tr><th>Time</th><th>Client</th><th>Stylist</th><th>Service</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>9:00 AM</strong></td><td>Jessica T.</td><td>Maya</td><td>Color + cut + blowout</td><td><span class="tag emerald">Done · $280</span></td></tr>
+                <tr><td><strong>10:00 AM</strong></td><td>Sarah K.</td><td>Marcus</td><td>Highlights + toner</td><td><span class="tag rose">In chair</span></td></tr>
+                <tr><td><strong>11:00 AM</strong></td><td>Anna V.</td><td>Jess</td><td>Cut + blowout</td><td><span class="tag rose">In chair</span></td></tr>
+                <tr><td><strong>11:30 AM</strong></td><td>Yelena C.</td><td>Maya</td><td>Balayage refresh + cut · 3 hrs</td><td><span class="tag gold">Next · VIP</span></td></tr>
+                <tr><td><strong>12:00 PM</strong></td><td>Mike F.</td><td>Tony (barber)</td><td>Cut + beard trim</td><td><span class="tag muted">Scheduled</span></td></tr>
+                <tr><td><strong>1:30 PM</strong></td><td>The Reillys (3)</td><td>Multi-stylist</td><td>Mom + 2 daughters family appt</td><td><span class="tag muted">Block scheduled · 3 chairs</span></td></tr>
+                <tr><td><strong>3:00 PM</strong></td><td>Cooper</td><td>Maya</td><td>Color correction · consult done</td><td><span class="tag muted">3 hr block</span></td></tr>
+                <tr><td><em>34 more</em></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Rebook engine · clients due to rebook</div><a class="panel-link" onclick="navigate('rebook')">All due</a></div>
+            <div class="activity-item"><div class="activity-icon">!</div><div class="activity-text"><div><strong>14 clients overdue 6 weeks</strong> · color typical interval</div><div class="activity-time">AUTO-TEXT 1 / 14 / 30 DAYS POST-INTERVAL · 38% AUTO-REBOOK</div></div></div>
+            <div class="activity-item"><div class="activity-icon">!</div><div class="activity-text"><div><strong>22 clients due this month</strong> · cuts at 8-week mark</div><div class="activity-time">CADENCE WORKING · 68% REBOOK BEFORE 8 WEEKS</div></div></div>
+            <div class="activity-item"><div class="activity-icon">★</div><div class="activity-text"><div><strong>VIP overdue 90+ days</strong> · personal call from owner</div><div class="activity-time">3 PATIENTS · YOUR HIGHEST-LTV LIST</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Stylist productivity · today</div></div>
+            <div class="activity-item"><div class="activity-icon">MA</div><div class="activity-text"><div><strong>Maya · 8 hrs · $1,840</strong></div><div class="activity-time">COMMISSION 45% · $828 NET</div></div></div>
+            <div class="activity-item"><div class="activity-icon">MR</div><div class="activity-text"><div><strong>Marcus · 7 hrs · $1,420</strong></div><div class="activity-time">BOOTH RENTAL · $200/WEEK</div></div></div>
+            <div class="activity-item"><div class="activity-icon">JE</div><div class="activity-text"><div><strong>Jess · 7 hrs · $1,180</strong></div><div class="activity-time">COMMISSION 40%</div></div></div>
+            <div class="activity-item"><div class="activity-icon">TO</div><div class="activity-text"><div><strong>Tony (barber) · 6 hrs · $840</strong></div><div class="activity-time">BOOTH RENTAL · $250/WEEK</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Retail · top movers</div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Olaplex No. 3</strong> · 14 sold MTD · $48 each</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Kerastase shampoo + conditioner</strong> · 8 sold</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Color-safe sets</strong> · 6 sold</div><div class="activity-time">CROSS-SOLD POST-COLOR APPT</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-appts"><div class="page-header"><div><div class="page-subtitle">42 today · 224 this week · online + walk-in</div><div class="page-title">Appointments</div></div></div><div class="coming-soon"><h3>Appointment Management</h3><p>Per-stylist scheduling with skill-based + preference-based booking.</p><ul><li>Online booking via website + Instagram</li><li>Per-stylist availability + skill set</li><li>Client preference matching</li><li>Waitlist auto-promote on cancellation</li><li>No-show + late-cancel fee policy</li></ul></div></div>
+    <div class="view" id="view-clients"><div class="page-header"><div><div class="page-subtitle">1,840 active · per-client formula history · avg LTV $1,840</div><div class="page-title">Clients</div></div></div><div class="coming-soon"><h3>Client Database</h3><p>Per-client formula card, photo timeline, preference notes.</p><ul><li>Per-client color formula history (every appt logged)</li><li>Photo timeline per visit</li><li>Preference notes (parts hair, allergies, conversation topics)</li><li>Preferred stylist + alternates</li><li>Lifetime value + visit frequency</li></ul></div></div>
+    <div class="view" id="view-stylists"><div class="page-header"><div><div class="page-subtitle">6 stylists · 2 barbers · commission + booth-rental mix</div><div class="page-title">Stylists / Barbers</div></div></div><div class="coming-soon"><h3>Stylist Management</h3><p>Per-stylist scheduling, commissions/rent, client book, productivity.</p><ul><li>Per-stylist client book (portable)</li><li>Commission vs booth-rental per stylist</li><li>Skill matrix (color / cuts / extensions / etc.)</li><li>License tracking with expiration</li><li>Per-stylist retail attach rate</li></ul></div></div>
+    <div class="view" id="view-rebook"><div class="page-header"><div><div class="page-subtitle">68% rebook rate · 6-week color · 8-week cut intervals</div><div class="page-title">Rebook Engine</div></div></div><div class="coming-soon"><h3>Rebook Engine</h3><p>The highest-ROI activity in salon ops. Push clients to rebook before they leave.</p><ul><li>Per-service typical interval (6-wk color, 8-wk cut)</li><li>Auto-text at 1 / 14 / 30 days past interval</li><li>Pre-fill calendar with stylist availability</li><li>Per-stylist rebook rate scoring</li><li>Win-back campaign for lost clients</li></ul></div></div>
+    <div class="view" id="view-retail"><div class="page-header"><div><div class="page-subtitle">$8K MTD · 17% of revenue · per-stylist attach rate tracked</div><div class="page-title">Retail Products</div></div></div><div class="coming-soon"><h3>Retail Operations</h3><p>Highest-margin revenue. Per-stylist attach rate tracking + auto-recommendation.</p><ul><li>POS with auto-recommendation post-service</li><li>Per-stylist retail attach rate scoring</li><li>Client purchase history surfaced at chair-side</li><li>Auto-recommended re-up at 60-day mark</li><li>Per-product margin reporting</li></ul></div></div>
+    <div class="view" id="view-inventory"><div class="page-header"><div><div class="page-subtitle">Color line · developer · towels · retail SKUs · auto-reorder at par</div><div class="page-title">Color + Supply Inventory</div></div></div><div class="coming-soon"><h3>Backbar + Retail Inventory</h3><p>Per-product par + reorder + cost-per-service tracking.</p><ul><li>Per-color-tube usage tracking (deducted per appt formula)</li><li>Backbar par levels + auto-reorder</li><li>Retail SKU inventory with supplier accounts</li><li>Per-service product cost</li></ul></div></div>
+    <div class="view" id="view-reviews"><div class="page-header"><div><div class="page-subtitle">4.8 stars Google · 4.9 Yelp · review-prompt automation</div><div class="page-title">Reviews</div></div></div><div class="coming-soon"><h3>Review Engine</h3><p>Auto-prompt post-appointment. 5-star → public. 1-4 star → private.</p><ul><li>Cross-platform aggregation (Google / Yelp / Booksy / FB)</li><li>Auto-prompt 24h post-appointment</li><li>5-star routing to public</li><li>Per-stylist review sentiment</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-stylist · service-mix · client retention · retail attach</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Salon Reports</h3><p>Numbers a salon owner needs.</p><ul><li>Per-stylist revenue + retail + retention</li><li>Service-mix analysis (color vs cuts vs treatments)</li><li>Client retention cohort analysis</li><li>Per-channel new-client acquisition</li><li>Booth-rental vs commission ROI</li></ul></div></div>
+
+    <div class="view" id="view-tax"><div class="page-header"><div><div class="page-subtitle">Sales tax on retail · service exempt (most states) · 1099 booth-renters</div><div class="page-title">Tax &amp; Compliance</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Audit Practice · salon-flavored: retail taxable, service mostly exempt, 1099 booth-renters, OSHA + cosmetology board compliance</p>
+    <div class="stat-grid"><div class="stat"><div class="stat-label">Retail Sales Tax MTD</div><div class="stat-value">$640</div></div><div class="stat"><div class="stat-label">Service Revenue</div><div class="stat-value">$40K</div><div class="stat-delta">Exempt</div></div><div class="stat"><div class="stat-label">1099 Stylists</div><div class="stat-value">2</div><div class="stat-delta">Booth-rental</div></div><div class="stat"><div class="stat-label">Cosmetology Board</div><div class="stat-value">Current</div></div></div></div>
+    <div class="view" id="view-milestones"><div class="page-header"><div><div class="page-subtitle">Birthdays · wedding prep · special event prep</div><div class="page-title">Milestone Outreach</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Diamond Atelier · salon-flavored: pre-wedding hair trials, birthday color refreshes, life-event prep packages</p>
+    <div class="panel" style="padding:0"><table class="table"><thead><tr><th>Date</th><th>Client</th><th>Event</th><th>Recommendation</th></tr></thead><tbody><tr><td><strong>Jun 14</strong></td><td>Jessica T.</td><td>Sister's wedding</td><td>Pre-event color refresh + updo trial</td></tr><tr><td><strong>Jun 22</strong></td><td>Carolyn M.</td><td>50th birthday party</td><td>Color + cut + makeup add-on</td></tr><tr><td><strong>Jul 18</strong></td><td>Yelena C.</td><td>Daughter's bat mitzvah</td><td>Full glow · color + makeup · multiple appts</td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Salon + Barbershop Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
