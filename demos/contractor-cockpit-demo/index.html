@@ -199,5 +199,112 @@ function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.r
 document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
 </script>
 <div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+
+<style id="hb-toast-style">
+  #hb-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(40px);
+    background: rgba(15, 31, 15, 0.96); color: #c6d97a;
+    padding: 12px 22px; border-radius: 22px;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    font-size: 13.5px; font-weight: 500; line-height: 1.4;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+    z-index: 9999; opacity: 0; transition: all 240ms cubic-bezier(.2,.7,.2,1);
+    max-width: 90vw; text-align: center; pointer-events: none;
+    border: 1px solid rgba(198,217,122,0.18);
+  }
+  #hb-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #hb-toast .h { color: #fff; font-weight: 700; margin-right: 8px; }
+  #hb-toast .m { color: rgba(198,217,122,0.7); font-size: 12px; display: block; margin-top: 2px; }
+</style>
+<div id="hb-toast" role="status" aria-live="polite"></div>
+<script id="hb-toast-script">
+(function() {
+  const el = document.getElementById('hb-toast');
+  let t;
+  function showToast(label, msg) {
+    el.innerHTML = '<span class="h">' + label + '</span>' + (msg ? '<span class="m">' + msg + '</span>' : '');
+    el.classList.add('show');
+    clearTimeout(t);
+    t = setTimeout(function() { el.classList.remove('show'); }, 3200);
+  }
+
+  // Intent → message map. First match wins.
+  const intents = [
+    { re: /^\+\s*new\s+(?:referral|patient|guest|call|appointment|client|customer|case|order|job|booking|prospect|lead|account|item|invoice|loop|memo|appraisal|milestone|machine|stop|property|chart|file)/i,
+      label: '✓ Form staged', m: 'Would open the create-new form in your production cockpit.' },
+    { re: /^\+\s*add\b/i,
+      label: '✓ Added', m: 'Would persist to the database in your production cockpit.' },
+    { re: /^submit\b/i,
+      label: '✓ Submitted', m: 'Would post to the billing / claims / state aggregator endpoint.' },
+    { re: /^export\b|^download\b/i,
+      label: '✓ Export queued', m: 'Would generate the CSV / PDF report in your production cockpit.' },
+    { re: /^send(?:\s|$)/i,
+      label: '✓ Sent', m: 'Would dispatch the email / SMS / push in your production cockpit.' },
+    { re: /^print\b/i,
+      label: '✓ Print queued', m: 'Would generate the printable view in your production cockpit.' },
+    { re: /^sync(?:\s|now|$)/i,
+      label: '✓ Sync triggered', m: 'Would pull the latest from connected APIs (iCal, EVV aggregator, bank, etc.).' },
+    { re: /^auto-correct\b|^correct\b|^resubmit\b/i,
+      label: '✓ Resubmitted', m: 'Would auto-correct the claim and resubmit to the payer.' },
+    { re: /^schedule\b|^book\b/i,
+      label: '✓ Scheduled', m: 'Would create the appointment and notify the assignee.' },
+    { re: /^reorder\b|^restock\b/i,
+      label: '✓ Reorder placed', m: 'Would post to Amazon Subscribe & Save (or your configured supplier).' },
+    { re: /^request\b/i,
+      label: '✓ Request sent', m: 'Would notify the recipient / payer / scheduling team.' },
+    { re: /^reply\b|^respond\b/i,
+      label: '✓ Draft saved', m: 'Would open the response composer in your production cockpit.' },
+    { re: /^message\b|^text\b/i,
+      label: '✓ Message staged', m: 'Would open the secure messaging thread in your production cockpit.' },
+    { re: /^call\b|^dial\b/i,
+      label: '✓ Calling…', m: 'Would launch the phone dialer with the contact pre-loaded.' },
+    { re: /^generate\b/i,
+      label: '✓ Generated', m: 'Would compose the document and download / preview.' },
+    { re: /^notify\b/i,
+      label: '✓ Notified', m: 'Would send the alert to the relevant team / care manager.' },
+    { re: /^edit\b/i,
+      label: '✓ Edit mode', m: 'Would open the inline editor in your production cockpit.' },
+    { re: /^regenerate\b/i,
+      label: '✓ Regenerating…', m: 'Would call the LLM with a fresh prompt context.' },
+    { re: /^filter\b|^sort\b/i,
+      label: '✓ Filter applied', m: 'Would refresh the list with the selected criteria.' },
+    { re: /^view\b|^open\b|^see\b/i,
+      label: '✓ Opened', m: 'Would navigate to the detail view in your production cockpit.' },
+    // Fallback for any other button
+    { re: /./,
+      label: '✓ Action staged', m: 'Demo button — would execute this action in your production cockpit.' }
+  ];
+
+  function describe(text) {
+    text = (text || '').trim();
+    for (const i of intents) {
+      if (i.re.test(text)) return { label: i.label, m: i.m };
+    }
+    return { label: '✓ Action staged', m: 'Demo button — would execute this in your production cockpit.' };
+  }
+
+  // Capture-late handler so existing real handlers run first.
+  document.addEventListener('click', function(e) {
+    // skip if real handler already prevented default
+    if (e.defaultPrevented) return;
+    const t = e.target.closest('button, .btn, [role="button"]');
+    if (!t) return;
+    // skip if it's a nav-toggle button with data-panel (existing handler)
+    if (t.classList.contains('nav-btn') || t.classList.contains('view-btn') || t.classList.contains('cgs-btn') || t.classList.contains('filter-btn')) return;
+    // skip submit-type buttons inside forms (let form handle)
+    if (t.type === 'submit' && t.form) return;
+    // skip disabled
+    if (t.disabled) return;
+    // skip links with href (let them navigate)
+    if (t.tagName === 'A' && t.getAttribute('href') && t.getAttribute('href') !== '#') return;
+
+    const text = t.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    const d = describe(text);
+    showToast(d.label, d.m);
+  }, false);
+})();
+</script>
+
 </body>
 </html>
