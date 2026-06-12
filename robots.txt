@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Surfaced for AI ingestion engines (Perplexity, ChatGPT, Claude crawlers, etc.)
+Sitemap: https://heisenbug.app/sitemap.xml
