@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vacation Rental Cockpit — Heisenbug demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #faf6ec;
+  --paper-2: #fff;
+  --ink: #1a1815;
+  --ink-2: #3a342a;
+  --muted: #7a7264;
+  --line: #e6dfcc;
+  --line-2: #d4cbb4;
+  --teal: #1f6b6b;
+  --teal-soft: #d8ebe8;
+  --teal-deep: #0f2a2a;
+  --coral: #c0533b;
+  --coral-soft: #fbe5dc;
+  --sand: #c69856;
+  --sand-soft: #f8eccc;
+  --green: #4a7d3e;
+  --green-soft: #e8f0d4;
+  --green-deep: #1a2a1a;
+  --amber: #c69820;
+  --amber-soft: #fef0d0;
+  --blue: #1f5b88;
+  --blue-soft: #e0ecf5;
+  --rust: #b8541d;
+  --rust-soft: #fce8de;
+  --red: #b82828;
+  --red-soft: #fbe5e5;
+  --shadow: 0 1px 2px rgba(15,31,15,0.04), 0 4px 16px rgba(15,31,15,0.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', sans-serif;
+  font-size: 14px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+.serif { font-family: 'Fraunces', 'Source Serif Pro', Georgia, serif; }
+.mono { font-family: 'JetBrains Mono', 'SF Mono', monospace; }
+
+/* ── shell ─────────────────────────────────────────────────────────── */
+.shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.sidebar {
+  background: var(--teal-deep); color: #c4d8d4;
+  padding: 22px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  border-right: 1px solid #0a1a1a;
+}
+.sidebar .brand {
+  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500;
+  color: #d8a878; letter-spacing: -0.3px; margin: 0 6px 6px;
+}
+.sidebar .brand small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: #7a8884; margin-top: 4px; font-weight: 400; }
+.sidebar .nav { display: flex; flex-direction: column; gap: 1px; margin-top: 16px; }
+.sidebar .nav-cat {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.6px;
+  color: #6a7470; text-transform: uppercase; padding: 12px 8px 4px; font-weight: 500;
+}
+.sidebar .nav button {
+  background: transparent; border: none; color: #a8b8b4;
+  padding: 9px 10px; border-radius: 6px;
+  text-align: left; font-family: inherit; font-size: 13.5px; font-weight: 500;
+  cursor: pointer; display: flex; align-items: center; gap: 9px;
+  transition: background 80ms;
+}
+.sidebar .nav button:hover { background: rgba(255,255,255,0.04); color: #d8e0d8; }
+.sidebar .nav button.active { background: rgba(216,168,120,0.14); color: #d8a878; }
+.sidebar .nav button .ic { width: 18px; display: inline-flex; justify-content: center; font-size: 14px; }
+.sidebar .nav button .badge { margin-left: auto; background: var(--coral); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+.sidebar .footer { margin-top: auto; padding: 12px 8px; border-top: 1px solid #1a2a2a; font-size: 11.5px; color: #6a7470; }
+.sidebar .footer .user { display: flex; align-items: center; gap: 9px; color: #a8b8b4; font-weight: 500; }
+.sidebar .footer .user .av { width: 24px; height: 24px; border-radius: 50%; background: var(--coral); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700; }
+
+.main { background: var(--paper); }
+.topbar {
+  background: var(--paper-2); border-bottom: 1px solid var(--line);
+  padding: 14px 28px; display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar h1 { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; letter-spacing: -0.2px; }
+.topbar .crumb { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; margin-left: 4px; }
+.topbar .right { margin-left: auto; display: flex; gap: 12px; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.4px; }
+.topbar .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.topbar .conn { display: inline-flex; align-items: center; gap: 5px; }
+
+.content { padding: 22px 28px 80px; max-width: 1280px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.panel-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 18px; gap: 16px; flex-wrap: wrap; }
+.panel-head h2 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; letter-spacing: -0.4px; line-height: 1.1; }
+.panel-head .sub { color: var(--muted); margin-top: 4px; font-size: 13.5px; max-width: 620px; }
+.panel-head .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+.panel-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── cards / kpis ────────────────────────────────────────────────── */
+.card { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+.card h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+.card .label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; font-weight: 500; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.kpi { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.kpi .label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; font-weight: 500; }
+.kpi .num { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 500; letter-spacing: -0.5px; line-height: 1.1; margin-top: 4px; }
+.kpi .delta { font-size: 11.5px; color: var(--green); margin-top: 4px; font-weight: 600; }
+.kpi .delta.dn { color: var(--coral); }
+
+/* ── pills ────────────────────────────────────────────────────────── */
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+.pill.green { background: var(--green-soft); color: var(--green); }
+.pill.amber { background: var(--amber-soft); color: var(--amber); }
+.pill.coral { background: var(--coral-soft); color: var(--coral); }
+.pill.teal  { background: var(--teal-soft); color: var(--teal); }
+.pill.sand  { background: var(--sand-soft); color: var(--sand); }
+.pill.blue  { background: var(--blue-soft); color: var(--blue); }
+.pill.rust  { background: var(--rust-soft); color: var(--rust); }
+.pill.dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 2px; }
+
+/* ── buttons ──────────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 7px; border: 1px solid var(--line-2); background: var(--paper-2); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 100ms; }
+.btn:hover { background: #fbf6e0; border-color: var(--sand); }
+.btn.primary { background: var(--teal); color: white; border-color: var(--teal); }
+.btn.primary:hover { background: var(--teal-deep); border-color: var(--teal-deep); }
+.btn.coral { background: var(--coral); color: white; border-color: var(--coral); }
+.btn.sm { padding: 4px 10px; font-size: 11.5px; font-weight: 500; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.ghost:hover { background: var(--paper-2); color: var(--ink); }
+
+.view-toggle { display: inline-flex; background: var(--paper-2); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.view-toggle button { background: transparent; border: none; padding: 6px 14px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; letter-spacing: 0.3px; }
+.view-toggle button.active { background: var(--teal); color: white; }
+
+/* ── dashboard ────────────────────────────────────────────────────── */
+.dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.dash-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 22px; }
+.prop-card { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px; box-shadow: var(--shadow); position: relative; overflow: hidden; cursor: pointer; transition: all 120ms; }
+.prop-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(15,31,15,0.08); }
+.prop-card .stripe { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.prop-card.occupied .stripe { background: var(--teal); }
+.prop-card.cleaning .stripe { background: var(--amber); }
+.prop-card.arriving .stripe { background: var(--coral); }
+.prop-card.vacant .stripe { background: var(--line-2); }
+.prop-card .photo { width: 100%; height: 80px; border-radius: 6px; margin-bottom: 9px; background: linear-gradient(135deg, var(--teal-soft), var(--sand-soft)); display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--teal); }
+.prop-card .nm { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; margin-top: 4px; }
+.prop-card .meta { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+.prop-card .status { margin-top: 9px; font-size: 11.5px; }
+
+.timeline { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 0; box-shadow: var(--shadow); }
+.timeline .head { padding: 13px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.timeline .head h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; }
+.tl-row { display: grid; grid-template-columns: 60px 1fr auto; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line); align-items: center; font-size: 13px; }
+.tl-row:last-child { border: none; }
+.tl-row .day { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.5px; text-align: center; }
+.tl-row .day strong { display: block; font-family: 'Fraunces', serif; color: var(--ink); font-size: 16px; font-weight: 500; }
+.tl-row .ev { font-weight: 600; }
+.tl-row .ev small { display: block; font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+
+.attention { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 0; box-shadow: var(--shadow); }
+.attention .head { padding: 13px 16px; border-bottom: 1px solid var(--line); }
+.attention .head h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; }
+.att-item { padding: 10px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; }
+.att-item:last-child { border: none; }
+.att-item .ic { width: 26px; height: 26px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.att-item.urgent .ic { background: var(--coral-soft); color: var(--coral); }
+.att-item.warn .ic { background: var(--amber-soft); color: var(--amber); }
+.att-item.info .ic { background: var(--teal-soft); color: var(--teal); }
+.att-item .nm { font-weight: 600; }
+.att-item .desc { color: var(--muted); margin-top: 1px; font-size: 11.5px; }
+
+.rev-chart { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+.rev-chart h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+.rev-chart .nums { display: flex; gap: 22px; margin-bottom: 12px; }
+.rev-chart .num { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; letter-spacing: -0.4px; }
+.rev-chart .num small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.6px; text-transform: uppercase; font-weight: 500; margin-bottom: 2px; }
+.rev-svg { width: 100%; height: 140px; display: block; }
+
+/* ── inbox ────────────────────────────────────────────────────────── */
+.inbox-grid { display: grid; grid-template-columns: 280px 1fr 280px; gap: 14px; }
+.inbox-list { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); max-height: 720px; overflow-y: auto; }
+.inbox-list .head { padding: 11px 14px; border-bottom: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+.thread { padding: 11px 14px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background 80ms; }
+.thread:hover { background: #fcf9ec; }
+.thread.sel { background: var(--teal-soft); border-left: 3px solid var(--teal); padding-left: 11px; }
+.thread .top { display: flex; justify-content: space-between; align-items: baseline; }
+.thread .nm { font-weight: 600; font-size: 13px; }
+.thread .ts { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); }
+.thread .subj { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+.thread .preview { font-size: 11.5px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+.thread .badges { margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; }
+.thread.unread .nm::before { content: '●'; color: var(--coral); margin-right: 5px; font-size: 9px; vertical-align: 2px; }
+
+.inbox-thread { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 18px 20px; max-height: 720px; overflow-y: auto; }
+.inbox-thread .h { padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.inbox-thread .h .subj { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; }
+.inbox-thread .h .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.inbox-thread .h .meta strong { color: var(--ink); }
+.inbox-msg { padding: 11px 14px; background: var(--paper); border-radius: 8px; margin-bottom: 9px; font-size: 13px; line-height: 1.5; }
+.inbox-msg.out { background: var(--teal-soft); margin-left: 36px; }
+.inbox-msg.in { background: #f4eedb; margin-right: 36px; }
+.inbox-msg .from { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.4px; font-weight: 600; margin-bottom: 4px; }
+
+.ai-draft { background: linear-gradient(135deg, #fefad8 0%, #fef8e8 100%); border: 1px dashed var(--sand); border-radius: 10px; padding: 14px 16px; margin-top: 16px; }
+.ai-draft .label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--sand); font-weight: 700; margin-bottom: 6px; }
+.ai-draft .text { font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.ai-draft .actions { margin-top: 10px; display: flex; gap: 8px; }
+
+.inbox-ctx { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+.inbox-ctx h4 { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+.ctx-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12.5px; border-bottom: 1px dashed var(--line); }
+.ctx-row:last-of-type { border: none; }
+.ctx-row .k { color: var(--muted); }
+.ctx-row .v { font-weight: 600; text-align: right; }
+
+/* ── calendar ─────────────────────────────────────────────────────── */
+.cal { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 0; box-shadow: var(--shadow); overflow-x: auto; }
+.cal-grid { display: grid; grid-template-columns: 180px repeat(14, 1fr); min-width: 980px; }
+.cal-h { padding: 10px 8px; background: #f4eedb; border-bottom: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); font-weight: 600; text-align: center; }
+.cal-h.today { background: var(--coral-soft); color: var(--coral); }
+.cal-h.prop { text-align: left; padding: 10px 14px; }
+.cal-prop { padding: 12px 14px; border-bottom: 1px solid var(--line); background: #fcf9ec; }
+.cal-prop .nm { font-weight: 600; font-size: 13px; }
+.cal-prop .meta { font-size: 10.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.4px; margin-top: 1px; }
+.cal-day { padding: 4px 2px; border-bottom: 1px solid var(--line); border-right: 1px dashed #e6dfcc; position: relative; min-height: 64px; }
+.cal-day.today { background: rgba(192,83,59,0.04); }
+.cal-day.weekend { background: rgba(0,0,0,0.015); }
+.booking { position: absolute; top: 6px; bottom: 6px; left: 1px; right: 1px; border-radius: 4px; padding: 3px 6px; font-size: 10px; line-height: 1.25; color: white; font-weight: 600; cursor: pointer; transition: all 100ms; overflow: hidden; }
+.booking:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.booking.airbnb { background: linear-gradient(135deg, #c0533b, #a04528); }
+.booking.vrbo   { background: linear-gradient(135deg, #1f5b88, #143e5e); }
+.booking.direct { background: linear-gradient(135deg, #4a7d3e, #2e5026); }
+.booking.cleaning { background: repeating-linear-gradient(45deg, #c69820, #c69820 6px, #b58a1a 6px, #b58a1a 12px); color: white; }
+.booking.blocked { background: #7a7264; opacity: 0.5; }
+.booking.span2 { left: -50%; right: 1px; }
+.booking.span3 { left: -150%; right: 1px; }
+.cal-legend { display: flex; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--line); flex-wrap: wrap; font-size: 12px; }
+.cal-legend .item { display: flex; align-items: center; gap: 6px; }
+.cal-legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+
+/* ── properties ───────────────────────────────────────────────────── */
+.props-grid { display: grid; grid-template-columns: 280px 1fr; gap: 16px; }
+.props-list { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+.props-list .head { padding: 11px 14px; border-bottom: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.props-list .item { padding: 14px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background 80ms; display: grid; grid-template-columns: 60px 1fr; gap: 11px; }
+.props-list .item:hover { background: #fcf9ec; }
+.props-list .item.sel { background: var(--teal-soft); border-left: 3px solid var(--teal); padding-left: 11px; }
+.props-list .item .ph { width: 60px; height: 60px; border-radius: 6px; background: linear-gradient(135deg, var(--teal-soft), var(--sand-soft)); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--teal); }
+.props-list .item .nm { font-weight: 600; font-size: 13.5px; }
+.props-list .item .meta { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.35; }
+.props-list .item .status { font-size: 11px; margin-top: 3px; }
+
+.prop-detail { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 20px; box-shadow: var(--shadow); }
+.prop-detail .h { display: flex; gap: 16px; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.prop-detail .h .ph { width: 110px; height: 90px; border-radius: 8px; background: linear-gradient(135deg, var(--teal-soft), var(--sand-soft)); display: flex; align-items: center; justify-content: center; font-size: 38px; color: var(--teal); flex-shrink: 0; }
+.prop-detail .h .info { flex: 1; }
+.prop-detail .h .nm { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; }
+.prop-detail .h .addr { color: var(--muted); font-size: 13px; margin-top: 3px; }
+.prop-detail .h .stat-row { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+.prop-sect { margin-top: 18px; }
+.prop-sect h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); margin-bottom: 9px; font-weight: 600; }
+.prop-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.prop-block { background: #fcf9ec; border-radius: 8px; padding: 11px 13px; }
+.prop-block .k { font-size: 10.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+.prop-block .v { font-weight: 600; margin-top: 2px; font-size: 13px; }
+.prop-block .v small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; margin-top: 1px; }
+
+.vendor-row { display: grid; grid-template-columns: 100px 1fr auto; gap: 12px; padding: 8px 11px; border-bottom: 1px dashed var(--line); align-items: center; font-size: 12.5px; }
+.vendor-row:last-child { border: none; }
+.vendor-row .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.vendor-row .name { font-weight: 600; }
+.vendor-row .name small { display: block; color: var(--muted); font-weight: 500; font-size: 11px; margin-top: 1px; }
+
+.maint-row { display: grid; grid-template-columns: 90px 1fr auto; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--line); align-items: center; font-size: 12.5px; }
+.maint-row:last-child { border: none; }
+.maint-row .dt { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+.supply-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.supply { background: #fcf9ec; padding: 9px 11px; border-radius: 7px; font-size: 12.5px; }
+.supply.low { background: var(--coral-soft); }
+.supply .nm { font-weight: 600; }
+.supply .qty { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); margin-top: 1px; letter-spacing: 0.3px; }
+.supply.low .qty { color: var(--coral); font-weight: 600; }
+
+/* ── guests panel ─────────────────────────────────────────────────── */
+.guest-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.guest-card { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); border-left: 4px solid var(--teal); }
+.guest-card.arriving { border-left-color: var(--coral); }
+.guest-card.departing { border-left-color: var(--amber); }
+.guest-card.upcoming { border-left-color: var(--blue); }
+.guest-card .top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.guest-card .nm { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; }
+.guest-card .meta { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+.guest-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 12px; margin-top: 11px; }
+.guest-grid-2 .k { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.6px; text-transform: uppercase; font-weight: 600; }
+.guest-grid-2 .v { font-weight: 600; margin-top: 1px; font-size: 12.5px; }
+.guest-card .actions { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ── cleaning panel ───────────────────────────────────────────────── */
+.turnover-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.tx-day { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 0; box-shadow: var(--shadow); margin-bottom: 14px; overflow: hidden; }
+.tx-day .head { padding: 11px 16px; background: #f4eedb; border-bottom: 1px solid var(--line); font-family: 'Fraunces', serif; font-size: 15px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+.tx-day .head .meta { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.5px; font-weight: 500; }
+.tx-row { display: grid; grid-template-columns: 110px 1fr 130px 110px 80px; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); align-items: center; font-size: 12.5px; }
+.tx-row:last-child { border: none; }
+.tx-row:hover { background: #fcf9ec; }
+.tx-row .tm { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); }
+.tx-row .nm { font-weight: 600; font-size: 13px; }
+.tx-row .nm small { display: block; color: var(--muted); font-weight: 500; font-size: 11px; margin-top: 1px; }
+.tx-row .crew { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.tx-row .crew .av { width: 22px; height: 22px; border-radius: 50%; background: var(--teal); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 600; }
+
+/* ── money panel ──────────────────────────────────────────────────── */
+.money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pl-table { background: var(--paper-2); border: 1px solid var(--line); border-radius: 10px; padding: 0; box-shadow: var(--shadow); overflow: hidden; }
+.pl-table .head { padding: 13px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.pl-table .head h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; }
+.pl-row { display: grid; grid-template-columns: 1fr 100px 100px 100px; gap: 10px; padding: 11px 16px; border-bottom: 1px solid var(--line); align-items: center; font-size: 12.5px; }
+.pl-row.hdr { background: #f4eedb; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 9px 16px; }
+.pl-row .nm { font-weight: 600; }
+.pl-row .nm small { display: block; color: var(--muted); font-weight: 500; font-size: 11px; margin-top: 1px; }
+.pl-row .num { font-family: 'Fraunces', serif; font-weight: 500; text-align: right; font-size: 14px; }
+.pl-row .num.exp { color: var(--coral); }
+.pl-row .num.net { color: var(--green); font-weight: 600; }
+.pl-row.total { background: #f8f1d8; font-weight: 700; border-top: 2px solid var(--sand); }
+.pl-row.total .num { font-size: 16px; }
+
+.bank-conn { background: linear-gradient(135deg, #fefad8 0%, #fef8e8 100%); border: 1px solid var(--sand); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.bank-conn .ic { width: 36px; height: 36px; background: var(--teal); color: white; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+.bank-conn .info { flex: 1; }
+.bank-conn .nm { font-weight: 700; font-size: 13.5px; }
+.bank-conn .meta { font-size: 11.5px; color: var(--muted); margin-top: 1px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.4px; }
+
+.tx-bank-row { display: grid; grid-template-columns: 80px 1fr 130px 90px 80px; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); align-items: center; font-size: 12.5px; }
+.tx-bank-row .dt { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.tx-bank-row .merch { font-weight: 600; font-size: 12.5px; }
+.tx-bank-row .merch small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; margin-top: 1px; }
+.tx-bank-row .cat { font-size: 11px; }
+.tx-bank-row .amt { font-family: 'Fraunces', serif; font-weight: 500; text-align: right; }
+.tx-bank-row .amt.in { color: var(--green); }
+.tx-bank-row .amt.out { color: var(--coral); }
+.tx-bank-row .prop { font-size: 10.5px; color: var(--muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.3px; }
+
+.cat-breakdown { display: grid; gap: 7px; margin-top: 4px; }
+.cat-row { display: grid; grid-template-columns: 110px 1fr 70px; gap: 12px; align-items: center; font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.cat-row:last-child { border: none; }
+.cat-row .bar { background: var(--line); border-radius: 3px; height: 8px; overflow: hidden; }
+.cat-row .bar div { height: 100%; border-radius: 3px; }
+.cat-row .amt { font-family: 'Fraunces', serif; font-weight: 500; text-align: right; font-size: 13px; }
+
+/* ── footer banner ──────────────────────────────────────────────── */
+.demo-banner {
+  background: linear-gradient(135deg, var(--teal-deep) 0%, #1f4a4a 100%);
+  color: #d8a878;
+  padding: 14px 28px; margin: 32px -28px -80px;
+  border-top: 1px solid var(--teal);
+  font-size: 12.5px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.demo-banner .mono { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a9088; letter-spacing: 1.6px; text-transform: uppercase; }
+.demo-banner a { color: #d8a878; margin-left: auto; padding: 8px 16px; border: 1px solid #d8a878; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 12.5px; }
+.demo-banner a:hover { background: #d8a878; color: var(--teal-deep); }
+
+@media (max-width: 1100px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { flex-direction: row; padding: 12px 14px; overflow-x: auto; gap: 4px; align-items: center; }
+  .sidebar .brand, .sidebar .nav-cat, .sidebar .footer { display: none; }
+  .sidebar .nav { flex-direction: row; gap: 2px; }
+  .sidebar .nav button { white-space: nowrap; padding: 6px 10px; font-size: 12.5px; }
+  .kpis, .dash-strip { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid, .inbox-grid, .props-grid, .guest-grid, .turnover-grid, .money-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Heisenbug<small>Vacation Rental</small></div>
+
+    <div class="nav-cat">Today</div>
+    <div class="nav">
+      <button class="nav-btn active" data-panel="dashboard"><span class="ic">▦</span>Dashboard</button>
+      <button class="nav-btn" data-panel="inbox"><span class="ic">✉</span>Inbox<span class="badge">4</span></button>
+    </div>
+
+    <div class="nav-cat">Properties</div>
+    <div class="nav">
+      <button class="nav-btn" data-panel="calendar"><span class="ic">📅</span>Calendar</button>
+      <button class="nav-btn" data-panel="properties"><span class="ic">⌂</span>Properties</button>
+    </div>
+
+    <div class="nav-cat">Guests + Ops</div>
+    <div class="nav">
+      <button class="nav-btn" data-panel="guests"><span class="ic">●</span>Active guests<span class="badge">3</span></button>
+      <button class="nav-btn" data-panel="cleaning"><span class="ic">✦</span>Cleaning + turnover</button>
+      <button class="nav-btn" data-panel="maintenance"><span class="ic">⚙</span>Maintenance</button>
+    </div>
+
+    <div class="nav-cat">Money</div>
+    <div class="nav">
+      <button class="nav-btn" data-panel="money"><span class="ic">$</span>P&amp;L + bank</button>
+    </div>
+
+    <div class="footer">
+      <div class="user"><span class="av">AS</span><div>Andrey Shvedov<br><span style="font-size:10.5px;color:#7a8884;">Owner · 4 properties</span></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h1 id="topbar-title">Dashboard</h1>
+      <span class="crumb" id="topbar-crumb">4 properties · 3 occupied · $12,840 MTD</span>
+      <div class="right">
+        <span class="conn"><span class="status-dot"></span>Airbnb + VRBO synced</span>
+        <span class="conn"><span class="status-dot" style="background:var(--blue);"></span>Bank · BoA · live</span>
+        <span class="conn"><span class="status-dot" style="background:var(--sand);"></span>Gmail · 4 unread</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="panel active" data-panel="dashboard">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Today · Thu Jun 11 · Hollywood FL</div>
+            <h2>Good morning, Andrey.</h2>
+            <p class="sub">3 of 4 properties occupied. 1 message needs your reply. 1 cleaning crew arriving 11 AM. June MTD revenue is on pace for $22k — best month since March.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn">Today</button>
+            <button class="btn primary">+ Block dates</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="label">June MTD revenue</div><div class="num">$12,840</div><div class="delta">+18% vs May MTD</div></div>
+          <div class="kpi"><div class="label">Occupancy · 30d</div><div class="num">87%</div><div class="delta">+4 pts vs prior 30d</div></div>
+          <div class="kpi"><div class="label">Avg nightly rate</div><div class="num">$189</div><div class="delta">+$12 YoY</div></div>
+          <div class="kpi"><div class="label">Active guests</div><div class="num">3</div><div class="delta">7 nights booked next 7d</div></div>
+        </div>
+
+        <div class="dash-strip">
+          <div class="prop-card occupied"><div class="stripe"></div><div class="photo">🏖</div><div class="nm">Hollywood Beach</div><div class="meta">2BR · 4 guests · Atlantic Ave</div><div class="status"><span class="pill teal dot">Occupied · the Patel family</span></div></div>
+          <div class="prop-card cleaning"><div class="stripe"></div><div class="photo">🌴</div><div class="nm">Hollywood East</div><div class="meta">1BR · 2 guests · S 14th Ave</div><div class="status"><span class="pill amber dot">Cleaning · 11 AM</span></div></div>
+          <div class="prop-card arriving"><div class="stripe"></div><div class="photo">🌅</div><div class="nm">Sunset Condo</div><div class="meta">2BR · 3 guests · Hallandale</div><div class="status"><span class="pill coral dot">Arriving today · 4 PM</span></div></div>
+          <div class="prop-card occupied"><div class="stripe"></div><div class="photo">🏠</div><div class="nm">Dania Bungalow</div><div class="meta">3BR · 6 guests · Dania Beach</div><div class="status"><span class="pill teal dot">Occupied · the Brooks family</span></div></div>
+        </div>
+
+        <div class="dash-grid">
+          <div>
+            <div class="rev-chart" style="margin-bottom:16px;">
+              <h3>June revenue trend</h3>
+              <div class="nums">
+                <div class="num"><small>MTD</small>$12,840</div>
+                <div class="num"><small>On pace</small>$22,400</div>
+                <div class="num"><small>Last June</small>$18,200</div>
+              </div>
+              <svg viewBox="0 0 700 160" class="rev-svg">
+                <defs>
+                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1f6b6b" stop-opacity="0.22"/>
+                    <stop offset="100%" stop-color="#1f6b6b" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- last year baseline -->
+                <polyline points="20,120 60,116 100,110 140,108 180,104 220,100 260,96 300,92 340,90 380,88 420,86 460,84 500,82 540,80 580,80 620,80 660,80" fill="none" stroke="#c69856" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.55"/>
+                <text x="664" y="84" font-family="JetBrains Mono" font-size="9" fill="#c69856">last yr</text>
+                <!-- this year -->
+                <path d="M 20,120 L 60,108 L 100,95 L 140,84 L 180,76 L 220,72 L 260,64 L 300,58 L 340,52 L 340,142 L 20,142 Z" fill="url(#revGrad)"/>
+                <polyline points="20,120 60,108 100,95 140,84 180,76 220,72 260,64 300,58 340,52" fill="none" stroke="#1f6b6b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- forecast dashed -->
+                <polyline points="340,52 380,48 420,44 460,42 500,40 540,38 580,36 620,34 660,32" fill="none" stroke="#1f6b6b" stroke-width="2" stroke-dasharray="5 4" opacity="0.5"/>
+                <g fill="#1f6b6b"><circle cx="340" cy="52" r="4"/></g>
+                <text x="346" y="48" font-family="JetBrains Mono" font-size="9.5" fill="#1f6b6b" font-weight="700">today</text>
+                <g font-family="JetBrains Mono" font-size="9" fill="#7a7264">
+                  <text x="14" y="156">Jun 1</text><text x="170" y="156">Jun 8</text><text x="340" y="156">Jun 11</text><text x="500" y="156">Jun 22</text><text x="640" y="156">Jun 30</text>
+                </g>
+              </svg>
+            </div>
+
+            <div class="timeline">
+              <div class="head"><h3>Next 7 days</h3><span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1.6px;">5 CHECK-INS · 4 CHECK-OUTS</span></div>
+              <div class="tl-row"><div class="day"><strong>11</strong>Thu</div><div class="ev">Sunset Condo · check-in 4 PM <small>The Wilson party · 3 guests · 4 nights · $1,260 · Airbnb</small></div><span class="pill coral dot">Arriving</span></div>
+              <div class="tl-row"><div class="day"><strong>11</strong>Thu</div><div class="ev">Hollywood East · cleaning at 11 AM <small>Maria's crew · post-checkout turnover · pre Friday arrival</small></div><span class="pill amber dot">Crew</span></div>
+              <div class="tl-row"><div class="day"><strong>12</strong>Fri</div><div class="ev">Hollywood East · check-in 3 PM <small>Anders Olsen · solo traveler · 7 nights · $1,520 · VRBO</small></div><span class="pill blue dot">Booked</span></div>
+              <div class="tl-row"><div class="day"><strong>14</strong>Sun</div><div class="ev">Hollywood Beach · check-out 11 AM <small>The Patel family · 6 nights · trigger crew + supply check</small></div><span class="pill amber dot">Auto-trigger</span></div>
+              <div class="tl-row"><div class="day"><strong>15</strong>Mon</div><div class="ev">Hollywood Beach · check-in 4 PM <small>Robinson family · 4 guests · 5 nights · $1,540 · Direct booking</small></div><span class="pill green dot">Direct · no fee</span></div>
+              <div class="tl-row"><div class="day"><strong>17</strong>Wed</div><div class="ev">Dania Bungalow · check-out 11 AM <small>The Brooks family · 8 nights · review request auto-sent</small></div><span class="pill amber dot">Auto-trigger</span></div>
+              <div class="tl-row"><div class="day"><strong>18</strong>Thu</div><div class="ev">Dania Bungalow · check-in 3 PM <small>The Cohen party · 6 guests · 4 nights · $2,140 · Airbnb</small></div><span class="pill teal dot">Confirmed</span></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="attention" style="margin-bottom:16px;">
+              <div class="head"><h3>Needs your attention</h3></div>
+              <div class="att-item urgent"><div class="ic">!</div><div style="flex:1;"><div class="nm">Patel family asking about late checkout</div><div class="desc">Hollywood Beach · message at 6:42 AM · AI drafted a reply, awaiting your approval</div></div></div>
+              <div class="att-item warn"><div class="ic">⚠</div><div style="flex:1;"><div class="nm">Hollywood East · towel stock low (3 sets)</div><div class="desc">Add to Maria's supply list for 11 AM turnover or auto-reorder from Amazon ($45)</div></div></div>
+              <div class="att-item warn"><div class="ic">⚠</div><div style="flex:1;"><div class="nm">Sunset Condo · AC not cooling well</div><div class="desc">Robinson family who booked next week flagged in chat · Carlos (HVAC) available Sat 9 AM</div></div></div>
+              <div class="att-item info"><div class="ic">i</div><div style="flex:1;"><div class="nm">FL tourist tax filing due Jun 20</div><div class="desc">$487 owed across 4 properties · pre-filled, awaiting your e-sign</div></div></div>
+              <div class="att-item info"><div class="ic">i</div><div style="flex:1;"><div class="nm">Hollywood Beach review just landed: 5 stars</div><div class="desc">The Henderson party from May · "Andrey was super responsive" · respond?</div></div></div>
+            </div>
+
+            <div class="card">
+              <h3>This month, automated</h3>
+              <div style="font-size:13px; line-height:1.65; color:var(--ink-2); margin-top:8px;">
+                <div style="padding:6px 0;">✓ <strong>32</strong> guest messages drafted, you approved 28</div>
+                <div style="padding:6px 0;">✓ <strong>11</strong> cleaning crews auto-dispatched after checkout</div>
+                <div style="padding:6px 0;">✓ <strong>$1,420</strong> expenses auto-categorized from BoA feed</div>
+                <div style="padding:6px 0;">✓ <strong>8</strong> review requests sent 24h after checkout</div>
+                <div style="padding:6px 0;">✓ <strong>5</strong> smart-lock codes generated + delivered to guests</div>
+                <div style="padding:6px 0;">✓ <strong>3</strong> supply low-stock alerts surfaced before runout</div>
+              </div>
+              <div style="margin-top:14px; padding-top:11px; border-top:1px solid var(--line); font-size:11.5px; color:var(--muted);">Time saved vs prior workflow: ~14 hours / month</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ INBOX ═══ -->
+      <div class="panel" data-panel="inbox">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Unified inbox · Gmail + Airbnb + VRBO + vendors · AI-categorized</div>
+            <h2>Inbox</h2>
+            <p class="sub">Guest messages from every platform, vendor emails, payout notifications, supply alerts — all in one thread list. AI drafts replies using property context. You review and click Send.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn">All</button>
+            <button class="btn">Needs reply <span style="background:var(--coral);color:white;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:5px;">4</span></button>
+          </div>
+        </div>
+
+        <div class="inbox-grid">
+          <div class="inbox-list">
+            <div class="head">Today · 4 unread</div>
+            <div class="thread unread sel">
+              <div class="top"><span class="nm">Priya Patel</span><span class="ts">6:42 AM</span></div>
+              <div class="subj">Late checkout possible?</div>
+              <div class="preview">Hi Andrey, would it be possible to check out at 2 PM instead of 11? Our flight isn't until evening...</div>
+              <div class="badges"><span class="pill coral" style="font-size:10px;">Guest msg</span><span class="pill teal" style="font-size:10px;">Hollywood Beach</span></div>
+            </div>
+            <div class="thread unread">
+              <div class="top"><span class="nm">Anders Olsen</span><span class="ts">8:14 AM</span></div>
+              <div class="subj">Check-in instructions for Friday</div>
+              <div class="preview">Hi, looking forward to my stay. Can you confirm the parking situation and the wifi password...</div>
+              <div class="badges"><span class="pill coral" style="font-size:10px;">Guest msg</span><span class="pill teal" style="font-size:10px;">Hollywood East</span></div>
+            </div>
+            <div class="thread unread">
+              <div class="top"><span class="nm">Robinson family</span><span class="ts">9:30 AM</span></div>
+              <div class="subj">AC concerns at Sunset Condo</div>
+              <div class="preview">We're checking in Saturday at Sunset Condo. The reviews mentioned the AC has been spotty. Is it...</div>
+              <div class="badges"><span class="pill coral" style="font-size:10px;">Guest msg</span><span class="pill teal" style="font-size:10px;">Sunset Condo</span><span class="pill rust" style="font-size:10px;">Maintenance</span></div>
+            </div>
+            <div class="thread unread">
+              <div class="top"><span class="nm">Maria's Cleaning Crew</span><span class="ts">9:48 AM</span></div>
+              <div class="subj">RE: Hollywood East 11 AM turnover</div>
+              <div class="preview">Hi Andrey, we're on our way. Towel supply at the unit is low — want us to bring extra from inventory?</div>
+              <div class="badges"><span class="pill amber" style="font-size:10px;">Vendor</span><span class="pill teal" style="font-size:10px;">Hollywood East</span></div>
+            </div>
+            <div style="padding:8px 14px; font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted); font-weight:500; background:#f4eedb;">Yesterday</div>
+            <div class="thread">
+              <div class="top"><span class="nm">Airbnb · payout</span><span class="ts">Wed</span></div>
+              <div class="subj">$1,820 payout · 6/10 booking</div>
+              <div class="preview">Your payout for reservation HMC23AB at Hollywood Beach has been sent to BoA ****8842...</div>
+              <div class="badges"><span class="pill green" style="font-size:10px;">Payout</span></div>
+            </div>
+            <div class="thread">
+              <div class="top"><span class="nm">Henderson family</span><span class="ts">Wed</span></div>
+              <div class="subj">5★ review left for Hollywood Beach</div>
+              <div class="preview">"Andrey was super responsive and the place was spotless. Walking distance to the beach. We'd come back..."</div>
+              <div class="badges"><span class="pill green" style="font-size:10px;">Review</span><span class="pill teal" style="font-size:10px;">Hollywood Beach</span></div>
+            </div>
+            <div class="thread">
+              <div class="top"><span class="nm">VRBO · booking</span><span class="ts">Tue</span></div>
+              <div class="subj">Confirmed: Anders Olsen · 7 nights</div>
+              <div class="preview">New booking confirmed at Hollywood East for Jun 12 - Jun 19. Total $1,520. Cleaning fee included...</div>
+              <div class="badges"><span class="pill blue" style="font-size:10px;">Booking</span></div>
+            </div>
+            <div class="thread">
+              <div class="top"><span class="nm">Carlos · HVAC</span><span class="ts">Mon</span></div>
+              <div class="subj">Sunset Condo AC quote</div>
+              <div class="preview">Hey Andrey, I checked the unit Friday. Compressor's working but the coils need cleaning. $180 for service or...</div>
+              <div class="badges"><span class="pill amber" style="font-size:10px;">Vendor</span><span class="pill teal" style="font-size:10px;">Sunset Condo</span></div>
+            </div>
+          </div>
+
+          <div class="inbox-thread">
+            <div class="h">
+              <div class="subj">Late checkout possible?</div>
+              <div class="meta">From <strong>Priya Patel</strong> · via Airbnb · Hollywood Beach booking #HMC23AB · today 6:42 AM</div>
+            </div>
+
+            <div class="inbox-msg in">
+              <div class="from">Priya Patel · 6:42 AM</div>
+              Hi Andrey,<br><br>Would it be possible to check out at 2 PM instead of 11 AM on Sunday? Our flight isn't until 7 PM and we'd love to spend a bit more time at the beach with the kids before heading back. Happy to pay an extra night fee if needed.<br><br>Thank you!<br>Priya
+            </div>
+
+            <div class="inbox-msg out">
+              <div class="from">You · Sat 4:12 PM (re: arrival)</div>
+              Welcome! The lockbox code is 4-2-8-3, change it once you're in. Wifi password is on the fridge. Beach umbrellas in the closet. Reach me anytime!
+            </div>
+
+            <div class="ai-draft">
+              <div class="label">→ AI drafted reply · awaiting your approval</div>
+              <div class="text">
+                Hi Priya — happy to do 2 PM checkout! No extra charge, just text me 30 min before you leave so I can let Maria's crew know.<br><br>The next guests don't arrive until 4 PM so you've got the time. Enjoy the morning at the beach with the kids — it's supposed to be a beautiful day.<br><br>Andrey
+              </div>
+              <div class="actions">
+                <button class="btn primary">Send</button>
+                <button class="btn">Edit</button>
+                <button class="btn ghost">Regenerate</button>
+                <button class="btn ghost">Send + auto-update cleaning crew ETA</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inbox-ctx">
+            <h4>Booking context</h4>
+            <div class="ctx-row"><span class="k">Property</span><span class="v">Hollywood Beach</span></div>
+            <div class="ctx-row"><span class="k">Guest</span><span class="v">Priya Patel + family · 4</span></div>
+            <div class="ctx-row"><span class="k">Dates</span><span class="v">Jun 8 → Jun 14 · 6 nights</span></div>
+            <div class="ctx-row"><span class="k">Total paid</span><span class="v">$1,820 + $80 cleaning</span></div>
+            <div class="ctx-row"><span class="k">Source</span><span class="v">Airbnb · 4th booking</span></div>
+            <div class="ctx-row"><span class="k">Guest history</span><span class="v" style="color:var(--green);">★ 5.0 across 12 stays</span></div>
+
+            <h4 style="margin-top:14px;">Same day · downstream</h4>
+            <div class="ctx-row"><span class="k">Next checkin</span><span class="v">15 Mon · 4 PM</span></div>
+            <div class="ctx-row"><span class="k">Cleaning crew</span><span class="v">Maria · arrives 12:30 PM</span></div>
+            <div class="ctx-row"><span class="k">Late ck-out impact</span><span class="v" style="color:var(--green);">Zero · 4hr gap</span></div>
+
+            <h4 style="margin-top:14px;">Why the AI suggested yes</h4>
+            <p style="font-size:11.5px; line-height:1.5; color:var(--muted);">5-star history guest, perfect review last stay, 4-hour gap before next checkin allows the request without rescheduling Maria, free upgrade builds the relationship for direct re-booking next year (no platform fee).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CALENDAR ═══ -->
+      <div class="panel" data-panel="calendar">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ All 4 properties · Airbnb + VRBO + direct + iCal sync</div>
+            <h2>Calendar</h2>
+            <p class="sub">Two-week view across all properties and all booking platforms. Color-coded by source. Cleaning blocks auto-generated from checkouts. Drag any block to reschedule.</p>
+          </div>
+          <div class="panel-actions">
+            <div class="view-toggle">
+              <button class="active">2 weeks</button>
+              <button>Month</button>
+              <button>Quarter</button>
+            </div>
+            <button class="btn">Sync now</button>
+            <button class="btn primary">+ Add booking</button>
+          </div>
+        </div>
+
+        <div class="cal">
+          <div class="cal-grid">
+            <div class="cal-h prop">Property</div>
+            <div class="cal-h">Wed<br>10</div>
+            <div class="cal-h today">Thu<br>11</div>
+            <div class="cal-h">Fri<br>12</div>
+            <div class="cal-h">Sat<br>13</div>
+            <div class="cal-h">Sun<br>14</div>
+            <div class="cal-h">Mon<br>15</div>
+            <div class="cal-h">Tue<br>16</div>
+            <div class="cal-h">Wed<br>17</div>
+            <div class="cal-h">Thu<br>18</div>
+            <div class="cal-h">Fri<br>19</div>
+            <div class="cal-h">Sat<br>20</div>
+            <div class="cal-h">Sun<br>21</div>
+            <div class="cal-h">Mon<br>22</div>
+            <div class="cal-h">Tue<br>23</div>
+
+            <!-- Hollywood Beach -->
+            <div class="cal-prop"><div class="nm">Hollywood Beach</div><div class="meta">2BR · ATLANTIC AVE</div></div>
+            <div class="cal-day"><div class="booking airbnb span2">Patel · 6n · Airbnb</div></div>
+            <div class="cal-day today"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day weekend"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day"><div class="booking direct span3">Robinson · 5n · DIRECT</div></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day weekend"><div class="booking blocked span2">Owner block</div></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+
+            <!-- Hollywood East -->
+            <div class="cal-prop"><div class="nm">Hollywood East</div><div class="meta">1BR · S 14TH AVE</div></div>
+            <div class="cal-day"></div>
+            <div class="cal-day today"><div class="booking cleaning">Clean 11a</div></div>
+            <div class="cal-day"><div class="booking vrbo span2">Olsen · 7n · VRBO</div></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day weekend"><div class="booking airbnb span2">Cohen · 4n · Airbnb</div></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+
+            <!-- Sunset Condo -->
+            <div class="cal-prop"><div class="nm">Sunset Condo</div><div class="meta">2BR · HALLANDALE</div></div>
+            <div class="cal-day"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day today"><div class="booking airbnb span2">Wilson · 4n · Airbnb</div></div>
+            <div class="cal-day"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day weekend"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day"><div class="booking direct span3">Davis · 6n · DIRECT</div></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"><div class="booking airbnb span2">Foster · 5n · Airbnb</div></div>
+            <div class="cal-day"></div>
+
+            <!-- Dania Bungalow -->
+            <div class="cal-prop"><div class="nm">Dania Bungalow</div><div class="meta">3BR · DANIA BEACH</div></div>
+            <div class="cal-day"><div class="booking airbnb span3">Brooks · 8n · Airbnb</div></div>
+            <div class="cal-day today"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day"><div class="booking airbnb span2">Cohen · 4n · Airbnb</div></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="booking cleaning">Clean</div></div>
+            <div class="cal-day weekend"><div class="booking vrbo span3">Yates · 6n · VRBO</div></div>
+            <div class="cal-day weekend"></div>
+            <div class="cal-day"></div>
+            <div class="cal-day"></div>
+          </div>
+          <div class="cal-legend">
+            <div class="item"><span class="sw" style="background:linear-gradient(135deg,#c0533b,#a04528);"></span>Airbnb</div>
+            <div class="item"><span class="sw" style="background:linear-gradient(135deg,#1f5b88,#143e5e);"></span>VRBO</div>
+            <div class="item"><span class="sw" style="background:linear-gradient(135deg,#4a7d3e,#2e5026);"></span>Direct (zero platform fee)</div>
+            <div class="item"><span class="sw" style="background:repeating-linear-gradient(45deg,#c69820,#c69820 4px,#b58a1a 4px,#b58a1a 8px);"></span>Cleaning turnover</div>
+            <div class="item"><span class="sw" style="background:#7a7264;opacity:0.5;"></span>Owner block</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PROPERTIES ═══ -->
+      <div class="panel" data-panel="properties">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Per-property detail · vendors · maintenance · compliance · supplies</div>
+            <h2>Properties</h2>
+            <p class="sub">One source of truth per property. Smart-lock codes, vendor contacts, maintenance log, supply inventory, license + tax compliance dates — everything that lived in a notebook, a Google Doc, a Notes app, and three text threads, in one place.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn primary">+ Add property</button>
+          </div>
+        </div>
+
+        <div class="props-grid">
+          <div class="props-list">
+            <div class="head">4 active properties</div>
+            <div class="item sel">
+              <div class="ph">🏖</div>
+              <div><div class="nm">Hollywood Beach</div><div class="meta">2BR · 2BA · 4 guests<br>Atlantic Ave</div><div class="status"><span class="pill teal dot">Occupied</span></div></div>
+            </div>
+            <div class="item">
+              <div class="ph">🌴</div>
+              <div><div class="nm">Hollywood East</div><div class="meta">1BR · 1BA · 2 guests<br>S 14th Ave</div><div class="status"><span class="pill amber dot">Cleaning 11a</span></div></div>
+            </div>
+            <div class="item">
+              <div class="ph">🌅</div>
+              <div><div class="nm">Sunset Condo</div><div class="meta">2BR · 2BA · 3 guests<br>Hallandale</div><div class="status"><span class="pill coral dot">Arriving 4 PM</span></div></div>
+            </div>
+            <div class="item">
+              <div class="ph">🏠</div>
+              <div><div class="nm">Dania Bungalow</div><div class="meta">3BR · 2BA · 6 guests<br>Dania Beach</div><div class="status"><span class="pill teal dot">Occupied</span></div></div>
+            </div>
+          </div>
+
+          <div class="prop-detail">
+            <div class="h">
+              <div class="ph">🏖</div>
+              <div class="info">
+                <div class="nm">Hollywood Beach</div>
+                <div class="addr">1428 Atlantic Ave · Hollywood FL 33019 · 2BR / 2BA · sleeps 4</div>
+                <div class="stat-row">
+                  <span class="pill teal dot">Occupied · the Patel family</span>
+                  <span class="pill green">★ 4.92 · 47 reviews</span>
+                  <span class="pill blue">Airbnb + VRBO + direct</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prop-sect">
+              <h4>Access + smart lock</h4>
+              <div class="prop-grid-2">
+                <div class="prop-block"><div class="k">Current code</div><div class="v">4-2-8-3 <small>auto-rotated at checkout · expires Sun 11 AM</small></div></div>
+                <div class="prop-block"><div class="k">Wifi</div><div class="v">HollywoodBeach2024 <small>Eero mesh · 200 Mbps · password printed on fridge magnet</small></div></div>
+                <div class="prop-block"><div class="k">Parking</div><div class="v">Spot #14 in garage <small>Permit hanging behind front door</small></div></div>
+                <div class="prop-block"><div class="k">Trash day</div><div class="v">Mon + Thu morning <small>Recycling Wed · auto-reminded to guests</small></div></div>
+              </div>
+            </div>
+
+            <div class="prop-sect">
+              <h4>Vendor contacts</h4>
+              <div style="background:#fcf9ec; border-radius:8px; padding:6px 12px;">
+                <div class="vendor-row"><div class="role">Cleaning</div><div class="name">Maria's Crew<small>maria@hollywoodclean.fl · (954) 555-0184</small></div><button class="btn sm">Call</button></div>
+                <div class="vendor-row"><div class="role">HVAC</div><div class="name">Carlos Ramirez<small>Coastline AC · (954) 555-2207 · responds same-day in summer</small></div><button class="btn sm">Call</button></div>
+                <div class="vendor-row"><div class="role">Plumber</div><div class="name">Joe Vincent<small>Vincent Plumbing · (954) 555-7720 · 24/7 emergency</small></div><button class="btn sm">Call</button></div>
+                <div class="vendor-row"><div class="role">Handyman</div><div class="name">Daniel Park<small>(954) 555-3318 · screen doors, locks, paint touch-ups</small></div><button class="btn sm">Call</button></div>
+                <div class="vendor-row"><div class="role">Exterminator</div><div class="name">All-Pro Pest<small>monthly contract · (954) 555-4490 · last service Jun 1</small></div><button class="btn sm">Call</button></div>
+              </div>
+            </div>
+
+            <div class="prop-grid-2" style="margin-top:18px;">
+              <div>
+                <h4 style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted); margin-bottom:9px; font-weight:600;">Maintenance log · last 6 mo</h4>
+                <div class="maint-row"><span class="dt">Jun 1</span><span><strong>Exterminator visit</strong> · monthly preventive</span><span class="pill green" style="font-size:10px;">Done</span></div>
+                <div class="maint-row"><span class="dt">May 22</span><span><strong>AC filter replaced</strong> · scheduled</span><span class="pill green" style="font-size:10px;">Done</span></div>
+                <div class="maint-row"><span class="dt">May 8</span><span><strong>Bathroom faucet · Joe V.</strong> · leak fix</span><span class="pill green" style="font-size:10px;">$165</span></div>
+                <div class="maint-row"><span class="dt">Apr 14</span><span><strong>Beach umbrella replaced</strong> · wear</span><span class="pill green" style="font-size:10px;">$48</span></div>
+                <div class="maint-row"><span class="dt">Mar 30</span><span><strong>Deep clean · post-spring break</strong></span><span class="pill green" style="font-size:10px;">$220</span></div>
+                <div class="maint-row"><span class="dt">Feb 18</span><span><strong>Water heater service</strong> · 8yr unit</span><span class="pill amber" style="font-size:10px;">$310</span></div>
+              </div>
+              <div>
+                <h4 style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; color:var(--muted); margin-bottom:9px; font-weight:600;">Supply inventory</h4>
+                <div class="supply-grid">
+                  <div class="supply"><div class="nm">Toilet paper</div><div class="qty">9 rolls · OK</div></div>
+                  <div class="supply"><div class="nm">Coffee pods</div><div class="qty">22 · OK</div></div>
+                  <div class="supply"><div class="nm">Bath towels</div><div class="qty">6 sets · OK</div></div>
+                  <div class="supply low"><div class="nm">Beach towels</div><div class="qty">2 sets · LOW</div></div>
+                  <div class="supply"><div class="nm">Dish soap</div><div class="qty">3 bottles · OK</div></div>
+                  <div class="supply"><div class="nm">Trash bags</div><div class="qty">28 · OK</div></div>
+                  <div class="supply"><div class="nm">Paper towels</div><div class="qty">5 rolls · OK</div></div>
+                  <div class="supply low"><div class="nm">Sunscreen</div><div class="qty">1 bottle · LOW</div></div>
+                  <div class="supply"><div class="nm">Laundry pods</div><div class="qty">14 · OK</div></div>
+                </div>
+                <div style="margin-top:9px;"><button class="btn sm primary">Order from Amazon · $52</button></div>
+              </div>
+            </div>
+
+            <div class="prop-sect">
+              <h4>Compliance + licenses · FL · Hollywood city</h4>
+              <div class="prop-grid-2">
+                <div class="prop-block"><div class="k">FL vacation rental license</div><div class="v">DBPR #VR-43821 · current <small>Renews 2027-03-18 · auto-reminder 60d</small></div></div>
+                <div class="prop-block"><div class="k">Tourist development tax</div><div class="v">Broward TDT-22084 · current <small>Filing due Jun 20 · $487 owed · auto-calc from bookings</small></div></div>
+                <div class="prop-block"><div class="k">Hollywood city STR permit</div><div class="v">CHR-2024-1842 · current <small>Renews 2027-01-10 · annual inspection passed Mar 4</small></div></div>
+                <div class="prop-block"><div class="k">Insurance · STR rider</div><div class="v">State Farm · $1,400/yr <small>Hurricane deductible 5% · covered through 2027-09</small></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ GUESTS ═══ -->
+      <div class="panel" data-panel="guests">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Currently in-stay + arriving today + upcoming 7d</div>
+            <h2>Active guests</h2>
+            <p class="sub">Every guest currently in your portfolio, plus arrivals today and the next 7 days. Each card has the live lockbox code, last contact timestamp, special requests, and quick actions.</p>
+          </div>
+        </div>
+
+        <div class="guest-grid">
+          <div class="guest-card">
+            <div class="top">
+              <div><div class="nm">The Patel family</div><div class="meta">Priya, Raj, 2 kids · Hollywood Beach</div></div>
+              <span class="pill teal dot">In-stay · day 3 of 6</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Check-in</div><div class="v">Sun Jun 8 · 4 PM</div></div>
+              <div><div class="k">Check-out</div><div class="v">Sun Jun 14 · 2 PM</div></div>
+              <div><div class="k">Lockbox code</div><div class="v" style="font-family:'JetBrains Mono',monospace;">4-2-8-3</div></div>
+              <div><div class="k">Last contact</div><div class="v">6:42 AM today</div></div>
+              <div><div class="k">Total paid</div><div class="v">$1,900</div></div>
+              <div><div class="k">Source · history</div><div class="v">Airbnb · ★ 5.0 · 12 stays</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Open thread</button>
+              <button class="btn sm">Resend instructions</button>
+              <button class="btn sm">Re-issue lockbox code</button>
+            </div>
+          </div>
+
+          <div class="guest-card">
+            <div class="top">
+              <div><div class="nm">The Brooks family</div><div class="meta">Mike + Jen + 4 kids · Dania Bungalow</div></div>
+              <span class="pill teal dot">In-stay · day 5 of 8</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Check-in</div><div class="v">Sat Jun 6 · 3 PM</div></div>
+              <div><div class="k">Check-out</div><div class="v">Wed Jun 17 · 11 AM</div></div>
+              <div><div class="k">Lockbox code</div><div class="v" style="font-family:'JetBrains Mono',monospace;">7-1-9-4</div></div>
+              <div><div class="k">Last contact</div><div class="v">Tue 8:14 PM</div></div>
+              <div><div class="k">Total paid</div><div class="v">$2,540</div></div>
+              <div><div class="k">Source</div><div class="v">Airbnb · first stay</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Open thread</button>
+              <button class="btn sm">Send mid-stay check-in</button>
+            </div>
+          </div>
+
+          <div class="guest-card departing">
+            <div class="top">
+              <div><div class="nm">The Henderson family</div><div class="meta">Already departed · Hollywood East</div></div>
+              <span class="pill amber dot">Checked out Tue</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Stayed</div><div class="v">Jun 4 → Jun 9 · 5 nights</div></div>
+              <div><div class="k">Review</div><div class="v" style="color:var(--green);">★★★★★ · landed Wed</div></div>
+              <div><div class="k">Total paid</div><div class="v">$1,180</div></div>
+              <div><div class="k">Source</div><div class="v">Airbnb · 3rd stay</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Respond to review</button>
+              <button class="btn sm">Offer direct re-book (no fee)</button>
+            </div>
+          </div>
+
+          <div class="guest-card arriving">
+            <div class="top">
+              <div><div class="nm">The Wilson party</div><div class="meta">3 guests · Sunset Condo · ARRIVING TODAY</div></div>
+              <span class="pill coral dot">Check-in 4 PM today</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Stay</div><div class="v">Jun 11 → Jun 15 · 4 nights</div></div>
+              <div><div class="k">Lockbox code</div><div class="v" style="font-family:'JetBrains Mono',monospace;">6-2-1-9</div></div>
+              <div><div class="k">Pre-arrival sent?</div><div class="v" style="color:var(--green);">✓ Tue 9 AM</div></div>
+              <div><div class="k">Special requests</div><div class="v">Crib for toddler (provided)</div></div>
+              <div><div class="k">Total</div><div class="v">$1,260</div></div>
+              <div><div class="k">Source</div><div class="v">Airbnb · first stay</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Send check-in instructions now</button>
+              <button class="btn sm">Track ETA</button>
+            </div>
+          </div>
+
+          <div class="guest-card upcoming">
+            <div class="top">
+              <div><div class="nm">Anders Olsen</div><div class="meta">Solo · Hollywood East · arrives Fri</div></div>
+              <span class="pill blue dot">Friday · 3 PM</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Stay</div><div class="v">Jun 12 → Jun 19 · 7 nights</div></div>
+              <div><div class="k">Lockbox code</div><div class="v">Auto-gen Fri AM</div></div>
+              <div><div class="k">Pre-arrival</div><div class="v">Scheduled Thu PM</div></div>
+              <div><div class="k">Total paid</div><div class="v">$1,520</div></div>
+              <div><div class="k">Source</div><div class="v">VRBO · first stay</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Reply to his Q's</button>
+              <button class="btn sm">Send wifi + parking now</button>
+            </div>
+          </div>
+
+          <div class="guest-card upcoming">
+            <div class="top">
+              <div><div class="nm">The Robinson family</div><div class="meta">4 guests · Hollywood Beach · arrives Mon</div></div>
+              <span class="pill blue dot">Monday · 4 PM</span>
+            </div>
+            <div class="guest-grid-2">
+              <div><div class="k">Stay</div><div class="v">Jun 15 → Jun 20 · 5 nights</div></div>
+              <div><div class="k">Total paid</div><div class="v">$1,540</div></div>
+              <div><div class="k">Source</div><div class="v" style="color:var(--green);">Direct (no platform fee)</div></div>
+              <div><div class="k">Concern flagged</div><div class="v" style="color:var(--coral);">Asked about Sunset Condo AC</div></div>
+            </div>
+            <div class="actions">
+              <button class="btn sm">Address AC concern</button>
+              <button class="btn sm">Confirm crib</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CLEANING ═══ -->
+      <div class="panel" data-panel="cleaning">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Auto-triggered from checkouts · crew dispatch · supply check</div>
+            <h2>Cleaning + turnover</h2>
+            <p class="sub">Every checkout auto-creates a turnover job: assigned crew, expected window, supply list, photo upload. Crews see today's queue on their phone. You see the schedule across all properties + supply low-stock alerts before the next guest notices.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn">All crews</button>
+            <button class="btn primary">+ Manual job</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="label">Today's turnovers</div><div class="num">1</div><div class="delta">+2 tomorrow</div></div>
+          <div class="kpi"><div class="label">This week</div><div class="num">8</div><div class="delta">avg 2hr 15m</div></div>
+          <div class="kpi"><div class="label">Avg turnover cost</div><div class="num">$95</div><div class="delta">-$12 vs last yr</div></div>
+          <div class="kpi"><div class="label">Supply alerts open</div><div class="num" style="color:var(--coral);">3</div><div class="delta dn">2 reorders queued</div></div>
+        </div>
+
+        <div class="turnover-grid">
+          <div>
+            <div class="tx-day">
+              <div class="head">Today · Thursday Jun 11 <span class="meta">1 turnover</span></div>
+              <div class="tx-row">
+                <span class="tm">11:00 AM<br><small style="font-size:10px;">~2 hrs</small></span>
+                <div class="nm">Hollywood East<small>Henderson party left 10:30 AM · 5-night stay</small></div>
+                <div class="crew"><span class="av">MR</span><div>Maria's Crew<br><small style="color:var(--muted);font-size:10.5px;">arriving on time</small></div></div>
+                <span class="pill amber dot">En route</span>
+                <span class="pill blue" style="font-size:10px;">$95</span>
+              </div>
+            </div>
+
+            <div class="tx-day">
+              <div class="head">Tomorrow · Friday Jun 12 <span class="meta">2 turnovers</span></div>
+              <div class="tx-row">
+                <span class="tm">11:30 AM<br><small style="font-size:10px;">~2 hrs</small></span>
+                <div class="nm">Hollywood Beach<small>Quick mid-stay refresh · towels + trash · per Patel request</small></div>
+                <div class="crew"><span class="av">MR</span><div>Maria's Crew<br><small style="color:var(--muted);font-size:10.5px;">add-on $35</small></div></div>
+                <span class="pill teal dot">Scheduled</span>
+                <span class="pill blue" style="font-size:10px;">$35</span>
+              </div>
+              <div class="tx-row">
+                <span class="tm">10:00 AM<br><small style="font-size:10px;">~1.5 hrs</small></span>
+                <div class="nm">Sunset Condo<small>Pre-arrival refresh · Wilson party arrives 4 PM</small></div>
+                <div class="crew"><span class="av" style="background:var(--coral);">CG</span><div>Coastal Cleaning<br><small style="color:var(--muted);font-size:10.5px;">Sunset's regular crew</small></div></div>
+                <span class="pill teal dot">Scheduled</span>
+                <span class="pill blue" style="font-size:10px;">$85</span>
+              </div>
+            </div>
+
+            <div class="tx-day">
+              <div class="head">This weekend · Sat Jun 13 - Sun Jun 14 <span class="meta">2 turnovers</span></div>
+              <div class="tx-row">
+                <span class="tm">Sun 11:30 AM<br><small style="font-size:10px;">~2.5 hrs</small></span>
+                <div class="nm">Hollywood Beach<small>Patel family departing · Robinson party arrives Mon 4 PM</small></div>
+                <div class="crew"><span class="av">MR</span><div>Maria's Crew<br><small style="color:var(--muted);font-size:10.5px;">double turnover before Robinson</small></div></div>
+                <span class="pill teal dot">Auto-scheduled</span>
+                <span class="pill blue" style="font-size:10px;">$110</span>
+              </div>
+              <div class="tx-row">
+                <span class="tm">Sat 10:00 AM<br><small style="font-size:10px;">~1.5 hrs</small></span>
+                <div class="nm">Sunset Condo<small>Wilson departing Sat 11 · Davis arriving Sun 3 PM</small></div>
+                <div class="crew"><span class="av" style="background:var(--coral);">CG</span><div>Coastal Cleaning</div></div>
+                <span class="pill teal dot">Auto-scheduled</span>
+                <span class="pill blue" style="font-size:10px;">$85</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom:14px;">
+              <h3 style="margin-bottom:6px;">Supply alerts · across all 4 properties</h3>
+              <div style="font-size:11.5px; color:var(--muted); margin-bottom:11px;">Inventory tracked per property. Auto-alert when below threshold. One-click reorder from Amazon Subscribe &amp; Save.</div>
+              <div class="supply low"><div class="nm">Hollywood Beach · beach towels</div><div class="qty">2 sets · need 4 more · $48</div></div>
+              <div class="supply low" style="margin-top:6px;"><div class="nm">Hollywood Beach · sunscreen</div><div class="qty">1 bottle · need 4 more · $24</div></div>
+              <div class="supply low" style="margin-top:6px;"><div class="nm">Hollywood East · K-cups</div><div class="qty">8 · need 40 more · $32</div></div>
+              <div style="margin-top:11px; display:flex; gap:6px;"><button class="btn sm primary">Reorder all · $104</button><button class="btn sm">Add to Maria's pickup</button></div>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-bottom:6px;">Crew performance · 90d</h3>
+              <div class="vendor-row"><div class="role">Maria's Crew</div><div class="name">Hollywood Beach + East<small>22 turnovers · avg 2h 8m · 4.9★ rating</small></div><span class="pill green" style="font-size:10px;">Top</span></div>
+              <div class="vendor-row"><div class="role">Coastal Cleaning</div><div class="name">Sunset Condo<small>14 turnovers · avg 1h 42m · 4.8★ rating</small></div><span class="pill green" style="font-size:10px;">Top</span></div>
+              <div class="vendor-row"><div class="role">Dania Crew</div><div class="name">Dania Bungalow<small>11 turnovers · avg 2h 35m · 4.7★ rating</small></div><span class="pill amber" style="font-size:10px;">Good</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MAINTENANCE ═══ -->
+      <div class="panel" data-panel="maintenance">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Open work orders · vendor directory · compliance dates</div>
+            <h2>Maintenance + vendors</h2>
+            <p class="sub">Open work orders surfaced from guest messages, supply alerts, scheduled PM, and your own walk-throughs. Vendor directory per property. Compliance dates that have a way of sneaking up — license renewals, inspections, tax filings.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn">All open</button>
+            <button class="btn primary">+ New work order</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="label">Open work orders</div><div class="num" style="color:var(--coral);">3</div><div class="delta dn">1 urgent</div></div>
+          <div class="kpi"><div class="label">Avg resolve time</div><div class="num">1.8d</div><div class="delta">-0.5d vs last yr</div></div>
+          <div class="kpi"><div class="label">Vendors trusted</div><div class="num">8</div><div class="delta">across 4 properties</div></div>
+          <div class="kpi"><div class="label">Compliance · 30d</div><div class="num" style="color:var(--amber);">2</div><div class="delta dn">TDT + state inspect</div></div>
+        </div>
+
+        <div class="dash-grid">
+          <div>
+            <div class="timeline" style="margin-bottom:16px;">
+              <div class="head"><h3>Open work orders</h3><span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1.6px;">3 OPEN · 1 URGENT</span></div>
+              <div class="tl-row">
+                <div class="day"><strong>SAT</strong>9a</div>
+                <div class="ev">Sunset Condo · AC cooling issue <small>Robinson family flagged in chat · Carlos available Sat 9 AM · before their 4 PM check-in</small></div>
+                <span class="pill coral dot">Urgent</span>
+              </div>
+              <div class="tl-row">
+                <div class="day"><strong>FRI</strong>11a</div>
+                <div class="ev">Hollywood East · towel stock <small>Maria adding to her supply pickup · resolves with turnover · no separate cost</small></div>
+                <span class="pill amber dot">In progress</span>
+              </div>
+              <div class="tl-row">
+                <div class="day"><strong>NEXT</strong>WK</div>
+                <div class="ev">Dania Bungalow · pool filter inspection <small>Quarterly · last did in March · scheduled Mike's pool service for Jun 18</small></div>
+                <span class="pill teal dot">Scheduled</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Recently closed · 30d</h3>
+              <div class="maint-row"><span class="dt">Jun 5</span><span><strong>Hollywood Beach · bathroom faucet</strong> · Joe Vincent · 45min</span><span class="pill green" style="font-size:10px;">$165</span></div>
+              <div class="maint-row"><span class="dt">May 28</span><span><strong>Dania Bungalow · screen door</strong> · Daniel handyman</span><span class="pill green" style="font-size:10px;">$85</span></div>
+              <div class="maint-row"><span class="dt">May 22</span><span><strong>Hollywood East · AC filter</strong> · Maria during turnover · supplies</span><span class="pill green" style="font-size:10px;">$24</span></div>
+              <div class="maint-row"><span class="dt">May 15</span><span><strong>Sunset Condo · garbage disposal</strong> · Joe Vincent · same-day</span><span class="pill green" style="font-size:10px;">$140</span></div>
+              <div class="maint-row"><span class="dt">May 8</span><span><strong>All 4 · monthly exterminator</strong> · All-Pro Pest contract</span><span class="pill green" style="font-size:10px;">$220</span></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="attention" style="margin-bottom:14px;">
+              <div class="head"><h3>Compliance · upcoming</h3></div>
+              <div class="att-item urgent"><div class="ic">!</div><div style="flex:1;"><div class="nm">FL tourist tax · Jun 20 · all 4 props</div><div class="desc">$487 across portfolio · auto-calc from bookings · pre-filled, awaiting e-sign</div></div></div>
+              <div class="att-item warn"><div class="ic">⚠</div><div style="flex:1;"><div class="nm">Hollywood city STR inspection · Jul 12</div><div class="desc">Hollywood Beach annual fire/safety inspection · 9 AM window booked</div></div></div>
+              <div class="att-item info"><div class="ic">i</div><div style="flex:1;"><div class="nm">DBPR vacation rental renewals</div><div class="desc">All 4 properties renew between Jan–Mar 2027 · 60-day reminders queued</div></div></div>
+              <div class="att-item info"><div class="ic">i</div><div style="flex:1;"><div class="nm">Hurricane prep checklist · Jun 1 → Nov 30</div><div class="desc">Shutters tested ✓ · sandbags stocked ✓ · emergency contacts updated ✓</div></div></div>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-bottom:8px;">Vendor directory</h3>
+              <div class="vendor-row"><div class="role">HVAC</div><div class="name">Carlos Ramirez<small>Coastline AC · all 4 properties</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Plumber</div><div class="name">Joe Vincent<small>Vincent Plumbing · 24/7 emergency</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Handyman</div><div class="name">Daniel Park<small>Hollywood Beach + East</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Pool</div><div class="name">Mike Costa<small>Dania Bungalow · weekly service $120/mo</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Exterminator</div><div class="name">All-Pro Pest<small>monthly · all 4 properties</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Locksmith</div><div class="name">Hallandale Lock<small>Sunset Condo · re-key after Mar incident</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Roof</div><div class="name">Atlas Roofing<small>Dania Bungalow · annual inspect + hurricane prep</small></div><button class="btn sm">Call</button></div>
+              <div class="vendor-row"><div class="role">Insurance</div><div class="name">State Farm · Maria Vega<small>STR rider on all 4 · annual review Jan</small></div><button class="btn sm">Call</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MONEY ═══ -->
+      <div class="panel" data-panel="money">
+        <div class="panel-head">
+          <div>
+            <div class="label">→ Per-property P&amp;L · Bank of America linked · auto-categorized expenses · Schedule E ready</div>
+            <h2>P&amp;L + bank</h2>
+            <p class="sub">Bank account connected via Plaid. Expenses auto-categorized and assigned to the right property. Per-property P&amp;L updated daily. Schedule E-ready output for Natalia at tax time — no shoebox of receipts.</p>
+          </div>
+          <div class="panel-actions">
+            <button class="btn">June MTD</button>
+            <button class="btn">YTD</button>
+            <button class="btn primary">Export Schedule E preview</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><div class="label">June revenue</div><div class="num">$12,840</div><div class="delta">+18% vs May</div></div>
+          <div class="kpi"><div class="label">June expenses</div><div class="num">$3,420</div><div class="delta dn">+$280 vs May</div></div>
+          <div class="kpi"><div class="label">June net</div><div class="num" style="color:var(--green);">$9,420</div><div class="delta">73% margin</div></div>
+          <div class="kpi"><div class="label">YTD net · all 4</div><div class="num">$48,180</div><div class="delta">+22% vs YTD 24</div></div>
+        </div>
+
+        <div class="money-grid">
+          <div>
+            <div class="pl-table">
+              <div class="head"><h3>Per-property · June MTD</h3><span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:0.5px;">DAY 11 OF 30</span></div>
+              <div class="pl-row hdr">
+                <div>Property</div><div style="text-align:right;">Revenue</div><div style="text-align:right;">Expenses</div><div style="text-align:right;">Net</div>
+              </div>
+              <div class="pl-row">
+                <div class="nm">Hollywood Beach<small>2BR · ★ 4.92 · 6n booked</small></div>
+                <div class="num">$4,840</div>
+                <div class="num exp">-$1,180</div>
+                <div class="num net">$3,660</div>
+              </div>
+              <div class="pl-row">
+                <div class="nm">Hollywood East<small>1BR · ★ 4.85 · 5n booked</small></div>
+                <div class="num">$2,150</div>
+                <div class="num exp">-$640</div>
+                <div class="num net">$1,510</div>
+              </div>
+              <div class="pl-row">
+                <div class="nm">Sunset Condo<small>2BR · ★ 4.78 · 4n booked</small></div>
+                <div class="num">$2,310</div>
+                <div class="num exp">-$820</div>
+                <div class="num net">$1,490</div>
+              </div>
+              <div class="pl-row">
+                <div class="nm">Dania Bungalow<small>3BR · ★ 4.91 · 8n booked</small></div>
+                <div class="num">$3,540</div>
+                <div class="num exp">-$780</div>
+                <div class="num net">$2,760</div>
+              </div>
+              <div class="pl-row total">
+                <div class="nm">Portfolio total · MTD</div>
+                <div class="num">$12,840</div>
+                <div class="num exp">-$3,420</div>
+                <div class="num net">$9,420</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <h3>Expense categories · June MTD</h3>
+              <div class="cat-breakdown" style="margin-top:11px;">
+                <div class="cat-row"><span><strong>Cleaning</strong> · 8 turnovers</span><div class="bar"><div style="width:48%; background:var(--teal);"></div></div><span class="amt">$1,280</span></div>
+                <div class="cat-row"><span><strong>Supplies</strong> · auto-orders + bulk</span><div class="bar"><div style="width:24%; background:var(--sand);"></div></div><span class="amt">$640</span></div>
+                <div class="cat-row"><span><strong>Utilities</strong> · electric + water + internet</span><div class="bar"><div style="width:18%; background:var(--blue);"></div></div><span class="amt">$480</span></div>
+                <div class="cat-row"><span><strong>Maintenance</strong> · plumber + AC</span><div class="bar"><div style="width:14%; background:var(--coral);"></div></div><span class="amt">$385</span></div>
+                <div class="cat-row"><span><strong>Insurance</strong> · STR rider monthly</span><div class="bar"><div style="width:13%; background:var(--green);"></div></div><span class="amt">$350</span></div>
+                <div class="cat-row"><span><strong>Platform fees</strong> · Airbnb + VRBO</span><div class="bar"><div style="width:10%; background:var(--rust);"></div></div><span class="amt">$285</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="bank-conn">
+              <div class="ic">$</div>
+              <div class="info">
+                <div class="nm">Bank of America · Business Checking</div>
+                <div class="meta">****8842 · live sync via Plaid · last updated 9:12 AM</div>
+              </div>
+              <span class="pill green dot">Connected</span>
+            </div>
+
+            <div class="card" style="padding:0;">
+              <div style="padding:13px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-family:'Fraunces',serif; font-size:17px; font-weight:500;">Recent transactions</h3>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1.6px;">AUTO-CATEGORIZED</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 11</span>
+                <div class="merch">Airbnb payout<small>HMC23AB · Patel reservation</small></div>
+                <span class="cat"><span class="pill green" style="font-size:10px;">Revenue</span></span>
+                <span class="amt in">+$1,820</span>
+                <span class="prop">HB</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 10</span>
+                <div class="merch">Maria's Cleaning<small>auto-paid · 2 turnovers · Hollywood Beach + East</small></div>
+                <span class="cat"><span class="pill teal" style="font-size:10px;">Cleaning</span></span>
+                <span class="amt out">-$190</span>
+                <span class="prop">HB·HE</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 10</span>
+                <div class="merch">FPL · electric<small>Sunset Condo · monthly auto-pay</small></div>
+                <span class="cat"><span class="pill blue" style="font-size:10px;">Utilities</span></span>
+                <span class="amt out">-$148</span>
+                <span class="prop">SC</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 9</span>
+                <div class="merch">VRBO payout<small>Anders Olsen · upcoming Jun 12 stay</small></div>
+                <span class="cat"><span class="pill green" style="font-size:10px;">Revenue</span></span>
+                <span class="amt in">+$1,376</span>
+                <span class="prop">HE</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 9</span>
+                <div class="merch">Amazon · Subscribe &amp; Save<small>K-cups, toilet paper, beach towels · auto-split 4 ways</small></div>
+                <span class="cat"><span class="pill sand" style="font-size:10px;">Supplies</span></span>
+                <span class="amt out">-$148</span>
+                <span class="prop">all</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 8</span>
+                <div class="merch">State Farm · STR insurance<small>monthly premium · all 4 properties</small></div>
+                <span class="cat"><span class="pill green" style="font-size:10px;">Insurance</span></span>
+                <span class="amt out">-$350</span>
+                <span class="prop">all</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 7</span>
+                <div class="merch">All-Pro Pest Control<small>monthly preventive · all 4 properties</small></div>
+                <span class="cat"><span class="pill teal" style="font-size:10px;">Maintenance</span></span>
+                <span class="amt out">-$220</span>
+                <span class="prop">all</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 6</span>
+                <div class="merch">Airbnb payout<small>Brooks family · Dania Bungalow</small></div>
+                <span class="cat"><span class="pill green" style="font-size:10px;">Revenue</span></span>
+                <span class="amt in">+$2,540</span>
+                <span class="prop">DB</span>
+              </div>
+              <div class="tx-bank-row">
+                <span class="dt">Jun 5</span>
+                <div class="merch">Vincent Plumbing<small>Hollywood Beach · bathroom faucet repair</small></div>
+                <span class="cat"><span class="pill coral" style="font-size:10px;">Maintenance</span></span>
+                <span class="amt out">-$165</span>
+                <span class="prop">HB</span>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:14px; background:linear-gradient(135deg,#fefad8 0%,#fef8e8 100%); border-color:var(--sand);">
+              <h3 style="margin-bottom:6px;">Schedule E · ready when Natalia is</h3>
+              <p style="font-size:12.5px; color:var(--ink-2); margin-bottom:10px;">All 4 properties tracked separately. Income, expenses, depreciation hints, mileage. Exports as CSV ready for the tax software your accountant uses, or as a PDF summary if she wants paper.</p>
+              <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:6px; font-size:12px;">
+                <div style="background:white; padding:7px 11px; border-radius:6px;"><strong>4</strong> properties tracked</div>
+                <div style="background:white; padding:7px 11px; border-radius:6px;"><strong>$48,180</strong> YTD net</div>
+                <div style="background:white; padding:7px 11px; border-radius:6px;"><strong>247</strong> categorized transactions</div>
+                <div style="background:white; padding:7px 11px; border-radius:6px;"><strong>0</strong> uncategorized</div>
+              </div>
+              <div style="margin-top:11px;"><button class="btn sm primary">Generate preview · PDF</button> <button class="btn sm">Send to Natalia</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ DEMO BANNER ═══ -->
+      <div class="demo-banner">
+        <div class="mono">→ Heisenbug · Vacation Rental cockpit · interactive demo</div>
+        <a href="https://heisenbug.app/#/built">Back to catalog →</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const buttons = document.querySelectorAll('.nav-btn');
+const panels = document.querySelectorAll('.panel');
+const titles = {
+  dashboard:   ["Dashboard", "4 properties · 3 occupied · $12,840 MTD"],
+  inbox:       ["Inbox", "4 unread · 1 needs your reply · AI-drafted"],
+  calendar:    ["Calendar", "Airbnb + VRBO + direct · live iCal sync"],
+  properties:  ["Properties", "4 active · 1 occupied · 1 cleaning · 1 arriving · 1 occupied"],
+  guests:      ["Active guests", "3 in-stay · 1 arriving today · 2 upcoming this week"],
+  cleaning:    ["Cleaning + turnover", "1 today · 8 this week · 3 supply alerts"],
+  maintenance: ["Maintenance + vendors", "3 open work orders · 1 urgent · 8 trusted vendors"],
+  money:       ["P&L + bank", "$12,840 revenue · $3,420 expenses · BoA connected"]
+};
+buttons.forEach(b => b.addEventListener('click', () => {
+  const p = b.dataset.panel;
+  buttons.forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  panels.forEach(x => x.classList.toggle('active', x.dataset.panel === p));
+  const t = titles[p];
+  if (t) {
+    document.getElementById('topbar-title').textContent = t[0];
+    document.getElementById('topbar-crumb').textContent = t[1];
+  }
+  window.scrollTo({top: 0, behavior: 'instant' in window ? 'instant' : 'auto'});
+}));
+
+// thread selection in inbox
+document.querySelectorAll('.thread').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.thread').forEach(x => x.classList.remove('sel'));
+    t.classList.add('sel');
+  });
+});
+
+// properties list selection
+document.querySelectorAll('.props-list .item').forEach(it => {
+  it.addEventListener('click', () => {
+    document.querySelectorAll('.props-list .item').forEach(x => x.classList.remove('sel'));
+    it.classList.add('sel');
+  });
+});
+
+// view toggle in calendar
+document.querySelectorAll('.view-toggle button').forEach(b => {
+  b.addEventListener('click', () => {
+    b.parentElement.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
