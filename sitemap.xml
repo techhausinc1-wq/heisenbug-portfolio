@@ -5,6 +5,9 @@
   <url><loc>https://heisenbug.app/about/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://heisenbug.app/contact/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://heisenbug.app/home-health/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://heisenbug.app/case-studies/</loc><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://heisenbug.app/methodology/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://heisenbug.app/demos/</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://heisenbug.app/privacy.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://heisenbug.app/terms.html</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://heisenbug.app/demos/audit-practice-cockpit-demo/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
