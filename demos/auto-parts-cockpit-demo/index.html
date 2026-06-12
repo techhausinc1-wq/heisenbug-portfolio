@@ -537,5 +537,182 @@
 })();
 </script>
 
+
+<script id="hb-universal-state">
+(function() {
+  // Demo-specific localStorage key — derive from URL path
+  const KEY = 'hb-' + (location.pathname.replace(/[^a-z0-9]/gi, '-') || 'demo') + '-state-v1';
+  const state = JSON.parse(localStorage.getItem(KEY) || '{"added":[]}');
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+  // Sample name pools
+  const FIRST = ['Maya','Lena','Sofia','Carla','Joaquín','Ezra','Ramón','Ines','Yuri','Linnea','Theo','Dax','Anya','Jonah','Mira','Kofi','Hideo','Esther','Carlos','Adelaide','Petra','Nikolai','Sienna','Reza','Aaron','Becca','Catalina','Demir','Elena','Felix','Gigi'];
+  const LAST = ['Bautista','Hollander','Vance','Okeke','Park','Brennan','Faris','Kowalski','Diaz','Eriksson','Adair','Liu','Talbot','Marston','Hadid','Nakamura','Patel','Olson','Mendez','Cohen','Rao','Castro','Singh','Yamamoto','Ozdemir','Rivera','Brooks','Pham','Costa','Greco','Hwang'];
+  const ENTITIES = ['Acme','BlueRiver','Cascade','Delta','Evergreen','Foxglove','Granite','Harbor','Ironside','Juniper','Kestrel','Lighthouse','Meridian','NorthStar','Oakridge','Pinecone','Quarry','Ridgeline','Sandstone','Tideline','Umbra','Vantage','Westfield','Yonder'];
+  const SFX = ['Holdings','LLC','Group','Co.','Inc.','Partners','Industries','Services','Studios','Works'];
+
+  function rnd(a) { return a[Math.floor(Math.random()*a.length)]; }
+  function genName() { return rnd(FIRST) + ' ' + rnd(LAST); }
+  function genBiz() { return rnd(ENTITIES) + ' ' + rnd(SFX); }
+  function uid() { return 'x-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,5); }
+  function timeNow() { return new Date().toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}); }
+
+  // Detect what kind of entity the button is creating
+  function classifyButton(text) {
+    text = text.toLowerCase();
+    if (/patient|caregiver|guest|client/.test(text)) return { kind: 'person', label: 'patient/client', context: 'name + meta' };
+    if (/referral|lead|prospect|inquiry/.test(text)) return { kind: 'person', label: 'referral', context: 'name + source' };
+    if (/call|appointment|booking|reservation|visit/.test(text)) return { kind: 'event', label: 'appointment', context: 'time + name' };
+    if (/ro\b|work\s*order|repair|service\s*call|job/.test(text)) return { kind: 'job', label: 'work order', context: 'job + asset' };
+    if (/property|listing|account/.test(text)) return { kind: 'asset', label: 'property/account', context: 'name + meta' };
+    if (/machine|stop|location/.test(text)) return { kind: 'asset', label: 'machine/stop', context: 'name + location' };
+    if (/order|invoice|case|claim/.test(text)) return { kind: 'order', label: 'order/invoice', context: 'id + amount' };
+    if (/staff|employee|stylist|tech|caregiver/.test(text)) return { kind: 'person', label: 'staff', context: 'name + role' };
+    return { kind: 'item', label: 'item', context: 'name + meta' };
+  }
+
+  // Render the new entry as compatible-looking HTML for common container patterns
+  function renderEntry(type, container) {
+    const name = type.kind === 'asset' ? genBiz() : genName();
+    const id = uid();
+    const t = timeNow();
+    // Detect container style: kanban, list, timeline, table
+    if (container.classList.contains('kbody') || container.closest('.kcol')) {
+      // kanban card
+      return {
+        id, html: '<div class="kcard" data-hb-id="' + id + '" style="border:1.5px solid #4a7d3e; background:linear-gradient(135deg,#f0f7e8,#fff); position:relative;"><span style="position:absolute; top:6px; right:8px; font-family:Inter,sans-serif; font-size:9px; background:#1f6b3a; color:white; padding:2px 6px; border-radius:8px; font-weight:700;">NEW</span><span style="display:block; font-family:JetBrains Mono,monospace; font-size:9.5px; color:#7a7264; margin-bottom:3px;">' + t + '</span><div style="font-weight:600; font-size:13px;">' + name + '</div><div style="font-size:11px; color:#7a7264; margin-top:2px;">Newly added · click to open</div></div>'
+      };
+    }
+    if (container.classList.contains('pt-list') || container.querySelector('.pt')) {
+      // patient list style
+      return {
+        id, html: '<div class="pt" data-hb-id="' + id + '" style="background:linear-gradient(90deg, rgba(31,107,58,0.06), transparent); border-left:3px solid #1f6b3a;"><div class="nm" style="color:#1f6b3a; font-weight:600;">' + name + ' <span style="font-family:Inter,sans-serif; font-size:9px; background:#1f6b3a; color:white; padding:1px 5px; border-radius:6px; font-weight:700; vertical-align:2px;">NEW</span></div><div class="meta" style="font-size:11.5px; color:#6a7068; margin-top:1px;">Just added · ' + t + '</div></div>'
+      };
+    }
+    // Generic card / timeline row
+    return {
+      id, html: '<div data-hb-id="' + id + '" style="padding:11px 14px; background:linear-gradient(90deg, rgba(31,107,58,0.08), transparent); border-left:3px solid #1f6b3a; border-radius:0 8px 8px 0; margin:6px 0; font-size:12.5px; display:flex; justify-content:space-between; align-items:center;"><div><div style="font-weight:600;">' + name + ' <span style="font-family:Inter,sans-serif; font-size:9px; background:#1f6b3a; color:white; padding:1px 5px; border-radius:6px; font-weight:700;">NEW</span></div><div style="font-size:11px; color:#6a7068; margin-top:1px;">Added ' + t + '</div></div></div>'
+    };
+  }
+
+  // Find the most likely target container near a + New button
+  function findTarget(btn) {
+    // Look up to ancestors for a panel, then scan for first list-like container
+    const candidates = [
+      '.kanban .kcol.hot .kbody',  // first/leftmost kanban column
+      '.kcol .kbody',
+      '.pt-list',
+      '.tile-list',
+      '.list',
+      '.timeline',
+      'tbody',
+      '.cards',
+      '.grid',
+      '[data-list]'
+    ];
+    // Search same panel first
+    let panel = btn.closest('[data-panel]') || btn.closest('main') || document.body;
+    for (const sel of candidates) {
+      const c = panel.querySelector(sel);
+      if (c) return c;
+    }
+    // Fallback: anywhere in the document
+    for (const sel of candidates) {
+      const c = document.querySelector(sel);
+      if (c) return c;
+    }
+    return null;
+  }
+
+  function isNewButton(t) {
+    const txt = (t.textContent || '').trim();
+    if (!txt) return false;
+    // Match "+ New X" or "Add X" or "New X" pattern
+    return /^[+\s]*new\s+|^add\s+|^create\s+|^\+\s*new/i.test(txt) && txt.length < 60;
+  }
+
+  function showToast(label, msg) {
+    const t = document.getElementById('hb-toast');
+    if (!t) return;
+    t.innerHTML = '<span class="h">' + label + '</span><span class="m">' + msg + '</span>';
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3400);
+  }
+
+  // Hydrate previously-added entries
+  function hydrate() {
+    state.added.forEach(function(e) {
+      // Find target container by selector hint stored at add time
+      let container = document.querySelector(e.containerSel);
+      if (!container) return;
+      if (container.querySelector('[data-hb-id="' + e.id + '"]')) return;
+      container.insertAdjacentHTML('afterbegin', e.html);
+    });
+  }
+
+  // Wire all matching buttons
+  function wire() {
+    document.querySelectorAll('button, .btn').forEach(function(b) {
+      if (b.dataset.hbWired) return;
+      if (!isNewButton(b)) return;
+      b.dataset.hbWired = '1';
+      b.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const container = findTarget(b);
+        if (!container) {
+          showToast('✓ Action staged', 'Could not detect a target list in this view.');
+          return;
+        }
+        const type = classifyButton(b.textContent);
+        const entry = renderEntry(type, container);
+        // Compute a selector hint for hydration
+        let containerSel = '';
+        if (container.id) containerSel = '#' + container.id;
+        else {
+          const cls = (container.className || '').split(/\s+/).filter(Boolean)[0] || container.tagName.toLowerCase();
+          containerSel = container.tagName.toLowerCase() + (cls ? '.' + cls : '');
+        }
+        // Insert
+        container.insertAdjacentHTML('afterbegin', entry.html);
+        // Save
+        state.added.unshift({ id: entry.id, html: entry.html, containerSel: containerSel, t: Date.now() });
+        // Keep only last 20 to avoid storage bloat
+        state.added = state.added.slice(0, 20);
+        save();
+        // Highlight new
+        const newEl = container.querySelector('[data-hb-id="' + entry.id + '"]');
+        if (newEl) {
+          newEl.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+          newEl.style.transition = 'box-shadow 240ms';
+          newEl.style.boxShadow = '0 6px 24px rgba(31,107,58,0.32)';
+          setTimeout(function() { newEl.style.boxShadow = ''; }, 1400);
+        }
+        showToast('✓ ' + type.label.charAt(0).toUpperCase() + type.label.slice(1) + ' added',
+                  'Persisted to localStorage. Reload — it stays.');
+      }, true);
+    });
+  }
+
+  function init() { hydrate(); wire(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+  // Re-wire after dynamic DOM changes (panel switches)
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-btn, .view-btn, [data-panel-trigger]')) {
+      setTimeout(wire, 50);
+    }
+  });
+
+  window.hbResetDemoState = function() {
+    localStorage.removeItem(KEY);
+    location.reload();
+  };
+})();
+</script>
+
 </body>
 </html>
