@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Florist Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600;ital@1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#faf8f5;--bg-2:#fff;--bg-3:#f0ede4;--ink:#1c1814;--text-dim:#5a5048;--text-mute:#8a8074;--line:#e0dac8;--line-2:#c0b8a0;--green:#3a6a48;--green-bright:#4a8058;--rose:#c47080;--olive:#7a8a4a;--gold:#a87838;--emerald:#2e7d5b;--red:#b53148}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-size:14px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column;min-height:100vh}
+  a{color:inherit;text-decoration:none}button{cursor:pointer;font-family:inherit;border:0;background:none;color:inherit}
+  header{background:var(--bg-2);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:14px}
+  @media(max-width:760px){header{padding:12px 16px;flex-wrap:wrap}}
+  .brand{display:flex;align-items:center;gap:12px}.brand-mark{width:38px;height:38px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:22px;border-radius:50%}.brand-name{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:18px}.brand-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-top:1px}
+  .user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border:1px solid var(--line);border-radius:24px;font-size:12px}.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+  .layout{display:grid;grid-template-columns:220px 1fr;flex:1;min-height:0}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:flex;flex-direction:row;overflow-x:auto;padding:12px 16px;background:var(--bg-3);border-right:0;border-bottom:1px solid var(--line);gap:6px;scrollbar-width:none}.sidebar::-webkit-scrollbar{display:none}.nav-section{margin-bottom:0;display:flex;flex-direction:row;gap:6px}.nav-label{display:none}.nav-item{padding:6px 14px;font-size:12px;white-space:nowrap;border-left:0;border-radius:16px}.nav-item.active{background:rgba(58,106,72,0.1)}}
+  .sidebar{background:var(--bg-3);border-right:1px solid var(--line);padding:22px 0;overflow-y:auto}
+  .nav-section{margin-bottom:26px}.nav-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.8px;color:var(--text-mute);text-transform:uppercase;padding:0 28px 8px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:9px 28px;color:var(--text-dim);font-size:13.5px;border-left:2px solid transparent;cursor:pointer;transition:all 120ms}.nav-item:hover{color:var(--ink);background:var(--bg-2)}.nav-item.active{color:var(--green);background:var(--bg-2);border-left-color:var(--green);font-weight:600}.nav-badge{margin-left:auto;font-size:10px;background:var(--green);color:#fff;padding:2px 7px;border-radius:10px;font-weight:600}
+  main{padding:28px 36px;overflow-y:auto}@media(max-width:900px){main{padding:20px}}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--line)}@media(max-width:600px){.page-actions{width:100%}.page-actions .btn{flex:1;text-align:center}}
+  .page-subtitle{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.6px;color:var(--text-mute);text-transform:uppercase;margin-bottom:6px}.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;line-height:1.1}
+  .page-actions{display:flex;gap:10px}.btn{padding:9px 16px;border:1px solid var(--line-2);color:var(--ink);font-size:12.5px;font-weight:500;border-radius:4px;background:var(--bg-2)}.btn.primary{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}.btn.ghost{background:transparent;border-color:transparent}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}@media(max-width:760px){.stat-grid{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:18px}.stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:10px}.stat-value{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;line-height:1}.stat-delta{font-size:11px;color:var(--olive);margin-top:6px}.stat-delta.neg{color:var(--red)}
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:6px;padding:22px;margin-bottom:16px}.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.panel-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500}.panel-link{font-size:11px;color:var(--green);letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;font-weight:600}
+  .table{width:100%;border-collapse:collapse;font-size:13px}.table th{text-align:left;padding:11px 14px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;border-bottom:1px solid var(--line);font-weight:500}.table td{padding:13px 14px;border-bottom:1px solid var(--line)}.table tr:hover td{background:var(--bg-3)}.table tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;font-weight:600}.tag.green{background:rgba(58,106,72,0.15);color:var(--green)}.tag.rose{background:rgba(196,112,128,0.15);color:var(--rose)}.tag.gold{background:rgba(168,120,56,0.15);color:var(--gold)}.tag.emerald{background:rgba(46,125,91,0.15);color:var(--emerald)}.tag.red{background:rgba(181,49,72,0.15);color:var(--red)}.tag.muted{background:var(--bg-3);color:var(--text-dim)}
+  .grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px}@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+  .activity-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.activity-item:last-child{border:0}.activity-icon{width:26px;height:26px;border-radius:50%;background:var(--bg-3);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}.activity-text{flex:1}.activity-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-mute);margin-top:2px}
+  .coming-soon{background:var(--bg-2);border:1px dashed var(--line-2);border-radius:6px;padding:50px 40px;text-align:center}.coming-soon h3{font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:8px}.coming-soon p{color:var(--text-dim);font-size:13px;max-width:460px;margin:0 auto 18px;line-height:1.6}.coming-soon ul{text-align:left;max-width:380px;margin:0 auto;list-style:none}.coming-soon li{padding:7px 0;font-size:12px;color:var(--text-dim);border-bottom:1px solid var(--line)}.coming-soon li::before{content:'— ';color:var(--green);margin-right:6px}
+  footer{padding:14px 28px;border-top:1px solid var(--line);background:var(--bg-3);font-size:11px;color:var(--text-mute);text-align:center}footer span{color:var(--green);font-weight:600}
+  .view{display:none}.view.active{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-mark">F</div><div><div class="brand-name">Florist Cockpit</div><div class="brand-sub">Retail + event + wedding · daily delivery + funeral work</div></div></div>
+  <div class="user-chip"><div class="user-avatar">O</div><span>Owner</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="orders">Orders + Deliveries <span class="nav-badge">24</span></div></div>
+    <div class="nav-section"><div class="nav-label">Work</div><div class="nav-item" data-view="design">Design Bench</div><div class="nav-item" data-view="weddings">Weddings + Events</div><div class="nav-item" data-view="subscriptions">Subscriptions</div></div>
+    <div class="nav-section"><div class="nav-label">Supply</div><div class="nav-item" data-view="inventory">Stem Inventory</div><div class="nav-item" data-view="suppliers">Wholesalers</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="customers">Customers</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="milestones">Milestone Outreach</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 24 orders today · 8 weddings June · funeral work daily</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Today's bench</button><button class="btn primary">+ New Order</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Today's Orders</div><div class="stat-value">24</div><div class="stat-delta">14 delivery · 8 pickup · 2 wedding</div></div>
+        <div class="stat"><div class="stat-label">June Revenue</div><div class="stat-value">$84K</div><div class="stat-delta">$48K weddings · $36K retail</div></div>
+        <div class="stat"><div class="stat-label">Weddings Booked</div><div class="stat-value">8</div><div class="stat-delta">June · 3 large · 5 standard</div></div>
+        <div class="stat"><div class="stat-label">Subscription Members</div><div class="stat-value">68</div><div class="stat-delta">$8,400/mo MRR</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's design queue</div><a class="panel-link" onclick="navigate('design')">Open bench</a></div>
+            <table class="table">
+              <thead><tr><th>Order #</th><th>Recipient</th><th>Type</th><th>Designer</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>O-2026-0184</strong></td><td>Cohen anniversary</td><td>Premium garden bouquet · $185</td><td>Sarah</td><td><span class="tag emerald">Done · delivered 10 AM</span></td></tr>
+                <tr><td><strong>O-2026-0185</strong></td><td>Walker funeral</td><td>Casket spray · roses + lilies · $480</td><td>Maya</td><td><span class="tag green">In design</span></td></tr>
+                <tr><td><strong>O-2026-0186</strong></td><td>Bergman birthday</td><td>Designer's choice · $85</td><td>Sarah</td><td><span class="tag green">In bench</span></td></tr>
+                <tr><td><strong>O-2026-0187</strong></td><td>Garcia get-well</td><td>Sunny mix · $65</td><td>Maya</td><td><span class="tag muted">Queued</span></td></tr>
+                <tr><td><strong>O-2026-0188</strong></td><td>Sterling-Walker wedding</td><td>14 bridesmaid bouquets + bouts</td><td>Owner</td><td><span class="tag gold">Wedding · 4 PM ceremony</span></td></tr>
+                <tr><td><strong>O-2026-0189</strong></td><td>Hospital weekly subscription · 12 locations</td><td>Lobby + nurse station arrangements</td><td>Sarah</td><td><span class="tag muted">Subscription · weekly route</span></td></tr>
+                <tr><td><em>18 more · retail + delivery</em></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">This week's weddings</div><a class="panel-link" onclick="navigate('weddings')">All weddings</a></div>
+            <div class="activity-item"><div class="activity-icon">W</div><div class="activity-text"><div><strong>Sterling-Walker · today 4 PM</strong> · barn venue · 180 guests</div><div class="activity-time">14 BOUQUETS · 16 BOUTS · 10 CTRPCS · BUDGET $8,400</div></div></div>
+            <div class="activity-item"><div class="activity-icon">W</div><div class="activity-text"><div><strong>Reilly-Cohen · next Sat</strong> · garden estate · 240 guests</div><div class="activity-time">FULL DESIGN · BUDGET $14K · ARCH + AISLE + 12 CTRPCS</div></div></div>
+            <div class="activity-item"><div class="activity-icon">W</div><div class="activity-text"><div><strong>Bergman elopement · Sun</strong> · 2 bouquets</div><div class="activity-time">SIMPLE · GARDEN-STYLE · $480</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Stem inventory · today's needs</div></div>
+            <div class="activity-item"><div class="activity-icon">🌹</div><div class="activity-text"><div><strong>Roses</strong> · 240 stems on hand · need 180</div><div class="activity-time">SAFE · WEDDINGS WILL DEPLETE · ORDER MON</div></div></div>
+            <div class="activity-item"><div class="activity-icon">🌷</div><div class="activity-text"><div><strong>Garden roses (peach)</strong> · 36 stems · need 48</div><div class="activity-time">SHORT · CALL WHOLESALER · CAN SUB ENGLISH SPRAY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">🌿</div><div class="activity-text"><div><strong>Eucalyptus + greenery</strong> · ample</div></div></div>
+            <div class="activity-item"><div class="activity-icon">🌸</div><div class="activity-text"><div><strong>Peonies</strong> · 60 stems · season ending</div><div class="activity-time">USE FOR WEDDINGS · NOT RETAIL</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Subscription deliveries today</div></div>
+            <div class="activity-item"><div class="activity-icon">12</div><div class="activity-text"><div><strong>Hospital subscription</strong> · 12 stations</div></div></div>
+            <div class="activity-item"><div class="activity-icon">8</div><div class="activity-text"><div><strong>Corporate accounts</strong> · 8 offices</div></div></div>
+            <div class="activity-item"><div class="activity-icon">3</div><div class="activity-text"><div><strong>Restaurant accounts</strong> · 3 dining rooms</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-orders"><div class="page-header"><div><div class="page-subtitle">24 today · multi-source (web · phone · walk-in · wire service)</div><div class="page-title">Orders + Deliveries</div></div></div><div class="coming-soon"><h3>Order Operations</h3><p>From order in to delivery confirmed.</p><ul><li>Multi-source intake (own site + Teleflora + FTD + phone + walk-in)</li><li>Per-order ribbon + card capture</li><li>Delivery route optimization</li><li>Photo proof of delivery</li><li>Recipient text-confirmation</li></ul></div></div>
+    <div class="view" id="view-design"><div class="page-header"><div><div class="page-subtitle">Per-designer queue · per-order recipe · time-per-design tracking</div><div class="page-title">Design Bench</div></div></div><div class="coming-soon"><h3>Design Operations</h3><p>Per-designer queue, recipe per arrangement, photo proof for delivery.</p><ul><li>Per-designer queue with priority</li><li>Recipe per standard arrangement</li><li>Photo capture before delivery (for proof + portfolio)</li><li>Per-designer time tracking</li></ul></div></div>
+    <div class="view" id="view-weddings"><div class="page-header"><div><div class="page-subtitle">8 weddings June · $48K event revenue · per-wedding spec sheet</div><div class="page-title">Weddings + Events</div></div></div><div class="coming-soon"><h3>Event Operations</h3><p>From inquiry to load-in. Full event-floral workflow.</p><ul><li>Inquiry intake with budget + style</li><li>Mood-board generator</li><li>Per-wedding spec sheet (every piece + quantities)</li><li>Setup + breakdown crew scheduling</li><li>Photo-portfolio capture for next-client referral</li></ul></div></div>
+    <div class="view" id="view-subscriptions"><div class="page-header"><div><div class="page-subtitle">68 active · weekly + bi-weekly · corporate + residential + hospital</div><div class="page-title">Subscriptions</div></div></div><div class="coming-soon"><h3>Subscription Engine</h3><p>The MRR base. Weekly + bi-weekly recurring deliveries.</p><ul><li>Per-subscription cadence + designer's-choice rules</li><li>Auto-charge monthly</li><li>Pause + skip handling</li><li>Per-subscription LTV</li><li>Upsell to higher tier</li></ul></div></div>
+    <div class="view" id="view-inventory"><div class="page-header"><div><div class="page-subtitle">Per-stem inventory · cooler tracking · waste reporting</div><div class="page-title">Stem Inventory</div></div></div><div class="coming-soon"><h3>Cooler + Stem Inventory</h3><p>Per-stem count + age tracking + waste reporting.</p><ul><li>Per-stem inventory updated at delivery</li><li>Cooler bucket tracking with age</li><li>Auto-discount aging stock to retail</li><li>Per-event stem allocation</li><li>Waste reporting for margin analysis</li></ul></div></div>
+    <div class="view" id="view-suppliers"><div class="page-header"><div><div class="page-subtitle">4 wholesalers · local growers · Mayesh · domestic + Holland imports</div><div class="page-title">Wholesalers</div></div></div><div class="coming-soon"><h3>Wholesaler Management</h3><p>Per-supplier ordering + price-tracking + delivery confirmation.</p><ul><li>Local growers + Mayesh + traditional wholesalers</li><li>Per-stem price comparison across suppliers</li><li>Auto-order based on event + retail forecast</li><li>Receiving + quality grading</li></ul></div></div>
+    <div class="view" id="view-customers"><div class="page-header"><div><div class="page-subtitle">1,840 customers · per-customer purchase history + preferences</div><div class="page-title">Customers</div></div></div><div class="coming-soon"><h3>Customer Database</h3><p>Per-customer purchase + preference history.</p><ul><li>Per-customer purchase history</li><li>Preferred flowers + colors + style</li><li>Gift-recipient list (for "wife's anniversary" recall)</li><li>Subscription eligibility</li><li>Lifetime value</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-channel · per-designer · waste % · event vs retail</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Florist Reports</h3><p>Numbers a florist owner needs.</p><ul><li>Per-channel revenue (web / phone / walk-in / wire / subscription / event)</li><li>Per-designer productivity</li><li>Waste % (stem cost vs revenue)</li><li>Event-vs-retail mix</li><li>Subscription growth + churn</li></ul></div></div>
+
+    <div class="view" id="view-tax"><div class="page-header"><div><div class="page-subtitle">Sales tax · delivery fees · 1099 designers · wire service fees</div><div class="page-title">Tax &amp; Compliance</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Audit Practice · florist-flavored: retail floral taxable, delivery fees taxable in most states, 1099 freelance designers, wire-service commissions</p>
+    <div class="stat-grid"><div class="stat"><div class="stat-label">Sales Tax MTD</div><div class="stat-value">$5,840</div></div><div class="stat"><div class="stat-label">Delivery Fees</div><div class="stat-value">$1,840</div></div><div class="stat"><div class="stat-label">1099 Designers</div><div class="stat-value">2</div></div><div class="stat"><div class="stat-label">Wire Service Fees</div><div class="stat-value">$840</div></div></div></div>
+    <div class="view" id="view-milestones"><div class="page-header"><div><div class="page-subtitle">Anniversaries · birthdays · life events · sympathy</div><div class="page-title">Milestone Outreach</div></div></div><p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--text-mute);text-transform:uppercase;margin-bottom:20px">↘ Shared engine — from Diamond Atelier · florist-flavored: anniversary repeat orders, birthday gift reminders for husbands/partners, sympathy follow-ups</p>
+    <div class="panel" style="padding:0"><table class="table"><thead><tr><th>Date</th><th>Customer</th><th>Event</th><th>Recommendation</th></tr></thead><tbody><tr><td><strong>Jun 14</strong></td><td>Cohen</td><td>1-yr anniversary of last order</td><td>"Same as last year? Or want me to switch it up?"</td></tr><tr><td><strong>Jun 22</strong></td><td>D. Goldberg</td><td>Wife's birthday (we know)</td><td>His standard order · auto-text 7-day reminder</td></tr><tr><td><strong>Jul 5</strong></td><td>Williams</td><td>Mom's birthday</td><td>Annual recurring</td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Florist Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
