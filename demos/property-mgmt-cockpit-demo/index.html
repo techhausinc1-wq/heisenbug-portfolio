@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2e3b">
+<title>Property Management Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #f6f8fa; --bg-2: #ffffff; --bg-3: #ecf0f4; --ink: #1a2e3b; --text-dim: #5a6878; --text-mute: #8a96a4; --line: #dae0e8; --line-2: #b8c0cc; --steel: #34546e; --steel-bright: #4a7090; --gold: #c4880a; --olive: #5e6e3d; --emerald: #2e7d5b; --red: #b53148; --slate: #1a2e3b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; } button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--steel); color: var(--bg); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; border-radius: 4px; }
+  .brand-name { font-weight: 700; font-size: 16px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--steel); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(52,84,110,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--steel); background: var(--bg-2); border-left-color: var(--steel); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--steel); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); }
+  .btn.primary { background: var(--steel); color: white; border-color: var(--steel); font-weight: 600; }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-size: 26px; font-weight: 700; line-height: 1; }
+  .stat-delta { font-size: 11px; color: var(--olive); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-size: 16px; font-weight: 700; }
+  .panel-link { font-size: 11px; color: var(--steel); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.steel { background: rgba(52,84,110,0.15); color: var(--steel); }
+  .tag.gold { background: rgba(196,136,10,0.15); color: var(--gold); }
+  .tag.olive { background: rgba(94,110,61,0.15); color: var(--olive); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--steel); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '→ '; color: var(--steel); margin-right: 4px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--steel); font-weight: 700; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">PM</div>
+    <div><div class="brand-name">Property Mgmt Cockpit</div><div class="brand-sub">Residential + commercial · single-family to multi-family</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">M</div><span>Manager</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="maintenance">Maintenance <span class="nav-badge">14</span></div></div>
+    <div class="nav-section"><div class="nav-label">Portfolio</div><div class="nav-item" data-view="properties">Properties</div><div class="nav-item" data-view="units">Units</div><div class="nav-item" data-view="tenants">Tenants</div><div class="nav-item" data-view="leasing">Leasing Pipeline</div></div>
+    <div class="nav-section"><div class="nav-label">Money</div><div class="nav-item" data-view="rent">Rent + Collections</div><div class="nav-item" data-view="owner-statements">Owner Statements</div><div class="nav-item" data-view="vendor-ap">Vendor AP</div></div>
+    <div class="nav-section"><div class="nav-label">Compliance</div><div class="nav-item" data-view="inspections">Inspections</div><div class="nav-item" data-view="lease-renewals">Lease Renewals</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="docs">Documents</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 14 maintenance tickets open</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Today's maintenance</button><button class="btn primary">+ New Lead</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Units Under Management</div><div class="stat-value">284</div><div class="stat-delta">96.5% occupancy</div></div>
+        <div class="stat"><div class="stat-label">Monthly Rent Roll</div><div class="stat-value">$482K</div><div class="stat-delta">8% mgmt fee = $38K MRR</div></div>
+        <div class="stat"><div class="stat-label">Open Maintenance</div><div class="stat-value">14</div><div class="stat-delta neg">3 urgent (HVAC + leak)</div></div>
+        <div class="stat"><div class="stat-label">Delinquent Rent</div><div class="stat-value">$4,200</div><div class="stat-delta">2.1% of roll · below industry</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Open maintenance tickets</div><a class="panel-link" onclick="navigate('maintenance')">All tickets</a></div>
+            <table class="table">
+              <thead><tr><th>Property</th><th>Issue</th><th>Vendor</th><th>Priority</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Riverside #4B</strong></td><td>HVAC not cooling</td><td>Comfort Pros</td><td><span class="tag red">Urgent</span></td><td>Tech arriving 11 AM</td></tr>
+                <tr><td><strong>Oakwood #12</strong></td><td>Water leak under kitchen sink</td><td>FlowState Plumb</td><td><span class="tag red">Urgent</span></td><td>Tech en route</td></tr>
+                <tr><td><strong>Maple Court #7</strong></td><td>Front door deadbolt loose</td><td>In-house tech</td><td><span class="tag gold">Standard</span></td><td>Scheduled Mon</td></tr>
+                <tr><td><strong>Lincoln Apts #214</strong></td><td>Ceiling fan replacement</td><td>In-house</td><td><span class="tag muted">Cosmetic</span></td><td>Awaiting parts</td></tr>
+                <tr><td><strong>Cherry Ln #18</strong></td><td>Garbage disposal jammed</td><td>FlowState</td><td><span class="tag gold">Standard</span></td><td>Wed AM</td></tr>
+                <tr><td><strong>Sunset Building B</strong></td><td>Hallway light out (3rd floor)</td><td>In-house</td><td><span class="tag muted">Common area</span></td><td>Today PM</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Leasing pipeline</div><a class="panel-link" onclick="navigate('leasing')">All applicants</a></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Riverside #2A · 1BR · $1,840</strong> · 4 applications</div><div class="activity-time">2 SCREENED · 2 PENDING · TOP CHOICE: KIM FAMILY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Maple Court #14 · 2BR · $2,420</strong> · 2 applications</div><div class="activity-time">BOTH SCREENED · DECISION TUESDAY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Oakwood #18 · 2BR · $2,180</strong> · 1 application</div><div class="activity-time">JUST CAME IN · BACKGROUND PENDING</div></div></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Sunset Bldg A · 3BR · $3,200</strong> · self-tour bookings 7</div><div class="activity-time">SHOWING THIS WEEK · LISTED MON</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Owner statements due</div><a class="panel-link" onclick="navigate('owner-statements')">All owners</a></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Riverside Properties LLC</strong> · 28 units</div><div class="activity-time">JUNE STATEMENT · GENERATED · ACH READY JUL 1</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Maple Court Trust</strong> · 14 units</div><div class="activity-time">REVIEW PENDING · 1 RENT DELINQUENT NOTE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Lincoln Apt Investors</strong> · 84 units (anchor)</div><div class="activity-time">DETAILED STATEMENT · CAP-EX PROJECT REVIEW NEEDED</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>22 other owners</strong> · 1-12 units each</div><div class="activity-time">AUTO-GENERATED · APPROVED · QUEUED JUL 1</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Rent collection · this month</div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--emerald);">✓</div><div class="activity-text"><div><strong>Collected: $477,800</strong> · 96% of roll</div><div class="activity-time">AUTO-ACH 62% · CARD 28% · CHECK 10%</div></div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--gold);">!</div><div class="activity-text"><div><strong>Late: $4,200</strong> · 3 tenants</div><div class="activity-time">2 PAYMENT-PLAN · 1 PAY-OR-QUIT NOTICE PENDING</div></div></div>
+            <div class="activity-item"><div class="activity-icon">→</div><div class="activity-text"><div><strong>Late fees collected: $840</strong></div><div class="activity-time">PER-LEASE FORMULA · AUTO-APPLIED</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-maintenance"><div class="page-header"><div><div class="page-subtitle">14 open · 3 urgent · 8 vendor-handled · 3 in-house</div><div class="page-title">Maintenance</div></div></div><div class="coming-soon"><h3>Maintenance Operations</h3><p>Tenant ticket → triage → vendor dispatch → completion → tenant satisfaction.</p><ul><li>Tenant portal ticket submission with photo</li><li>AI-triage for urgency + vendor routing</li><li>Per-property preferred-vendor list</li><li>Auto-dispatch with response SLA</li><li>Photo proof of completion</li><li>Tenant satisfaction survey</li><li>Owner approval for &gt; $500</li></ul></div></div>
+    <div class="view" id="view-properties"><div class="page-header"><div><div class="page-subtitle">42 properties · 284 units · $482K monthly rent roll</div><div class="page-title">Properties</div></div></div><div class="coming-soon"><h3>Property Portfolio</h3><p>Per-property data: owner, units, rent roll, expenses, cap-ex, lease history.</p><ul><li>Per-property profile with owner relationship</li><li>Per-property P&amp;L</li><li>Cap-ex tracking + planning</li><li>Insurance + warranty doc archive</li><li>Annual property inspection scheduling</li></ul></div></div>
+    <div class="view" id="view-units"><div class="page-header"><div><div class="page-subtitle">284 units · 273 occupied · 11 vacant or pre-leased</div><div class="page-title">Units</div></div></div><div class="coming-soon"><h3>Unit-Level Detail</h3><p>Per-unit specs, rent, lease history, condition, photos.</p><ul><li>Per-unit specs (bed/bath/sqft/floor)</li><li>Current rent + market rent comparison</li><li>Lease history with rent-increase log</li><li>Condition reports + photo timeline</li><li>Make-ready checklist when vacating</li></ul></div></div>
+    <div class="view" id="view-tenants"><div class="page-header"><div><div class="page-subtitle">273 active tenants · 94% retention · avg tenancy 2.4 yrs</div><div class="page-title">Tenants</div></div></div><div class="coming-soon"><h3>Tenant Database</h3><p>Every tenant, every lease, every payment, every interaction.</p><ul><li>Per-tenant lease + payment history</li><li>Communication log (privileged)</li><li>Renewal eligibility scoring</li><li>Maintenance request history</li><li>Tenant satisfaction trend</li></ul></div></div>
+    <div class="view" id="view-leasing"><div class="page-header"><div><div class="page-subtitle">11 active leasings · 6 applications · 3 pending screening</div><div class="page-title">Leasing Pipeline</div></div></div><div class="coming-soon"><h3>Leasing Operations</h3><p>From listing to signed lease — every step automated.</p><ul><li>Multi-channel listing (Zillow + Trulia + Apartments.com + own site)</li><li>Self-tour booking via lockbox code</li><li>Online application with credit + background check</li><li>Income verification automated</li><li>E-sign lease + first month + deposit</li><li>Auto-move-in checklist</li></ul></div></div>
+    <div class="view" id="view-rent"><div class="page-header"><div><div class="page-subtitle">Auto-ACH · card · check · late-fee automation · partial-payment handling</div><div class="page-title">Rent + Collections</div></div></div><div class="coming-soon"><h3>Rent Operations</h3><p>Auto-charge, late-fee automation, payment-plan support, eviction prep.</p><ul><li>Tenant portal with auto-ACH setup</li><li>Card payments with convenience fee</li><li>Per-lease late-fee formula</li><li>Payment-plan support for hardship</li><li>Pay-or-quit notice auto-generation</li><li>Aged AR by property</li></ul></div></div>
+    <div class="view" id="view-owner-statements"><div class="page-header"><div><div class="page-subtitle">28 owners · monthly statements · ACH distribution</div><div class="page-title">Owner Statements</div></div></div><div class="coming-soon"><h3>Owner Operations</h3><p>Monthly statements, ACH distribution, owner portal, 1099-MISC at year-end.</p><ul><li>Monthly P&amp;L statement per owner</li><li>ACH net-distribution to owner</li><li>Owner portal with property reports</li><li>1099-MISC for owners at year-end</li><li>Annual reserve replenishment</li></ul></div></div>
+    <div class="view" id="view-vendor-ap"><div class="page-header"><div><div class="page-subtitle">42 active vendors · per-vendor 1099 · approval workflow</div><div class="page-title">Vendor AP</div></div></div><div class="coming-soon"><h3>Vendor Payable</h3><p>Vendor management, invoice approval, payment scheduling.</p><ul><li>Per-vendor account with W-9 + COI</li><li>Per-property preferred-vendor list</li><li>Invoice approval workflow (over $500 = owner approval)</li><li>Vendor performance scoring</li><li>1099-NEC at year-end</li></ul></div></div>
+    <div class="view" id="view-inspections"><div class="page-header"><div><div class="page-subtitle">Move-in · move-out · annual · drive-by quarterly</div><div class="page-title">Inspections</div></div></div><div class="coming-soon"><h3>Inspection Operations</h3><p>Move-in/out documentation, annual inspections, drive-bys.</p><ul><li>Photo-documented move-in/move-out condition reports</li><li>Annual inspection scheduling per unit</li><li>Quarterly drive-by inspections</li><li>Auto-violation flagging</li><li>Owner-facing inspection report PDF</li></ul></div></div>
+    <div class="view" id="view-lease-renewals"><div class="page-header"><div><div class="page-subtitle">Renewals next 90 days · market-rate analysis · auto-offer</div><div class="page-title">Lease Renewals</div></div></div><div class="coming-soon"><h3>Renewal Automation</h3><p>Surface renewals 90/60/30 days out, propose market-adjusted rent, e-sign new lease.</p><ul><li>Auto-surface upcoming renewals</li><li>Market-rate analysis per unit</li><li>Renewal offer auto-generation</li><li>E-sign new lease + payment auto-update</li><li>Non-renewal workflow with move-out scheduling</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Occupancy · NOI · vacancy days · maintenance spend</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Portfolio Reports</h3><p>Owner-facing + manager-facing reports.</p><ul><li>Per-property NOI + cap rate</li><li>Portfolio occupancy + vacancy-day tracking</li><li>Maintenance spend per unit per year</li><li>Tenant retention cohorts</li><li>Per-property leasing velocity</li></ul></div></div>
+
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">1099 owners · 1099 vendors · per-property cap-ex depreciation · rental income reporting</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · PM-flavored: 1099-MISC for owners + 1099-NEC for vendors, per-property cap-ex depreciation schedule, schedule E rental income</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Owners Receiving 1099</div><div class="stat-value">28</div><div class="stat-delta">All distributions tracked</div></div>
+        <div class="stat"><div class="stat-label">1099 Vendors YTD</div><div class="stat-value">42</div><div class="stat-delta">Repair + capital subs</div></div>
+        <div class="stat"><div class="stat-label">Cap-Ex YTD</div><div class="stat-value">$284K</div><div class="stat-delta">Capitalized vs expensed</div></div>
+        <div class="stat"><div class="stat-label">Mgmt Fee MTD</div><div class="stat-value">$38,400</div><div class="stat-delta">8% of rent collected</div></div>
+      </div>
+    </div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Leases · addendums · COIs · permits · owner agreements</div><div class="page-title">Documents</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · PM-flavored: per-unit lease + addendums, vendor COIs, building permits, owner property-mgmt agreements</p><div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Document</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td><strong>Riverside-#4B-Lease-2026.pdf</strong></td><td>Lease</td><td><span class="tag emerald">Executed · 12-mo</span></td></tr><tr><td><strong>RiversideLLC-Mgmt-Agreement.pdf</strong></td><td>Owner agreement</td><td><span class="tag emerald">Active · 8% mgmt fee</span></td></tr><tr><td><strong>ComfortPros-COI-2026.pdf</strong></td><td>Vendor COI</td><td><span class="tag emerald">Current</span></td></tr><tr><td><strong>Maple-Annual-Inspection.pdf</strong></td><td>Inspection report</td><td><span class="tag emerald">Filed</span></td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Property Mgmt Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
