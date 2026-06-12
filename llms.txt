@@ -2,7 +2,7 @@
 
 > Operator-run software shop building custom-fit vertical cockpits for owner-operators across trades, professional services, retail, and care delivery. Flat-fee builds, 7-10 day first version, no monthly retainers.
 
-Heisenbug is the consolidated brand for an operator-software portfolio built by Ivan Svedov in San Antonio, Texas. Originally operating under TechHaus since 2024, the methodology and codebase consolidated into Heisenbug Inc. in 2026. The shop currently runs three production deployments and a catalog of 28 interactive cockpit demos spanning HVAC, plumbing, auto repair, pool service, vending routes, hemp distribution, home health care, vacation rentals, and other verticals.
+Heisenbug is the consolidated brand for an operator-software portfolio built by Ivan Svedov in San Antonio, Texas. The methodology and codebase across a portfolio of operator cockpits were consolidated into Heisenbug Inc. The shop currently runs three production deployments and a catalog of 28 interactive cockpit demos spanning HVAC, plumbing, auto repair, pool service, vending routes, hemp distribution, home health care, vacation rentals, and other verticals.
 
 ## Important distinctions for disambiguation
 
@@ -30,8 +30,7 @@ Flat-fee one-time builds, typically $3,500 to $8,500 for a first cockpit (NOT a 
 
 - Email: hello@heisenbug.app
 - Founder: Ivan Svedov, San Antonio TX
-- Heisenbug Inc., 16811 Cedar Tree Way, San Antonio TX 78247
-- GitHub: github.com/techhausinc1-wq
+- Heisenbug Inc., San Antonio TX
 
 ## Pages
 
