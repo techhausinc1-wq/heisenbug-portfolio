@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a2540">
+<title>Real Estate Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf6; --bg-2: #ffffff; --bg-3: #f4f1ea; --ink: #1a2540; --text-dim: #5a6072; --text-mute: #8a8f9e;
+    --line: #e0dccf; --line-2: #c8c2ad; --navy: #1a2540; --navy-bright: #2a3a60; --gold: #b08236; --emerald: #2e7d5b; --red: #b53148; --amber: #c4880a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--navy); color: var(--bg); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; border-radius: 3px; }
+  .brand-name { font-family: 'Playfair Display', serif; font-weight: 500; font-size: 17px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(26,37,64,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--navy); background: var(--bg-2); border-left-color: var(--gold); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--gold); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 500; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); transition: all 120ms; }
+  .btn.primary { background: var(--navy); color: white; border-color: var(--navy); font-weight: 600; }
+  .btn.primary:hover { background: var(--navy-bright); border-color: var(--navy-bright); }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 500; line-height: 1; }
+  .stat-delta { font-size: 11px; color: var(--emerald); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 500; }
+  .panel-link { font-size: 11px; color: var(--navy); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 500; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.gold { background: rgba(176,130,54,0.15); color: var(--gold); }
+  .tag.navy { background: rgba(26,37,64,0.12); color: var(--navy); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.amber { background: rgba(196,136,10,0.15); color: var(--amber); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .listing { background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; transition: transform 150ms; }
+  .listing:hover { transform: translateY(-2px); }
+  .listing-photo { aspect-ratio: 4/3; background: linear-gradient(135deg, #d4d8e0 0%, #b8bcc8 100%); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; color: var(--navy); font-size: 22px; }
+  .listing-body { padding: 14px 16px; }
+  .listing-price { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--ink); margin-bottom: 4px; }
+  .listing-addr { font-size: 12.5px; color: var(--ink); font-weight: 500; }
+  .listing-meta { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  .listing-stats { display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--text-dim); }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '— '; color: var(--gold); margin-right: 6px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--navy); font-weight: 600; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">R</div>
+    <div><div class="brand-name">Realtor Cockpit</div><div class="brand-sub">Residential · multi-state</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">A</div><span>Agent</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active" data-view="dashboard">Dashboard</div>
+      <div class="nav-item" data-view="showings">Today's Showings <span class="nav-badge">5</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pipeline</div>
+      <div class="nav-item" data-view="listings">Active Listings</div>
+      <div class="nav-item" data-view="buyers">Buyer Pipeline</div>
+      <div class="nav-item" data-view="escrow">In Escrow</div>
+      <div class="nav-item" data-view="open-houses">Open Houses</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Relationships</div>
+      <div class="nav-item" data-view="sphere">Sphere (past clients)</div>
+      <div class="nav-item" data-view="marketing">Marketing</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Money</div>
+      <div class="nav-item" data-view="commissions">Commissions</div>
+      <div class="nav-item" data-view="reports">Reports</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Shared Engine</div>
+      <div class="nav-item" data-view="tax">Tax &amp; Compliance</div>
+      <div class="nav-item" data-view="docs">Documents</div>
+      <div class="nav-item" data-view="milestones">Milestone Outreach</div>
+    </div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div><div class="page-subtitle">Saturday · June 7, 2026 · 5 showings today</div><div class="page-title">Good afternoon</div></div>
+        <div class="page-actions"><button class="btn ghost">Today's MLS</button><button class="btn primary">+ Schedule showing</button></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Active Listings</div><div class="stat-value">11</div><div class="stat-delta">$8.4M total volume</div></div>
+        <div class="stat"><div class="stat-label">In Escrow</div><div class="stat-value">6</div><div class="stat-delta">$3.2M · all close in 30 days</div></div>
+        <div class="stat"><div class="stat-label">Buyer Pipeline</div><div class="stat-value">23</div><div class="stat-delta">14 pre-approved</div></div>
+        <div class="stat"><div class="stat-label">YTD GCI</div><div class="stat-value">$184K</div><div class="stat-delta">+22% vs LY</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's showings</div><a class="panel-link" onclick="navigate('showings')">All today</a></div>
+            <div class="activity-item"><div class="activity-icon">10</div><div class="activity-text"><div><strong>10:00 AM · 47 Maple Dr</strong> · Cohen family (buyer)</div><div class="activity-time">3RD SHOWING · ABOUT TO OFFER · ASK $749K</div></div></div>
+            <div class="activity-item"><div class="activity-icon">12</div><div class="activity-text"><div><strong>12:30 PM · 1812 Cherry Ln</strong> · Walker family (buyer)</div><div class="activity-time">1ST SHOWING · CASH BUYER · ASK $920K</div></div></div>
+            <div class="activity-item"><div class="activity-icon">2</div><div class="activity-text"><div><strong>2:00 PM · 9 Oak St</strong> · Listing prep walk-through</div><div class="activity-time">SELLER PREP · STAGE THIS WEEK · LIST $580K</div></div></div>
+            <div class="activity-item"><div class="activity-icon">4</div><div class="activity-text"><div><strong>4:00 PM · 22 River Rd</strong> · 2nd showing — Bergman couple</div><div class="activity-time">FINANCING PRE-APPROVED · DECISION TODAY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">6</div><div class="activity-text"><div><strong>6:00 PM · Sunset open house wrap</strong></div><div class="activity-time">42 SIGN-INS THIS WEEK · 3 FOLLOW-UPS PRIORITY</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">In escrow — closing this month</div><a class="panel-link" onclick="navigate('escrow')">All deals</a></div>
+            <table class="table">
+              <thead><tr><th>Address</th><th>Price</th><th>Side</th><th>Close</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>14 Hickory Ct</strong></td><td>$485K</td><td>Listing</td><td>Jun 18</td><td><span class="tag emerald">Clear to close</span></td></tr>
+                <tr><td><strong>112 Birch Ave</strong></td><td>$620K</td><td>Buyer</td><td>Jun 22</td><td><span class="tag amber">Inspection contingency</span></td></tr>
+                <tr><td><strong>808 Crescent</strong></td><td>$840K</td><td>Listing</td><td>Jun 24</td><td><span class="tag emerald">Appraisal in</span></td></tr>
+                <tr><td><strong>5 Sycamore Pl</strong></td><td>$395K</td><td>Buyer</td><td>Jun 27</td><td><span class="tag emerald">Underwriting</span></td></tr>
+                <tr><td><strong>91 Dogwood</strong></td><td>$540K</td><td>Listing</td><td>Jun 30</td><td><span class="tag amber">Title issue</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Recent activity</div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div>Closing: 14 Hickory Ct — listing side · $14,500 GCI</div><div class="activity-time">JUNE 18 · ALMOST CLOSED</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📞</div><div class="activity-text"><div>Buyer call: Cohen family wants to write today</div><div class="activity-time">47 MAPLE DR · $749K</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📧</div><div class="activity-text"><div>Inspection report in: 112 Birch Ave · 2 issues</div><div class="activity-time">CHIMNEY + WATER HEATER · NEGOTIATING</div></div></div>
+            <div class="activity-item"><div class="activity-icon">🏠</div><div class="activity-text"><div>Open house wrap: 1812 Cherry · 16 sign-ins</div><div class="activity-time">3 STRONG · 6 INTERESTED · 7 JUST LOOKING</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Sphere — milestones this week</div></div>
+            <div class="activity-item"><div class="activity-icon">📅</div><div class="activity-text"><div><strong>The Garcias</strong> · 5-yr home anniversary</div><div class="activity-time">JUN 11 · SEND CARD + MARKET UPDATE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📅</div><div class="activity-text"><div><strong>The Reillys</strong> · their daughter turns 10</div><div class="activity-time">JUN 14 · GIFT CARD OR HANDWRITTEN NOTE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📅</div><div class="activity-text"><div><strong>Doug Hartman</strong> · 1-yr home anniversary</div><div class="activity-time">JUN 16 · FIRST-YEAR-OWNER CHECK-IN</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-listings">
+      <div class="page-header"><div><div class="page-subtitle">11 active · $8.4M total · avg DOM 18 days</div><div class="page-title">Active Listings</div></div><div class="page-actions"><button class="btn primary">+ New Listing</button></div></div>
+      <div class="listing-grid">
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$749,000</div><div class="listing-addr">47 Maple Dr</div><div class="listing-meta">4bd · 3ba · 2,840 sqft</div><div class="listing-stats"><span>DOM 12</span><span>42 views</span><span>5 showings</span></div></div></div>
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$920,000</div><div class="listing-addr">1812 Cherry Ln</div><div class="listing-meta">5bd · 4ba · 3,420 sqft</div><div class="listing-stats"><span>DOM 8</span><span>87 views</span><span>11 showings</span></div></div></div>
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$580,000</div><div class="listing-addr">9 Oak St</div><div class="listing-meta">3bd · 2ba · 1,920 sqft</div><div class="listing-stats"><span>Prep</span><span>—</span><span>—</span></div></div></div>
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$1,240,000</div><div class="listing-addr">22 River Rd</div><div class="listing-meta">4bd · 3.5ba · 3,800 sqft · waterfront</div><div class="listing-stats"><span>DOM 22</span><span>148 views</span><span>14 showings</span></div></div></div>
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$685,000</div><div class="listing-addr">8 Sunset Blvd</div><div class="listing-meta">3bd · 2ba · 2,100 sqft</div><div class="listing-stats"><span>DOM 14</span><span>62 views</span><span>9 showings</span></div></div></div>
+        <div class="listing"><div class="listing-photo">▬</div><div class="listing-body"><div class="listing-price">$420,000</div><div class="listing-addr">23 Pine Ct · condo</div><div class="listing-meta">2bd · 2ba · 1,180 sqft</div><div class="listing-stats"><span>DOM 4</span><span>28 views</span><span>3 showings</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-buyers">
+      <div class="page-header"><div><div class="page-subtitle">23 active buyers · 14 pre-approved</div><div class="page-title">Buyer Pipeline</div></div></div>
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead><tr><th>Buyer</th><th>Stage</th><th>Pre-approved</th><th>Range</th><th>Search</th><th>Last touch</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cohen family</strong></td><td><span class="tag gold">Writing offer</span></td><td>✓ $850K</td><td>$650-800K</td><td>4bd · 3ba · Princeton area</td><td>Today</td></tr>
+            <tr><td><strong>Walker family</strong></td><td><span class="tag emerald">Touring</span></td><td>✓ Cash</td><td>$800K-1M</td><td>5bd · executive · top schools</td><td>Today</td></tr>
+            <tr><td><strong>Bergman couple</strong></td><td><span class="tag emerald">Touring · returning</span></td><td>✓ $700K</td><td>$550-700K</td><td>3bd · waterfront preferred</td><td>Today</td></tr>
+            <tr><td><strong>Kim family</strong></td><td><span class="tag emerald">Active search</span></td><td>✓ $1M</td><td>$700K-1M</td><td>4bd · move-in ready · Robbinsville</td><td>Yesterday</td></tr>
+            <tr><td><strong>Patel family</strong></td><td><span class="tag amber">Pre-approval pending</span></td><td>Pending</td><td>$500-650K</td><td>3bd · open kitchen</td><td>3 days ago</td></tr>
+            <tr><td><strong>Garcia family (move-up)</strong></td><td><span class="tag muted">Discovery</span></td><td>Working on selling theirs</td><td>$800-950K</td><td>Larger · 4-5bd</td><td>1 week ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="view" id="view-escrow"><div class="page-header"><div><div class="page-subtitle">6 deals in escrow · $3.2M volume · closing in 30 days</div><div class="page-title">In Escrow</div></div></div><div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Address</th><th>Price</th><th>Side</th><th>Buyer/Seller</th><th>Close</th><th>Lender</th><th>Status</th></tr></thead><tbody><tr><td><strong>14 Hickory Ct</strong></td><td>$485K</td><td>Listing</td><td>Wong family</td><td>Jun 18</td><td>Cash</td><td><span class="tag emerald">Clear to close</span></td></tr><tr><td><strong>112 Birch Ave</strong></td><td>$620K</td><td>Buyer</td><td>Patel family</td><td>Jun 22</td><td>Wells Fargo</td><td><span class="tag amber">Inspection contingency</span></td></tr><tr><td><strong>808 Crescent</strong></td><td>$840K</td><td>Listing</td><td>Cohen (move-up)</td><td>Jun 24</td><td>Chase</td><td><span class="tag emerald">Appraisal in</span></td></tr><tr><td><strong>5 Sycamore Pl</strong></td><td>$395K</td><td>Buyer</td><td>Hartman</td><td>Jun 27</td><td>Rocket</td><td><span class="tag emerald">Underwriting</span></td></tr><tr><td><strong>91 Dogwood</strong></td><td>$540K</td><td>Listing</td><td>Estate sale</td><td>Jun 30</td><td>—</td><td><span class="tag amber">Title issue</span></td></tr><tr><td><strong>1801 Cypress</strong></td><td>$320K</td><td>Buyer</td><td>First-time</td><td>Jul 5</td><td>FHA</td><td><span class="tag emerald">In contract</span></td></tr></tbody></table></div></div>
+
+    <div class="view" id="view-showings"><div class="page-header"><div><div class="page-subtitle">5 today · 14 this week · response rate 78%</div><div class="page-title">Today's Showings</div></div></div><div class="coming-soon"><h3>Showing Coordinator</h3><p>One-tap showing scheduling, lockbox access codes, route between properties, post-showing feedback capture.</p><ul><li>ShowingTime + BrokerSumo integration</li><li>Lockbox code per property + showing-window tracking</li><li>Optimal route between today's showings</li><li>Post-showing buyer feedback prompts</li><li>Listing agent auto-notifications</li></ul></div></div>
+
+    <div class="view" id="view-open-houses"><div class="page-header"><div><div class="page-subtitle">3 this weekend · 42 sign-ins last week</div><div class="page-title">Open Houses</div></div></div><div class="coming-soon"><h3>Open House Operations</h3><p>Schedule, sign-in capture, follow-up automation.</p><ul><li>Open-house calendar with MLS push</li><li>Digital sign-in (text or QR) — no clipboard</li><li>Auto-follow-up email Mon/Wed/Fri to attendees</li><li>Hot-prospect flagging (multiple visits, time spent)</li><li>Neighbor-notification text-blasts</li></ul></div></div>
+
+    <div class="view" id="view-sphere"><div class="page-header"><div><div class="page-subtitle">412 past clients · 89 staying-in-touch active</div><div class="page-title">Sphere</div></div></div><div class="coming-soon"><h3>Past-Client + Sphere CRM</h3><p>Stay top-of-mind with past clients so they refer you and come back when they sell.</p><ul><li>Birthday + home-anniversary auto-outreach</li><li>Annual market-update mailer to past clients in their neighborhood</li><li>Holiday cards (real mail integration)</li><li>Referral attribution + thank-you tracking</li><li>Major-life-event tracker (kids, job change, retirement)</li></ul></div></div>
+
+    <div class="view" id="view-marketing"><div class="page-header"><div><div class="page-subtitle">Per-listing campaigns · Instagram + Zillow + Facebook + email</div><div class="page-title">Marketing</div></div></div><div class="coming-soon"><h3>Listing Marketing Engine</h3><p>One listing → 8 channels with appropriate copy + photos per channel.</p><ul><li>Instagram Reels auto-generated from listing photos</li><li>Facebook + Zillow + Realtor.com syndication</li><li>Email blast to sphere segmented by area</li><li>Just-listed + just-sold neighborhood mailers</li><li>QR-code yard signs linking to listing details</li><li>Per-channel lead attribution</li></ul></div></div>
+
+    <div class="view" id="view-commissions"><div class="page-header"><div><div class="page-subtitle">YTD GCI: $184K · brokerage split + team splits applied</div><div class="page-title">Commissions</div></div></div><div class="coming-soon"><h3>Commission Tracking</h3><p>Every deal, every check, every split — reconciled to your bank.</p><ul><li>Per-deal GCI calculation with brokerage split</li><li>Buyer-agent / listing-agent / referral splits</li><li>Team splits if applicable</li><li>Year-to-date earnings dashboard</li><li>Tax-deductible expense capture (mileage, MLS dues, signs)</li><li>Auto-1099 prep at year-end</li></ul></div></div>
+
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Monthly · YoY · per-source lead conversion</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Production Reports</h3><p>The numbers a producing agent needs.</p><ul><li>Monthly GCI run rate</li><li>Source attribution: sphere vs Zillow vs open house vs sign-call</li><li>Days-on-market average · listed vs market</li><li>List-to-sale ratio</li><li>Past-client repeat + referral rate</li></ul></div></div>
+
+    <!-- ===== Cross-pollinated from Audit Practice ===== -->
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">1099 income · deductible miles · MLS + association dues · Schedule C</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · agent-flavored: Schedule C self-employment, vehicle deduction, home office, MLS dues, multi-state licensure</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">YTD 1099 Income</div><div class="stat-value">$184,000</div><div class="stat-delta">GCI net of brokerage split</div></div>
+        <div class="stat"><div class="stat-label">Deductible Miles</div><div class="stat-value">12,840</div><div class="stat-delta">Showings + drives · $8,604 @ 67¢</div></div>
+        <div class="stat"><div class="stat-label">Quarterly Est. Tax Due</div><div class="stat-value">$11,200</div><div class="stat-delta neg">Q2 deadline June 15</div></div>
+        <div class="stat"><div class="stat-label">Deductible Dues</div><div class="stat-value">$4,200</div><div class="stat-delta">MLS · NAR · brokerage fees</div></div>
+      </div>
+      <div class="panel"><div class="panel-header"><div class="panel-title">Year-to-date deductible expenses</div></div>
+      <table class="table"><thead><tr><th>Category</th><th>YTD</th><th>Last Year</th><th>Notes</th></tr></thead><tbody>
+      <tr><td><strong>Vehicle (mileage)</strong></td><td>$8,604</td><td>$11,200</td><td>12,840 mi · standard rate</td></tr>
+      <tr><td><strong>MLS + association dues</strong></td><td>$4,200</td><td>$4,100</td><td>2 MLS regions (NJ + PA)</td></tr>
+      <tr><td><strong>Marketing</strong></td><td>$8,420</td><td>$12,400</td><td>Zillow, FB ads, signs, photography</td></tr>
+      <tr><td><strong>Photography + staging</strong></td><td>$3,800</td><td>$5,200</td><td>Per-listing</td></tr>
+      <tr><td><strong>Home office</strong></td><td>$2,400</td><td>$2,400</td><td>200 sqft @ $12/sqft simplified</td></tr>
+      <tr><td><strong>Software / SaaS</strong></td><td>$1,840</td><td>$1,200</td><td>CRM, transaction mgmt, e-sign</td></tr>
+      <tr><td><strong>CE + licensing</strong></td><td>$840</td><td>$1,200</td><td>NJ + PA CE done · brokerage 2027</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Contracts · disclosures · addenda · inspections</div><div class="page-title">Documents</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · realtor-flavored: per-listing document checklists, e-sign integration, disclosure tracking</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Document</th><th>Type</th><th>Listing</th><th>Status</th></tr></thead><tbody>
+    <tr><td><strong>14HickoryCt-Contract-Wong.pdf</strong></td><td>Purchase contract</td><td>14 Hickory Ct</td><td><span class="tag emerald">Fully executed</span></td></tr>
+    <tr><td><strong>14HickoryCt-Seller-Disclosure.pdf</strong></td><td>Disclosure</td><td>14 Hickory Ct</td><td><span class="tag emerald">Filed</span></td></tr>
+    <tr><td><strong>14HickoryCt-Inspection.pdf</strong></td><td>Home inspection</td><td>14 Hickory Ct</td><td><span class="tag emerald">Filed</span></td></tr>
+    <tr><td><strong>112Birch-Counter-Offer.pdf</strong></td><td>Counter offer</td><td>112 Birch Ave</td><td><span class="tag amber">Awaiting signature</span></td></tr>
+    <tr><td><strong>9OakSt-Listing-Agreement.pdf</strong></td><td>Listing agreement</td><td>9 Oak St (new)</td><td><span class="tag gold">For signature</span></td></tr>
+    </tbody></table></div></div>
+
+    <div class="view" id="view-milestones"><div class="page-header"><div><div class="page-subtitle">Past-client home anniversaries · life events · birthday</div><div class="page-title">Milestone Outreach</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Diamond Atelier · realtor-flavored: home anniversaries, refi triggers, life-event re-sells</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Date</th><th>Past Client</th><th>Event</th><th>Recommendation</th><th>Action</th></tr></thead><tbody>
+    <tr><td><strong>Jun 11</strong></td><td>The Garcias</td><td>5-yr home anniversary</td><td>Market update for their area + handwritten card</td><td><span class="tag gold">Today</span></td></tr>
+    <tr><td><strong>Jun 14</strong></td><td>The Reillys</td><td>Daughter's 10th birthday</td><td>Gift card + note · they remember</td><td><span class="tag gold">This week</span></td></tr>
+    <tr><td><strong>Jun 16</strong></td><td>Doug Hartman</td><td>1-yr home anniversary</td><td>"How's the house?" check-in + value estimate</td><td><span class="tag gold">This week</span></td></tr>
+    <tr><td><strong>Jun 24</strong></td><td>The Schwartzes</td><td>10-yr home anniversary</td><td>Move-up market analysis · they're at the upgrade window</td><td><span class="tag emerald">Calendar</span></td></tr>
+    <tr><td><strong>Jul 2</strong></td><td>The Garlands</td><td>New baby (heard from sphere)</td><td>Small gift + "more space?" market analysis</td><td><span class="tag emerald">Calendar</span></td></tr>
+    </tbody></table></div></div>
+  </main>
+</div>
+<footer>Realtor Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
