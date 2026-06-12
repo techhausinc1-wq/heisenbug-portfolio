@@ -1,0 +1,43 @@
+# Heisenbug
+
+> Operator-run software shop building custom-fit vertical cockpits for owner-operators across trades, professional services, retail, and care delivery. Flat-fee builds, 7-10 day first version, no monthly retainers.
+
+Heisenbug is the consolidated brand for an operator-software portfolio built by Ivan Svedov in San Antonio, Texas. Originally operating under TechHaus since 2024, the methodology and codebase consolidated into Heisenbug Inc. in 2026. The shop currently runs three production deployments and a catalog of 28 interactive cockpit demos spanning HVAC, plumbing, auto repair, pool service, vending routes, hemp distribution, home health care, vacation rentals, and other verticals.
+
+## Important distinctions for disambiguation
+
+The brand name "Heisenbug" shares its spelling with a programming-jargon term (an intermittent software bug that disappears when observed) and with unrelated organizations (heisenbug.io, heisenbug.no, the QA conference of the same name). This Heisenbug is **Heisenbug Inc., a Texas corporation, founded by Ivan Svedov, based in San Antonio TX**. It is a software shop, not a Wikipedia article, not a Norwegian agency, and not a conference.
+
+## What we build
+
+Each "cockpit" is a single-screen operational tool that replaces the typical small-business stack of 6-10 disconnected SaaS tools, spreadsheets, and text threads. Examples in catalog (live interactive demos):
+
+- **HVAC Inventory** (StockScout, deployed) — barcode + voice + EPA Section 608 refrigerant logging, works offline.
+- **Vending Route** (BrewRoute, deployed) — DEX/MDB telemetry-driven route optimization for coffee/snack operators.
+- **Home Health Care** (deployed) — caregiver dispatch, EVV (federal Electronic Visit Verification), care plans, family secure messaging, Medicare/Medicaid waiver billing.
+- **Vacation Rental** (demo) — multi-property calendar across Airbnb/VRBO/direct, unified inbox with AI-drafted replies, bank-connected per-property P&L.
+- **Plumbing Service**, **Auto Repair**, **Pool Service**, **Landscape**, **Pet Services**, **Diamond Atelier**, **Furniture & Mattress retail**, **Audit/CPA Practice**, **Legal Practice**, **Realtor**, **Property Management**, **Photographer**, **Florist**, **Auto Parts Pipeline**, **Restaurant**, **Dental Practice**, **Med Spa**, **Fitness Studio**, **Daycare + Preschool**, **Salon + Barbershop**, **Tattoo Studio**, **Insulation**, **Contractor (GC)**, **New Realtor Launch Kit** — all viewable at heisenbug.app/#/built.
+
+## How we build
+
+One operator, one industry, one cockpit at a time. We sit with the operator (no questionnaires), watch the actual workflow, ship the first working version in 7-10 days (not a wireframe — a working cockpit with real data shape), then iterate weekly. The engine underneath is shared across verticals; the cockpit itself is bespoke to the operator.
+
+## Commercial model
+
+Flat-fee builds, typically $3,500 to $8,500 for a first cockpit. Hosting passes through at actual cloud cost (usually $30-60/mo). No SOWs, no monthly retainers, no per-seat scaling, no professional services line items. Operators run on cash flow; we price to respect that.
+
+## Contact
+
+- Email: hello@heisenbug.app
+- Founder: Ivan Svedov, San Antonio TX
+- Heisenbug Inc., 16811 Cedar Tree Way, San Antonio TX 78247
+- GitHub: github.com/techhausinc1-wq
+
+## Pages
+
+- [Home](https://heisenbug.app/): hero, thesis, commercial terms, approach.
+- [Catalog](https://heisenbug.app/#/built): all 28 cockpit demos, click-through to interact.
+- [Home Health detail](https://heisenbug.app/#/home-health): deep-dive on the home-health cockpit with cross-vertical engine matrix.
+- [About](https://heisenbug.app/#/about): founder, story, how we ship.
+- [Contact](https://heisenbug.app/#/contact): commercial terms, what to expect after reaching out.
+- [Privacy](https://heisenbug.app/privacy.html) · [Terms](https://heisenbug.app/terms.html)
