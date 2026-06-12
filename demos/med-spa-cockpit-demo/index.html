@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4ebe2">
+<title>Med Spa Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #faf6f2; --bg-2: #ffffff; --bg-3: #f0e8e0; --ink: #2e2422; --text-dim: #6e5e58; --text-mute: #a09188; --line: #e0d4c8; --line-2: #c8b8a8; --rose: #b8587d; --gold: #b08236; --olive: #5e6e3d; --emerald: #2e7d5b; --red: #b53148; --slate: #2e2422; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; } button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--rose); color: var(--bg); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; border-radius: 50%; }
+  .brand-name { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 18px; letter-spacing: 0.5px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--rose); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(184,88,125,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--rose); background: var(--bg-2); border-left-color: var(--rose); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--rose); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); }
+  .btn.primary { background: var(--rose); color: white; border-color: var(--rose); font-weight: 600; }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500; line-height: 1; }
+  .stat-delta { font-size: 11px; color: var(--olive); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 500; }
+  .panel-link { font-size: 11px; color: var(--rose); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.rose { background: rgba(184,88,125,0.15); color: var(--rose); }
+  .tag.gold { background: rgba(176,130,54,0.15); color: var(--gold); }
+  .tag.olive { background: rgba(94,110,61,0.15); color: var(--olive); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--rose); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '— '; color: var(--rose); margin-right: 6px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--rose); font-weight: 600; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">M</div>
+    <div><div class="brand-name">Med Spa Cockpit</div><div class="brand-sub">Aesthetics · injectables · skin · body</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">D</div><span>Director</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="schedule">Schedule <span class="nav-badge">22</span></div></div>
+    <div class="nav-section"><div class="nav-label">Clients</div><div class="nav-item" data-view="patients">Patient Records</div><div class="nav-item" data-view="memberships">Memberships</div><div class="nav-item" data-view="rewards">Alle / Aspire / Xperience</div></div>
+    <div class="nav-section"><div class="nav-label">Clinical</div><div class="nav-item" data-view="protocols">Treatment Protocols</div><div class="nav-item" data-view="consents">Consents</div><div class="nav-item" data-view="photos">Before/After Photos</div><div class="nav-item" data-view="inventory">Injectables Inventory</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="marketing">Marketing</div><div class="nav-item" data-view="reviews">Reviews</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="docs">Document Inbox</div><div class="nav-item" data-view="financing">Patient Financing</div><div class="nav-item" data-view="milestones">Milestone Outreach</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7, 2026 · 22 appts today · 4 consults</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Patient lookup</button><button class="btn primary">+ New Appt</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Today's Appts</div><div class="stat-value">22</div><div class="stat-delta">$8,420 booked revenue</div></div>
+        <div class="stat"><div class="stat-label">June MTD</div><div class="stat-value">$184,200</div><div class="stat-delta">+18% vs May</div></div>
+        <div class="stat"><div class="stat-label">Active Members</div><div class="stat-value">284</div><div class="stat-delta">$58,400/mo recurring</div></div>
+        <div class="stat"><div class="stat-label">Alle Points YTD</div><div class="stat-value">$24,800</div><div class="stat-delta">Allergan loyalty redeemed</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's schedule — clinical staff</div><a class="panel-link" onclick="navigate('schedule')">Full day</a></div>
+            <div class="activity-item"><div class="activity-icon">9</div><div class="activity-text"><div><strong>9:00 AM · Jessica T.</strong> · Botox glabella + crows · 30 min</div><div class="activity-time">DR. PARK · MEMBER · ALLE POINTS APPLY · $480</div></div></div>
+            <div class="activity-item"><div class="activity-icon">9</div><div class="activity-text"><div><strong>9:30 AM · Sarah K.</strong> · Hydrafacial · 50 min</div><div class="activity-time">ESTHETICIAN MARIA · NEW PATIENT · CONSULT POST</div></div></div>
+            <div class="activity-item"><div class="activity-icon">10</div><div class="activity-text"><div><strong>10:30 AM · Carolyn M.</strong> · Filler — lips 1 syringe · 45 min</div><div class="activity-time">DR. PARK · 6-MONTH MEMBER · $750</div></div></div>
+            <div class="activity-item"><div class="activity-icon">11</div><div class="activity-text"><div><strong>11:30 AM · CONSULT · Diana R.</strong> · CoolSculpting eval · 30 min</div><div class="activity-time">DR. PARK · REFERRED BY JESSICA T.</div></div></div>
+            <div class="activity-item"><div class="activity-icon">12</div><div class="activity-text"><div><strong>12:30 PM · LUNCH BLOCK</strong></div><div class="activity-time">RESTOCK INJECTABLES · CONSULT NOTES</div></div></div>
+            <div class="activity-item"><div class="activity-icon">2</div><div class="activity-text"><div><strong>2:00 PM · Anna V.</strong> · Laser hair removal · 45 min</div><div class="activity-time">ESTHETICIAN MARIA · PKG 6 OF 8</div></div></div>
+            <div class="activity-item"><div class="activity-icon">3</div><div class="activity-text"><div><strong>3:00 PM · Mike F.</strong> · Botox masseter · 30 min</div><div class="activity-time">DR. PARK · NEW · CONSULTATION FIRST · $720</div></div></div>
+            <div class="activity-item"><div class="activity-icon">4</div><div class="activity-text"><div><strong>4:00 PM · Yelena C.</strong> · Tox + Filler combo · 60 min</div><div class="activity-time">DR. PARK · VIP TIER · MAINTENANCE · $1,840</div></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">VIP patients · life-event milestones</div><a class="panel-link">All milestones</a></div>
+            <table class="table">
+              <thead><tr><th>Date</th><th>Patient</th><th>Event</th><th>Recommendation</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Jun 14</strong></td><td>Jessica T.</td><td>Wedding (her sister)</td><td>Pre-event smoothing + light filler · book Jun 11</td><td><span class="tag gold">Outreach sent</span></td></tr>
+                <tr><td><strong>Jun 22</strong></td><td>Carolyn M.</td><td>50th birthday party</td><td>Skin booster + tox refresh · book 1 wk prior</td><td><span class="tag gold">Outreach pending</span></td></tr>
+                <tr><td><strong>Jul 18</strong></td><td>Yelena C.</td><td>Daughter's bat mitzvah</td><td>Full glow package · book 3-5 days prior</td><td><span class="tag emerald">Booked</span></td></tr>
+                <tr><td><strong>Aug 8</strong></td><td>Anna V.</td><td>10-yr anniversary trip</td><td>Pre-vacation laser + LED · book 2 wks prior</td><td><span class="tag gold">To contact</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Injectables on hand — auto-track</div></div>
+            <div class="activity-item"><div class="activity-icon">Bx</div><div class="activity-text"><div><strong>Botox</strong> · 8 vials · 800 units</div><div class="activity-time">REORDER POINT: 4 VIALS · GOOD FOR WEEK</div></div></div>
+            <div class="activity-item"><div class="activity-icon">Jv</div><div class="activity-text"><div><strong>Juvederm Ultra Plus</strong> · 6 syringes</div><div class="activity-time">GOOD FOR 2 WEEKS · ALLE POINTS PER USE</div></div></div>
+            <div class="activity-item"><div class="activity-icon" style="color: var(--red);">!</div><div class="activity-text"><div><strong>Voluma</strong> · 2 syringes</div><div class="activity-time">REORDER POINT HIT · ORDER PLACED · ETA TUE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">Sc</div><div class="activity-text"><div><strong>Sculptra</strong> · 4 vials</div><div class="activity-time">SLOW MOVER · OK</div></div></div>
+            <div class="activity-item"><div class="activity-icon">DY</div><div class="activity-text"><div><strong>Daxxify</strong> · 3 vials</div><div class="activity-time">REVANCE LOYALTY · NEW PROGRAM</div></div></div>
+            <p style="font-size: 11px; color: var(--text-mute); line-height: 1.6; margin-top: 12px;">Lot + expiration tracked per vial. Auto-alerts on near-expiration (90 / 60 / 30 days).</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Recent activity</div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div>Membership renewal: <strong>Carolyn M.</strong> · annual · $4,200</div><div class="activity-time">12-MONTH AT 15% DISCOUNT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">★</div><div class="activity-text"><div>5-star Google review · <strong>Jessica T.</strong></div><div class="activity-time">"DR. PARK IS A GENIUS · LIFE-CHANGING"</div></div></div>
+            <div class="activity-item"><div class="activity-icon">📸</div><div class="activity-text"><div>Before/after upload · <strong>Anna V.</strong> · session 6</div><div class="activity-time">CONSENT FILED · MARKETING USE OPT-IN</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-schedule"><div class="page-header"><div><div class="page-subtitle">Today + week view · multi-provider</div><div class="page-title">Schedule</div></div></div><div class="coming-soon"><h3>Multi-Provider Scheduling</h3><p>One calendar across MDs, NPs, PAs, RNs, and estheticians. Room + equipment availability.</p><ul><li>Per-provider scheduling with credential-based service permissions</li><li>Treatment-room + laser-equipment availability</li><li>Online booking via patient portal (controlled per service)</li><li>Online booking via Instagram + Google Business</li><li>Pre-treatment auto-instructions (no botox 24h before alcohol, etc.)</li></ul></div></div>
+    <div class="view" id="view-patients"><div class="page-header"><div><div class="page-subtitle">2,840 active patients · 284 members · avg LTV $4,800</div><div class="page-title">Patient Records</div></div></div><div class="coming-soon"><h3>EMR-Lite for Aesthetics</h3><p>Patient charts purpose-built for med spa workflow — not a hospital EMR.</p><ul><li>Full treatment history with units, syringes, dates</li><li>Photo timeline per area (forehead / cheeks / lips / chin / body)</li><li>Allergies + medication list</li><li>HIPAA-compliant secure messaging</li><li>Pre/post photos with patient consent for marketing flag</li><li>Per-patient lifetime value</li></ul></div></div>
+    <div class="view" id="view-memberships"><div class="page-header"><div><div class="page-subtitle">284 members · $58K/mo recurring · 92% retention</div><div class="page-title">Memberships</div></div></div><div class="coming-soon"><h3>Membership Management</h3><p>Recurring revenue program — Botox-of-the-Month, skin memberships, treatment packages.</p><ul><li>Tier-based monthly programs ($150/mo · $250/mo · $450/mo)</li><li>Pre-paid treatment packages with rollover</li><li>Auto-charge with retry sequence on failed payment</li><li>Member-only pricing applied automatically</li><li>Loyalty points (Alle, Aspire, Xperience) tracked per visit</li><li>Member churn risk scoring</li></ul></div></div>
+    <div class="view" id="view-rewards"><div class="page-header"><div><div class="page-subtitle">Allergan Alle · Galderma Aspire · Revance Xperience</div><div class="page-title">Brand Loyalty Programs</div></div></div><div class="coming-soon"><h3>Manufacturer Loyalty Integration</h3><p>Auto-apply Alle / Aspire / Xperience points at checkout. Auto-redeem manufacturer specials.</p><ul><li>Real-time loyalty point balance per patient</li><li>Auto-apply at checkout (highest discount)</li><li>Manufacturer special promotions surfaced</li><li>Per-program redemption reporting</li><li>Allergan / Galderma / Revance manufacturer reporting compliance</li></ul></div></div>
+    <div class="view" id="view-protocols"><div class="page-header"><div><div class="page-subtitle">42 standard protocols · per-provider variations · regulatory-compliant</div><div class="page-title">Treatment Protocols</div></div></div><div class="coming-soon"><h3>Clinical Protocol Library</h3><p>Standardized treatment protocols per service, per provider, with dosing references.</p><ul><li>Dosing reference (units per area for tox, ml per area for filler)</li><li>Pre-treatment consent + instructions</li><li>Post-treatment care + downtime expectations</li><li>Provider override capability (with logged reasoning)</li><li>Outcome tracking + protocol refinement</li></ul></div></div>
+    <div class="view" id="view-consents"><div class="page-header"><div><div class="page-subtitle">E-sign · per-service consent · refresh annually</div><div class="page-title">Consents</div></div></div><div class="coming-soon"><h3>Digital Consent Management</h3><p>Per-service consent forms, e-signed by patient, archived forever.</p><ul><li>Service-specific consent forms (tox, filler, laser, body)</li><li>E-signature via patient portal or in-suite iPad</li><li>Annual refresh reminders</li><li>Witness signature for high-risk services</li><li>Auto-attach to treatment record</li></ul></div></div>
+    <div class="view" id="view-photos"><div class="page-header"><div><div class="page-subtitle">Before/after gallery · marketing-cleared · timeline per patient</div><div class="page-title">Before/After Photos</div></div></div><div class="coming-soon"><h3>Photo Documentation</h3><p>↘ Same engine as Auto Parts AutoLister + Construction Job Photos — adapted for aesthetic photography. Calibrated lighting + angle prompts.</p><ul><li>Standardized angle prompts per treatment area</li><li>Calibrated-lighting photo station integration</li><li>Auto-AI alignment for before/after comparison</li><li>Marketing-use consent flag per photo</li><li>Patient-portal access for their own timeline</li><li>One-tap Instagram-ready compilations (consented only)</li></ul></div></div>
+    <div class="view" id="view-inventory"><div class="page-header"><div><div class="page-subtitle">Injectables · lasers · skincare · sundries · lot + expiration tracked</div><div class="page-title">Injectables Inventory</div></div></div><div class="coming-soon"><h3>Clinical Inventory + Lot Tracking</h3><p>Per-product lot tracking, expiration alerts, manufacturer-rep auto-orders.</p><ul><li>Per-vial lot + expiration tracking</li><li>Auto-reorder when below threshold</li><li>Manufacturer rep direct ordering (Allergan, Galderma, Revance)</li><li>Cold-chain compliance for select products</li><li>Per-product cost basis for true margin</li></ul></div></div>
+    <div class="view" id="view-marketing"><div class="page-header"><div><div class="page-subtitle">Instagram · email · SMS · referral program · holiday specials</div><div class="page-title">Marketing</div></div></div><div class="coming-soon"><h3>Aesthetic Marketing Engine</h3><p>Instagram + before-afters + member-only specials + manufacturer promo amplification.</p><ul><li>Instagram auto-posting from consented before/afters</li><li>Email + SMS to past patients on milestone dates</li><li>Referral program with auto-tracking</li><li>Holiday + life-event promotional campaigns</li><li>Per-channel patient-acquisition cost</li></ul></div></div>
+    <div class="view" id="view-reviews"><div class="page-header"><div><div class="page-subtitle">4.9 stars Google · 4.8 RealSelf · 4.9 Yelp</div><div class="page-title">Reviews</div></div></div><div class="coming-soon"><h3>Review Management</h3><p>Auto-prompt post-visit. Route 5-stars to public platforms; 1-4 stars to private resolution.</p><ul><li>Cross-platform aggregation (Google / RealSelf / Yelp / FB)</li><li>Auto-prompt 48h post-visit</li><li>5-star routing to platforms</li><li>Private resolution flow for &lt; 5</li><li>Per-provider review sentiment</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Provider productivity · service mix · LTV cohorts · ad spend ROI</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Business Reports</h3><p>Numbers that matter for a med spa.</p><ul><li>Revenue by service (tox / filler / laser / membership / retail)</li><li>Per-provider productivity ($ per chair-hour)</li><li>Patient LTV cohorts</li><li>Membership growth + churn</li><li>Per-channel patient acquisition cost</li><li>Inventory cost vs revenue</li></ul></div></div>
+
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">Sales tax on skincare retail · service-exempt clinical · 1099 providers · DEA + state pharmacy</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · med spa flavored: clinical service is tax-exempt, retail skincare is taxable, 1099s for contracted providers, pharmacy + DEA tracking</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Retail Sales Tax MTD</div><div class="stat-value">$1,820</div><div class="stat-delta">From skincare retail · cosmeceuticals</div></div>
+        <div class="stat"><div class="stat-label">Service Revenue</div><div class="stat-value">$162K</div><div class="stat-delta">Tax-exempt clinical</div></div>
+        <div class="stat"><div class="stat-label">1099 Providers</div><div class="stat-value">2</div><div class="stat-delta">PRN NPs · W-9 on file</div></div>
+        <div class="stat"><div class="stat-label">DEA License</div><div class="stat-value">Active</div><div class="stat-delta">Renews Q1 2027</div></div>
+      </div>
+      <div class="panel"><div class="panel-header"><div class="panel-title">Revenue mix — current period</div></div><table class="table"><thead><tr><th>Category</th><th>Revenue</th><th>Taxable?</th><th>Tax</th></tr></thead><tbody><tr><td>Botox / Dysport / Daxxify (clinical)</td><td>$48,400</td><td>Exempt (medical service)</td><td>$0</td></tr><tr><td>Filler (clinical)</td><td>$62,800</td><td>Exempt</td><td>$0</td></tr><tr><td>Laser + body (clinical)</td><td>$28,200</td><td>Exempt</td><td>$0</td></tr><tr><td>Hydrafacial + skin (clinical)</td><td>$22,800</td><td>Exempt</td><td>$0</td></tr><tr><td>Retail skincare (cosmeceuticals)</td><td>$22,500</td><td>Taxable</td><td>$1,420</td></tr><tr><td>Retail SPF + sundries</td><td>$6,400</td><td>Taxable</td><td>$400</td></tr></tbody></table></div>
+    </div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Consents · licensure · insurance · vendor contracts</div><div class="page-title">Documents</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · med spa flavored: per-service consents, provider licensure, malpractice insurance, manufacturer rep agreements</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Document</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td><strong>Dr. Park - Medical License.pdf</strong></td><td>Provider licensure</td><td><span class="tag emerald">Current · renews Mar 2027</span></td></tr><tr><td><strong>Dr. Park - DEA Registration.pdf</strong></td><td>DEA</td><td><span class="tag emerald">Current</span></td></tr><tr><td><strong>NP Sarah - Collaborative Agreement.pdf</strong></td><td>Practice agreement</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>Malpractice Insurance 2026.pdf</strong></td><td>Professional liability</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>Allergan Direct Account.pdf</strong></td><td>Manufacturer account</td><td><span class="tag emerald">Active</span></td></tr><tr><td><strong>HIPAA Breach Notification Policy.pdf</strong></td><td>Compliance</td><td><span class="tag emerald">Annual review done</span></td></tr></tbody></table></div></div>
+
+    <div class="view" id="view-financing"><div class="page-header"><div><div class="page-subtitle">Cherry · Care Credit · in-house package plans</div><div class="page-title">Patient Financing</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Furniture cockpit · med spa flavored: medical-aesthetics lenders (Cherry, Care Credit), in-house pre-paid packages</p>
+    <div class="panel"><div class="panel-header"><div class="panel-title">Active financed treatments</div></div><table class="table"><thead><tr><th>Patient</th><th>Treatment</th><th>Amount</th><th>Lender</th><th>Status</th></tr></thead><tbody><tr><td><strong>Diana R.</strong></td><td>CoolSculpting package (8 sessions)</td><td>$4,800</td><td>Cherry</td><td><span class="tag amber">Pending consult</span></td></tr><tr><td><strong>Anna V.</strong></td><td>Laser hair removal (8 sessions)</td><td>$2,400</td><td>Cherry</td><td><span class="tag emerald">Approved · in progress</span></td></tr><tr><td><strong>Yelena C.</strong></td><td>Annual membership Plus tier</td><td>$5,400</td><td>Care Credit</td><td><span class="tag emerald">Approved</span></td></tr><tr><td><strong>New consult Diana</strong></td><td>3-area Botox + lip filler combo</td><td>$1,800</td><td>—</td><td><span class="tag amber">Cherry app pending</span></td></tr></tbody></table></div></div>
+
+    <div class="view" id="view-milestones"><div class="page-header"><div><div class="page-subtitle">Life events · pre-event prep · loyalty triggers</div><div class="page-title">Milestone Outreach</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Diamond Atelier · med spa flavored: weddings, milestones birthdays, anniversaries, daughter/son events drive pre-event treatments</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Date</th><th>Patient</th><th>Event</th><th>Recommendation</th><th>Status</th></tr></thead><tbody><tr><td><strong>Jun 14</strong></td><td>Jessica T.</td><td>Wedding (sister)</td><td>Pre-event smoothing 7-10 days prior · book Jun 4-7</td><td><span class="tag emerald">Booked Jun 6</span></td></tr><tr><td><strong>Jun 22</strong></td><td>Carolyn M.</td><td>50th birthday party</td><td>Skin booster + tox refresh · book 1 wk prior</td><td><span class="tag gold">Outreach pending</span></td></tr><tr><td><strong>Jul 18</strong></td><td>Yelena C.</td><td>Daughter's bat mitzvah</td><td>Full glow package · book 3-5 days prior</td><td><span class="tag emerald">Booked</span></td></tr><tr><td><strong>Aug 8</strong></td><td>Anna V.</td><td>10-yr anniversary trip</td><td>Pre-vacation laser + LED · book 2 wks prior</td><td><span class="tag gold">To contact</span></td></tr><tr><td><strong>Aug 22</strong></td><td>Sarah K.</td><td>Class reunion</td><td>Treatment series 6 wks pre-event · gentle Botox</td><td><span class="tag gold">To contact</span></td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Med Spa Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
