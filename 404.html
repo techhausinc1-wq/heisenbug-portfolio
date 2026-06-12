@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · Heisenbug</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root { --paper: #fbf8ef; --ink: #16201a; --muted: #6a7068; --line: #d4cdb8; --green: #1f5b3a; --green-bright: #c6d97a; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Helvetica Neue", Helvetica, sans-serif; background: var(--paper); color: var(--ink); line-height: 1.5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.wrap { max-width: 540px; text-align: center; }
+.code { font-family: 'Fraunces', Georgia, serif; font-size: 110px; font-weight: 500; color: var(--green); letter-spacing: -3px; line-height: 1; margin-bottom: 12px; }
+h1 { font-family: 'Fraunces', Georgia, serif; font-size: 32px; font-weight: 500; margin-bottom: 14px; letter-spacing: -0.4px; }
+p { font-size: 15.5px; color: var(--muted); margin-bottom: 22px; }
+.actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; border: 1px solid transparent; }
+.btn.primary { background: var(--green); color: white; }
+.btn.primary:hover { background: var(--ink); }
+.btn.secondary { background: transparent; color: var(--green); border-color: var(--green); }
+.btn.secondary:hover { background: var(--green); color: white; }
+.context { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.context a { color: var(--green); margin: 0 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="code">404</div>
+  <h1>That page is not here.</h1>
+  <p>The URL you typed (or the link you clicked) doesn't match anything on heisenbug.app. The page was probably renamed when we cleaned up the site, or never existed.</p>
+  <div class="actions">
+    <a class="btn primary" href="/">Back to home</a>
+    <a class="btn secondary" href="/#/built">Browse the catalog</a>
+    <a class="btn secondary" href="mailto:hello@heisenbug.app">Email us</a>
+  </div>
+  <div class="context">
+    Looking for a specific cockpit?<br>
+    <a href="/#/home-health">Home Health</a> &middot;
+    <a href="/#/built">Full catalog</a> &middot;
+    <a href="/#/about">About</a> &middot;
+    <a href="/#/contact">Contact</a>
+  </div>
+</div>
+</body>
+</html>
