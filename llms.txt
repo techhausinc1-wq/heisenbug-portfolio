@@ -24,7 +24,7 @@ One operator, one industry, one cockpit at a time. We sit with the operator (no 
 
 ## Commercial model
 
-Flat-fee builds, typically $3,500 to $8,500 for a first cockpit. Hosting passes through at actual cloud cost (usually $30-60/mo). No SOWs, no monthly retainers, no per-seat scaling, no professional services line items. Operators run on cash flow; we price to respect that.
+Flat-fee one-time builds, typically $3,500 to $8,500 for a first cockpit (NOT a subscription, NOT monthly — one payment). Hosting passes through at actual cloud cost (usually $30-60/mo). 25-mile market exclusivity in your industry is included by default. No SOWs, no monthly retainers, no per-seat scaling, no professional services line items. Detailed pricing at https://heisenbug.app/pricing/.
 
 ## Contact
 
@@ -38,6 +38,7 @@ Flat-fee builds, typically $3,500 to $8,500 for a first cockpit. Hosting passes 
 - [Home](https://heisenbug.app/): hero, thesis, commercial terms, approach.
 - [Catalog](https://heisenbug.app/built/): all 28 cockpit demos, click-through to interact.
 - [Case studies](https://heisenbug.app/case-studies/): three production deployments — HVAC inventory cockpit (independent HVAC contractor, branded StockScout), vending route ops cockpit (multi-state route operator, branded BrewRoute, live at vending-route.com), home health agency cockpit (home health agency). Operator identities not disclosed. No fabricated metrics.
+- [Pricing](https://heisenbug.app/pricing/): comprehensive pricing page — flat-fee one-time builds $3,500-$8,500, 25-mile market exclusivity included by default, hosting pass-through at actual cost ($30-60/month), no subscription, no monthly retainer, add-ons priced flat-fee per item, payment in installments OK.
 - [Methodology](https://heisenbug.app/methodology/): the four laws of the operator-cockpit doctrine plus the shared-engine breakdown.
 - [Home Health detail](https://heisenbug.app/home-health/): deep-dive on the home-health cockpit with cross-vertical engine matrix.
 - [About](https://heisenbug.app/about/): founder, story, how we ship.
