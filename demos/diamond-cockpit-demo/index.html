@@ -1,0 +1,2076 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Diamond Atelier — House Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #121212;
+    --bg-3: #1a1a1a;
+    --line: #262626;
+    --line-2: #333333;
+    --text: #f0eada;
+    --text-dim: #a09a85;
+    --text-mute: #6b6856;
+    --gold: #b89968;
+    --gold-bright: #d4b87a;
+    --ruby: #9c2740;
+    --emerald: #2e7d5b;
+    --sapphire: #2c4a8f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  input, select, textarea {
+    font-family: inherit; font-size: 14px;
+    background: var(--bg-2); color: var(--text);
+    border: 1px solid var(--line); padding: 10px 14px;
+    outline: none; border-radius: 4px;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+
+  /* === Header === */
+  header {
+    background: #050505;
+    border-bottom: 1px solid var(--line);
+    padding: 16px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    gap: 14px;
+  }
+  @media (max-width: 760px) {
+    header { padding: 12px 16px; flex-wrap: wrap; }
+    .header-search { display: none; }
+    .brand-sub { font-size: 8px !important; }
+  }
+  .brand {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .brand-mark {
+    width: 38px; height: 38px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 500;
+    color: var(--gold);
+    background: radial-gradient(circle at 30% 30%, #1c1812 0%, #0a0a0a 70%);
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500;
+    letter-spacing: 2px;
+  }
+  .brand-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .header-actions { display: flex; gap: 12px; align-items: center; }
+  .header-search {
+    width: 320px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 8px 16px 8px 38px;
+    font-size: 13px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a09a85' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 14px center;
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    font-size: 12px;
+  }
+  .user-avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #8a7548 100%);
+    color: #0a0a0a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+
+  /* === Layout === */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar {
+      display: flex; flex-direction: row;
+      overflow-x: auto;
+      padding: 12px 16px;
+      background: #060606;
+      border-right: 0; border-bottom: 1px solid var(--line);
+      gap: 6px;
+      scrollbar-width: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+    .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; }
+    .nav-label { display: none; }
+    .nav-item {
+      padding: 6px 14px;
+      font-size: 12px;
+      white-space: nowrap;
+      border-left: 0;
+      border-bottom: 2px solid transparent;
+      border-radius: 16px;
+      background: transparent;
+    }
+    .nav-item.active {
+      border-left: 0;
+      border-bottom-color: transparent;
+      background: rgba(184,153,104,0.12);
+    }
+    .nav-item .ic { display: none; }
+    .nav-badge { font-size: 9px; padding: 1px 6px; margin-left: 4px; }
+  }
+  .sidebar {
+    background: #060606;
+    border-right: 1px solid var(--line);
+    padding: 24px 0;
+    overflow-y: auto;
+  }
+  .nav-section {
+    margin-bottom: 28px;
+  }
+  .nav-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--text-mute); text-transform: uppercase;
+    padding: 0 28px 10px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 28px;
+    color: var(--text-dim);
+    font-size: 13.5px; font-weight: 400;
+    border-left: 2px solid transparent;
+    transition: color 120ms, background 120ms, border-color 120ms;
+    cursor: pointer;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg-2); }
+  .nav-item.active {
+    color: var(--gold-bright);
+    background: var(--bg-2);
+    border-left-color: var(--gold);
+  }
+  .nav-item .ic {
+    width: 16px; height: 16px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+  .nav-item.active .ic { opacity: 1; }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--ruby);
+    color: var(--text);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .mobile-nav {
+    display: none;
+    padding: 16px;
+    background: var(--bg-2);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .mobile-nav-item {
+    display: inline-block;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    margin-right: 8px;
+  }
+  .mobile-nav-item.active { color: var(--gold-bright); border-color: var(--gold); }
+
+  /* === Main === */
+  main {
+    padding: 32px 40px;
+    overflow-y: auto;
+  }
+  @media (max-width: 900px) { main { padding: 20px; } }
+
+  .page-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    margin-bottom: 28px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 600px) {
+    .page-header { gap: 12px; }
+    .page-title { font-size: 26px !important; }
+    .page-actions { width: 100%; }
+    .page-actions .btn { flex: 1; text-align: center; }
+  }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px; font-weight: 500; line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .page-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .page-actions { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    padding: 9px 18px;
+    border: 1px solid var(--line-2);
+    color: var(--text);
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    transition: border-color 120ms, background 120ms;
+  }
+  .btn:hover { border-color: var(--gold); background: var(--bg-2); }
+  .btn.primary {
+    background: var(--gold); color: #0a0a0a;
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+  .btn.primary:hover {
+    background: var(--gold-bright); border-color: var(--gold-bright);
+  }
+  .btn.ghost { border-color: transparent; }
+  .btn.ghost:hover { border-color: var(--line-2); }
+
+  /* === Stat grid === */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.8px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 500; line-height: 1;
+  }
+  .stat-delta {
+    font-size: 11px;
+    color: var(--emerald);
+    margin-top: 6px;
+  }
+  .stat-delta.neg { color: var(--ruby); }
+
+  /* === Cards / panels === */
+  .panel {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 18px;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .panel-link {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .panel-link:hover { color: var(--gold-bright); }
+
+  /* === Tables === */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .table th {
+    text-align: left;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 1.5px;
+    color: var(--text-mute); text-transform: uppercase;
+    border-bottom: 1px solid var(--line);
+    font-weight: 500;
+  }
+  .table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .tag.gold { background: rgba(184,153,104,0.18); color: var(--gold-bright); }
+  .tag.emerald { background: rgba(46,125,91,0.22); color: #5eb88b; }
+  .tag.ruby { background: rgba(156,39,64,0.25); color: #d97a8e; }
+  .tag.sapphire { background: rgba(44,74,143,0.22); color: #6e95d8; }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+
+  /* === Two-column ==== */
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  @media (max-width: 1100px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  /* === Specific views === */
+  .lead-row { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .lead-row:last-child { border: 0; }
+  .lead-tier { width: 4px; border-radius: 2px; flex-shrink: 0; }
+  .lead-tier.t1 { background: var(--gold); }
+  .lead-tier.t2 { background: var(--sapphire); }
+  .lead-tier.t3 { background: var(--text-mute); }
+  .lead-body { flex: 1; }
+  .lead-name { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+  .lead-meta { font-size: 12px; color: var(--text-dim); }
+  .lead-value {
+    text-align: right;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; color: var(--gold-bright);
+  }
+
+  /* === Custom design pipeline === */
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    margin: 14px 0;
+  }
+  @media (max-width: 1100px) { .pipeline { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 760px) { .pipeline { grid-template-columns: repeat(2, 1fr); } }
+  .pipe-stage {
+    background: var(--bg-3);
+    border-radius: 5px;
+    padding: 12px;
+    min-height: 110px;
+    border-top: 2px solid var(--line);
+  }
+  .pipe-stage.active { border-top-color: var(--gold); }
+  .pipe-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.4px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .pipe-count {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .pipe-items {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* === Inventory cards === */
+  .inv-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .inv-card {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 150ms;
+  }
+  .inv-card:hover { border-color: var(--gold); }
+  .inv-photo {
+    aspect-ratio: 1; background: #1d1d1d;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px; color: var(--text-mute);
+    position: relative;
+    background: radial-gradient(circle at 30% 30%, #2a2a26 0%, #0e0e0e 80%);
+  }
+  .inv-cert {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.7);
+    color: var(--gold-bright);
+    padding: 3px 8px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .inv-body { padding: 14px; }
+  .inv-name { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .inv-specs {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-dim);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .inv-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; color: var(--gold-bright);
+  }
+  .inv-rap {
+    display: inline-block;
+    margin-left: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--emerald);
+  }
+
+  /* === VIPs === */
+  .vip-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 22px;
+  }
+  .vip-header {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding-bottom: 16px; margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .vip-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, #8a7548 100%);
+    color: #0a0a0a;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 500;
+    flex-shrink: 0;
+  }
+  .vip-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 500;
+    margin-bottom: 3px;
+  }
+  .vip-meta {
+    font-size: 11px; color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .vip-meta .ltv { color: var(--gold-bright); font-weight: 600; }
+  .vip-stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .vip-stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; color: var(--text);
+  }
+  .vip-stat-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px; letter-spacing: 1.5px;
+    color: var(--text-mute); text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .vip-note {
+    font-size: 12px; color: var(--text-dim);
+    line-height: 1.6;
+    font-style: italic;
+    padding-top: 12px; border-top: 1px solid var(--line);
+  }
+
+  /* === Empty / coming-soon views === */
+  .coming-soon {
+    background: var(--bg-2);
+    border: 1px dashed var(--line-2);
+    border-radius: 6px;
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .coming-soon h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px; font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .coming-soon p {
+    color: var(--text-dim); font-size: 13px;
+    max-width: 460px; margin: 0 auto 18px;
+    line-height: 1.6;
+  }
+  .coming-soon ul {
+    text-align: left;
+    max-width: 360px;
+    margin: 0 auto;
+    list-style: none;
+  }
+  .coming-soon li {
+    padding: 6px 0;
+    font-size: 12px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--line);
+  }
+  .coming-soon li::before {
+    content: '— ';
+    color: var(--gold);
+    margin-right: 6px;
+  }
+
+  /* === Activity feed === */
+  .activity-item {
+    display: flex; gap: 14px; padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .activity-item:last-child { border: 0; }
+  .activity-icon {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--bg-3);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .activity-text { flex: 1; }
+  .activity-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--text-mute);
+    margin-top: 3px;
+  }
+
+  /* === Footer === */
+  footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--line);
+    background: #050505;
+    font-size: 11px;
+    color: var(--text-mute);
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  footer span { color: var(--gold); }
+
+  /* === Hide all views by default, show active === */
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark">D</div>
+    <div>
+      <div class="brand-name">DIAMOND ATELIER</div>
+      <div class="brand-sub">House Management · Single-Stone &amp; Estate</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <input class="header-search" type="search" placeholder="Search clients, stones, repairs, memos...">
+    <div class="user-chip">
+      <div class="user-avatar">K</div>
+      <span>Principal</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Today</div>
+      <div class="nav-item active" data-view="dashboard">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Pipeline</div>
+      <div class="nav-item" data-view="leads">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Leads <span class="nav-badge">7</span>
+      </div>
+      <div class="nav-item" data-view="custom-design">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Custom Design
+      </div>
+      <div class="nav-item" data-view="repairs">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        Repairs <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" data-view="memos">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Memos Out
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Goods</div>
+      <div class="nav-item" data-view="inventory">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Inventory
+      </div>
+      <div class="nav-item" data-view="appraisals">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Appraisals
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Relationships</div>
+      <div class="nav-item" data-view="vips">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        VIP Clients
+      </div>
+      <div class="nav-item" data-view="milestones">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Milestones
+      </div>
+      <div class="nav-item" data-view="suppliers">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Suppliers
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Market</div>
+      <div class="nav-item" data-view="trade-events">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><circle cx="17" cy="11" r="3"/></svg>
+        Trade Events
+      </div>
+      <div class="nav-item" data-view="auctions">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 12l-8.5 8.5a2.12 2.12 0 01-3-3L11 9"/><path d="M15 14l3-3"/><path d="M14 2l4 4"/><path d="M16 4l-4 4"/></svg>
+        Auctions
+      </div>
+      <div class="nav-item" data-view="studio">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Studio
+      </div>
+      <div class="nav-item" data-view="reports">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Shared Engine</div>
+      <div class="nav-item" data-view="tax">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Tax &amp; Compliance
+      </div>
+      <div class="nav-item" data-view="docs">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Document Inbox
+      </div>
+      <div class="nav-item" data-view="photo-pipeline">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Photo Pipeline
+      </div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- =========================== DASHBOARD =========================== -->
+    <div class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Saturday · 7 June 2026</div>
+          <div class="page-title">Good evening</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Export</button>
+          <button class="btn primary">+ New Lead</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Memos Out</div>
+          <div class="stat-value">$1,847,500</div>
+          <div class="stat-delta">+3 new this week</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Open Repairs</div>
+          <div class="stat-value">12</div>
+          <div class="stat-delta neg">2 overdue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">June Sales</div>
+          <div class="stat-value">$284,250</div>
+          <div class="stat-delta">+18% vs May</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">In Custom Design</div>
+          <div class="stat-value">9</div>
+          <div class="stat-delta">3 ready to deliver</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Today's priorities</div>
+              <a class="panel-link" onclick="navigate('leads')">View all</a>
+            </div>
+            <div class="lead-row">
+              <div class="lead-tier t1"></div>
+              <div class="lead-body">
+                <div class="lead-name">Mr. Goldberg — 3ct cushion memo follow-up</div>
+                <div class="lead-meta">Memo out 14 days · placed Friday · expects decision today</div>
+              </div>
+              <div class="lead-value">$48,500</div>
+            </div>
+            <div class="lead-row">
+              <div class="lead-tier t1"></div>
+              <div class="lead-body">
+                <div class="lead-name">Anna R. — anniversary band ready for pickup</div>
+                <div class="lead-meta">25th anniversary · spouse pickup Monday · gift-wrapped</div>
+              </div>
+              <div class="lead-value">$12,800</div>
+            </div>
+            <div class="lead-row">
+              <div class="lead-tier t2"></div>
+              <div class="lead-body">
+                <div class="lead-name">Sterling appraisal — Yelena Chen</div>
+                <div class="lead-meta">Insurance renewal · 8 pieces · documents prepped, awaiting visit</div>
+              </div>
+              <div class="lead-value">$165,000</div>
+            </div>
+            <div class="lead-row">
+              <div class="lead-tier t2"></div>
+              <div class="lead-body">
+                <div class="lead-name">Custom — Berkowitz pendant CAD review</div>
+                <div class="lead-meta">Client wants minor changes · 24 hr turnaround promised</div>
+              </div>
+              <div class="lead-value">$6,400</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Custom design pipeline</div>
+              <a class="panel-link" onclick="navigate('custom-design')">Open board</a>
+            </div>
+            <div class="pipeline">
+              <div class="pipe-stage active">
+                <div class="pipe-name">Brief</div>
+                <div class="pipe-count">3</div>
+                <div class="pipe-items">Berkowitz<br>Rosen-Levi<br>Kohn</div>
+              </div>
+              <div class="pipe-stage active">
+                <div class="pipe-name">CAD</div>
+                <div class="pipe-count">2</div>
+                <div class="pipe-items">Berkowitz pendant<br>Schwartz band</div>
+              </div>
+              <div class="pipe-stage">
+                <div class="pipe-name">Wax</div>
+                <div class="pipe-count">1</div>
+                <div class="pipe-items">Goldfarb signet</div>
+              </div>
+              <div class="pipe-stage">
+                <div class="pipe-name">Casting</div>
+                <div class="pipe-count">2</div>
+                <div class="pipe-items">Adler ring<br>Volkov tennis</div>
+              </div>
+              <div class="pipe-stage">
+                <div class="pipe-name">Setting</div>
+                <div class="pipe-count">1</div>
+                <div class="pipe-items">Goldfarb signet</div>
+              </div>
+              <div class="pipe-stage">
+                <div class="pipe-name">Finishing</div>
+                <div class="pipe-count">0</div>
+                <div class="pipe-items">—</div>
+              </div>
+              <div class="pipe-stage active">
+                <div class="pipe-name">Ready</div>
+                <div class="pipe-count">3</div>
+                <div class="pipe-items">Anna R. band<br>Kim earrings<br>Sterling brooch</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Recent activity</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">M</div>
+              <div class="activity-text">
+                <div>Memo placed: 2.8ct round D-VVS1 → <strong>Goldberg</strong></div>
+                <div class="activity-time">14 DAYS AGO · $48,500</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">S</div>
+              <div class="activity-text">
+                <div>Sale closed: emerald-cut diamond stud earrings → <strong>Kim family</strong></div>
+                <div class="activity-time">2 DAYS AGO · $24,800</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">R</div>
+              <div class="activity-text">
+                <div>Repair complete: vintage Tiffany solitaire reset → <strong>Sterling</strong></div>
+                <div class="activity-time">3 DAYS AGO</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">A</div>
+              <div class="activity-text">
+                <div>Appraisal completed: estate sapphire necklace → <strong>Volkov</strong></div>
+                <div class="activity-time">4 DAYS AGO · $145,000</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">C</div>
+              <div class="activity-text">
+                <div>CAD approved: custom signet ring → <strong>Goldfarb</strong></div>
+                <div class="activity-time">5 DAYS AGO</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Upcoming milestones</div>
+              <a class="panel-link" onclick="navigate('milestones')">All</a>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(184,153,104,0.2);">9</div>
+              <div class="activity-text">
+                <div><strong>Kohn — 30th anniversary</strong></div>
+                <div class="activity-time">JUNE 14 · 7 DAYS · GIFT IDEA: PEARL STRAND</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(184,153,104,0.2);">16</div>
+              <div class="activity-text">
+                <div><strong>Sterling — birthday</strong></div>
+                <div class="activity-time">JUNE 23 · 16 DAYS · GIFT IDEA: SAPPHIRE PIECE</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon" style="background:rgba(184,153,104,0.2);">28</div>
+              <div class="activity-text">
+                <div><strong>Goldberg — wife's birthday</strong></div>
+                <div class="activity-time">JULY 5 · 28 DAYS · NOTE: 2.8CT MEMO PENDING</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================== LEADS =========================== -->
+    <div class="view" id="view-leads">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Pipeline · 7 active</div>
+          <div class="page-title">Leads</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter</button>
+          <button class="btn primary">+ New Lead</button>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Client</th>
+              <th>Source</th>
+              <th>Interest</th>
+              <th>Value</th>
+              <th>Stage</th>
+              <th>Last touch</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag gold">VIP</span></td>
+              <td><strong>David Goldberg</strong></td>
+              <td>Existing client</td>
+              <td>3ct cushion D-VVS1 for wife</td>
+              <td>$48,500</td>
+              <td><span class="tag emerald">Memo out</span></td>
+              <td>14 days ago</td>
+            </tr>
+            <tr>
+              <td><span class="tag gold">VIP</span></td>
+              <td><strong>Yelena Chen</strong></td>
+              <td>Principal direct</td>
+              <td>Appraisal renewal · 8 pieces</td>
+              <td>$165,000</td>
+              <td><span class="tag sapphire">Scheduled</span></td>
+              <td>Today</td>
+            </tr>
+            <tr>
+              <td><span class="tag sapphire">A</span></td>
+              <td><strong>Marcus Berkowitz</strong></td>
+              <td>Referral (Sterling)</td>
+              <td>Custom pendant 1.5ct emerald</td>
+              <td>$6,400</td>
+              <td><span class="tag emerald">CAD review</span></td>
+              <td>Yesterday</td>
+            </tr>
+            <tr>
+              <td><span class="tag sapphire">A</span></td>
+              <td><strong>Sergei Volkov</strong></td>
+              <td>Walk-in (47W47)</td>
+              <td>Tennis bracelet 8ct total</td>
+              <td>$28,000</td>
+              <td><span class="tag emerald">Casting</span></td>
+              <td>3 days ago</td>
+            </tr>
+            <tr>
+              <td><span class="tag sapphire">A</span></td>
+              <td><strong>The Adlers</strong></td>
+              <td>Anniversary follow-up</td>
+              <td>Eternity band reset</td>
+              <td>$9,800</td>
+              <td><span class="tag emerald">Casting</span></td>
+              <td>3 days ago</td>
+            </tr>
+            <tr>
+              <td><span class="tag muted">B</span></td>
+              <td><strong>Rachel Kim</strong></td>
+              <td>Instagram DM</td>
+              <td>Stud earrings — birthday gift</td>
+              <td>$2,400</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>4 days ago</td>
+            </tr>
+            <tr>
+              <td><span class="tag muted">B</span></td>
+              <td><strong>Daniel Shapiro</strong></td>
+              <td>Referral (Volkov)</td>
+              <td>Engagement ring · open spec</td>
+              <td>~$15,000</td>
+              <td><span class="tag sapphire">Discovery</span></td>
+              <td>1 week ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =========================== REPAIRS =========================== -->
+    <div class="view" id="view-repairs">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">12 active · 2 overdue</div>
+          <div class="page-title">Repairs</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter</button>
+          <button class="btn primary">+ Intake</button>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Job #</th>
+              <th>Client</th>
+              <th>Item</th>
+              <th>Work</th>
+              <th>Status</th>
+              <th>Due</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>R-2026-0142</td>
+              <td><strong>Sterling</strong></td>
+              <td>Vintage Tiffany solitaire</td>
+              <td>Stone reset, retip prongs</td>
+              <td><span class="tag emerald">Ready for pickup</span></td>
+              <td>—</td>
+              <td>$1,400</td>
+            </tr>
+            <tr>
+              <td>R-2026-0141</td>
+              <td><strong>Mrs. Goldberg</strong></td>
+              <td>Tennis bracelet</td>
+              <td>Replace 3 missing stones</td>
+              <td><span class="tag ruby">Overdue</span></td>
+              <td>Yesterday</td>
+              <td>$2,200</td>
+            </tr>
+            <tr>
+              <td>R-2026-0140</td>
+              <td><strong>Yelena Chen</strong></td>
+              <td>Sapphire ring</td>
+              <td>Rhodium plate</td>
+              <td><span class="tag emerald">In polish</span></td>
+              <td>Tue June 10</td>
+              <td>$180</td>
+            </tr>
+            <tr>
+              <td>R-2026-0139</td>
+              <td><strong>The Adlers</strong></td>
+              <td>Estate pearl strand</td>
+              <td>Restring · knot between</td>
+              <td><span class="tag sapphire">Awaiting client</span></td>
+              <td>—</td>
+              <td>$240</td>
+            </tr>
+            <tr>
+              <td>R-2026-0138</td>
+              <td><strong>Volkov</strong></td>
+              <td>Antique pocket watch chain</td>
+              <td>Repair broken link</td>
+              <td><span class="tag emerald">In bench</span></td>
+              <td>Wed June 11</td>
+              <td>$320</td>
+            </tr>
+            <tr>
+              <td>R-2026-0137</td>
+              <td><strong>D. Goldberg</strong></td>
+              <td>Cufflinks (gift from father)</td>
+              <td>Engrave inside</td>
+              <td><span class="tag ruby">Overdue</span></td>
+              <td>3 days ago</td>
+              <td>$120</td>
+            </tr>
+            <tr>
+              <td>R-2026-0136</td>
+              <td><strong>Berkowitz</strong></td>
+              <td>Wedding band</td>
+              <td>Size up 0.5</td>
+              <td><span class="tag emerald">Ready for pickup</span></td>
+              <td>—</td>
+              <td>$80</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =========================== CUSTOM DESIGN =========================== -->
+    <div class="view" id="view-custom-design">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">9 commissions in pipeline</div>
+          <div class="page-title">Custom Design</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter by jeweler</button>
+          <button class="btn primary">+ New Commission</button>
+        </div>
+      </div>
+
+      <div class="pipeline" style="margin-bottom: 24px;">
+        <div class="pipe-stage active">
+          <div class="pipe-name">Brief</div>
+          <div class="pipe-count">3</div>
+          <div class="pipe-items">Berkowitz pendant<br>Rosen-Levi necklace<br>Kohn anniversary set</div>
+        </div>
+        <div class="pipe-stage active">
+          <div class="pipe-name">CAD</div>
+          <div class="pipe-count">2</div>
+          <div class="pipe-items">Berkowitz (rev. 2)<br>Schwartz band</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-name">Wax</div>
+          <div class="pipe-count">1</div>
+          <div class="pipe-items">Goldfarb signet</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-name">Casting</div>
+          <div class="pipe-count">2</div>
+          <div class="pipe-items">Adler ring<br>Volkov tennis</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-name">Setting</div>
+          <div class="pipe-count">1</div>
+          <div class="pipe-items">Goldfarb signet</div>
+        </div>
+        <div class="pipe-stage">
+          <div class="pipe-name">Finishing</div>
+          <div class="pipe-count">0</div>
+          <div class="pipe-items">—</div>
+        </div>
+        <div class="pipe-stage active">
+          <div class="pipe-name">Ready</div>
+          <div class="pipe-count">3</div>
+          <div class="pipe-items">Anna R. band<br>Kim earrings<br>Sterling brooch</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Active commissions</div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Client</th><th>Piece</th><th>Stage</th><th>Jeweler</th><th>Quoted</th><th>Due</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Berkowitz</strong></td><td>1.5ct emerald pendant · 18k YG</td><td><span class="tag emerald">CAD Rev 2</span></td><td>Mikhail</td><td>$6,400</td><td>June 22</td></tr>
+            <tr><td><strong>Schwartz</strong></td><td>Eternity band · 1.5ct total · plat</td><td><span class="tag emerald">CAD</span></td><td>Mikhail</td><td>$8,200</td><td>June 28</td></tr>
+            <tr><td><strong>Goldfarb</strong></td><td>Signet ring · family crest · 18k YG</td><td><span class="tag emerald">Setting</span></td><td>Yuri</td><td>$3,800</td><td>June 18</td></tr>
+            <tr><td><strong>Adler</strong></td><td>Eternity band reset · 2ct total</td><td><span class="tag emerald">Casting</span></td><td>Yuri</td><td>$9,800</td><td>June 25</td></tr>
+            <tr><td><strong>Volkov</strong></td><td>Tennis bracelet · 8ct total · plat</td><td><span class="tag emerald">Casting</span></td><td>Mikhail</td><td>$28,000</td><td>July 5</td></tr>
+            <tr><td><strong>Kohn</strong></td><td>Anniversary set · pendant + earrings</td><td><span class="tag gold">Brief</span></td><td>—</td><td>~$18,000</td><td>July 14 (30th anniv)</td></tr>
+            <tr><td><strong>Rosen-Levi</strong></td><td>Tahitian pearl necklace · 18in</td><td><span class="tag gold">Brief</span></td><td>—</td><td>~$22,000</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =========================== INVENTORY =========================== -->
+    <div class="view" id="view-inventory">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Loose stones · 47 in safe · $1.2M total</div>
+          <div class="page-title">Inventory</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Rapaport ↻</button>
+          <button class="btn ghost">Filter</button>
+          <button class="btn primary">+ Add Stone</button>
+        </div>
+      </div>
+
+      <div class="inv-grid">
+        <div class="inv-card">
+          <div class="inv-photo">◆<span class="inv-cert">GIA 2287443891</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Round Brilliant</div>
+            <div class="inv-specs">2.81ct · D / VVS1 · EX/EX/EX<br>Depth 61.4 · Table 57</div>
+            <div class="inv-price">$48,500<span class="inv-rap">RAP -8%</span></div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◆<span class="inv-cert">GIA 5184992017</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Emerald Cut</div>
+            <div class="inv-specs">3.04ct · F / VS1 · EX/EX<br>Depth 65.2 · Table 64</div>
+            <div class="inv-price">$32,800<span class="inv-rap">RAP -12%</span></div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◆<span class="inv-cert">GIA 6395582108</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Cushion Modified</div>
+            <div class="inv-specs">2.05ct · E / VVS2 · EX/VG<br>Depth 68 · Table 58</div>
+            <div class="inv-price">$24,200<span class="inv-rap">RAP -6%</span></div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◆<span class="inv-cert">GIA 1156782034</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Pear Brilliant</div>
+            <div class="inv-specs">1.52ct · G / SI1 · EX/EX<br>L/W 1.55</div>
+            <div class="inv-price">$8,400<span class="inv-rap">RAP -15%</span></div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◇<span class="inv-cert">AGL R23-0488</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Burmese Ruby (oval)</div>
+            <div class="inv-specs">3.85ct · "Pigeon's Blood"<br>No heat · AGL certified</div>
+            <div class="inv-price">$185,000</div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◇<span class="inv-cert">SSEF 132401</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Kashmir Sapphire (cushion)</div>
+            <div class="inv-specs">4.12ct · royal blue<br>No heat · SSEF certified</div>
+            <div class="inv-price">$248,000</div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◇<span class="inv-cert">GRS 24-031</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Colombian Emerald (oct)</div>
+            <div class="inv-specs">2.88ct · vivid green<br>Minor oil · Muzo origin</div>
+            <div class="inv-price">$72,000</div>
+          </div>
+        </div>
+        <div class="inv-card">
+          <div class="inv-photo">◆<span class="inv-cert">GIA 7298473201</span></div>
+          <div class="inv-body">
+            <div class="inv-name">Oval Brilliant</div>
+            <div class="inv-specs">1.88ct · F / VS2 · EX/EX<br>L/W 1.38</div>
+            <div class="inv-price">$12,200<span class="inv-rap">RAP -10%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================== VIPs =========================== -->
+    <div class="view" id="view-vips">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">14 active · $14.2M lifetime value</div>
+          <div class="page-title">VIP Clients</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Sort by LTV</button>
+          <button class="btn primary">+ Promote to VIP</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">DG</div>
+            <div>
+              <div class="vip-name">David Goldberg</div>
+              <div class="vip-meta">Goldberg Family Office · 2014–present<br><span class="ltv">$2.4M lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">23</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">11 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$104K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">Wife's birthday July 5. Prefers cushion cuts. Always asks for D color. Has been waiting on the 2.8ct cushion memo for 14 days — push for closure today.</div>
+        </div>
+
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">YC</div>
+            <div>
+              <div class="vip-name">Yelena Chen</div>
+              <div class="vip-meta">Private · investor's wife · 2018–present<br><span class="ltv">$1.8M lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">17</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">7 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$106K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">Sterling reference. Strong preference for unique colored stones (Kashmir, Burmese). Refuses to wear anything mounted in white gold — platinum only. Annual appraisal due now.</div>
+        </div>
+
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">SV</div>
+            <div>
+              <div class="vip-name">Sergei Volkov</div>
+              <div class="vip-meta">Investor · NYC + Moscow · 2020–present<br><span class="ltv">$1.2M lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">12</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">5 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$100K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">Speaks Russian primarily. Long-standing family-network referral. Tennis bracelet in casting now. Often refers friends — Shapiro is a recent referral from this circle.</div>
+        </div>
+
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">EA</div>
+            <div>
+              <div class="vip-name">The Adlers</div>
+              <div class="vip-meta">Eric & Marina · Upper East Side · 2012–present<br><span class="ltv">$1.6M lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">28</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">13 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$57K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">Marina collects estate pearls and Edwardian-era pieces. Eric buys traditional. Eternity band reset in casting. Pearl strand restring pending Marina's drop-off this week.</div>
+        </div>
+
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">PS</div>
+            <div>
+              <div class="vip-name">Sterling Family</div>
+              <div class="vip-meta">3rd generation house clients · 1998–present<br><span class="ltv">$3.2M lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">61</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">27 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$52K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">Three generations of the family are clients. The vault has 14 of their pieces in long-term storage. Insurance appraisal of 8 pieces scheduled today.</div>
+        </div>
+
+        <div class="vip-card">
+          <div class="vip-header">
+            <div class="vip-avatar">RK</div>
+            <div>
+              <div class="vip-name">The Kohns</div>
+              <div class="vip-meta">Robert & Sarah · Long Island · 2008–present<br><span class="ltv">$890K lifetime</span> · Tier 1</div>
+            </div>
+          </div>
+          <div class="vip-stats">
+            <div><div class="vip-stat-val">19</div><div class="vip-stat-lbl">Pieces</div></div>
+            <div><div class="vip-stat-val">17 yrs</div><div class="vip-stat-lbl">Relationship</div></div>
+            <div><div class="vip-stat-val">$47K</div><div class="vip-stat-lbl">Avg piece</div></div>
+          </div>
+          <div class="vip-note">30th wedding anniversary July 14. Robert briefed an anniversary set last week — pendant + earrings, ~$18K target. Don't let him forget the date this year.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================== Other views (placeholders with planned features) =========================== -->
+    <div class="view" id="view-memos">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">11 memos out · $1,847,500 currently consigned · 1 risk flag</div>
+          <div class="page-title">Memos Out</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter by client</button>
+          <button class="btn primary">+ New Memo</button>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Memo #</th>
+              <th>Client</th>
+              <th>Item</th>
+              <th>Value</th>
+              <th>Days out</th>
+              <th>Status</th>
+              <th>Next touch</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>M-2026-0089</td>
+              <td><strong>Goldberg</strong></td>
+              <td>2.81ct round D-VVS1 (GIA 2287443891)</td>
+              <td>$48,500</td>
+              <td>14</td>
+              <td><span class="tag gold">Decision today</span></td>
+              <td>Call before EOD</td>
+            </tr>
+            <tr>
+              <td>M-2026-0088</td>
+              <td><strong>Sterling</strong></td>
+              <td>Kashmir sapphire pendant (SSEF certified)</td>
+              <td>$248,000</td>
+              <td>9</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>Friday June 13 · 5-day check-in</td>
+            </tr>
+            <tr>
+              <td>M-2026-0087</td>
+              <td><strong>Yelena Chen</strong></td>
+              <td>3.04ct emerald cut F-VS1 + setting</td>
+              <td>$32,800</td>
+              <td>6</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>Tuesday June 10 · 1-week check</td>
+            </tr>
+            <tr>
+              <td>M-2026-0086</td>
+              <td><strong>The Adlers</strong></td>
+              <td>Edwardian estate brooch (5pc)</td>
+              <td>$22,400</td>
+              <td>11</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>Marina dropping by Wednesday</td>
+            </tr>
+            <tr>
+              <td>M-2026-0085</td>
+              <td><strong>Sergei Volkov</strong></td>
+              <td>Burmese ruby (3.85ct, no heat)</td>
+              <td>$185,000</td>
+              <td>18</td>
+              <td><span class="tag gold">2-week check overdue</span></td>
+              <td>Today · phone call required</td>
+            </tr>
+            <tr>
+              <td>M-2026-0084</td>
+              <td><strong>Berkowitz</strong></td>
+              <td>1.5ct emerald (Muzo, AGL R23-0488)</td>
+              <td>$72,000</td>
+              <td>5</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>For wife's anniversary gift</td>
+            </tr>
+            <tr>
+              <td>M-2026-0083</td>
+              <td><strong>Kohn</strong></td>
+              <td>Tahitian pearl strand · 18in AAAA</td>
+              <td>$28,500</td>
+              <td>19</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>For 30th anniv July 14</td>
+            </tr>
+            <tr>
+              <td>M-2026-0082</td>
+              <td><strong>Daniel Shapiro</strong></td>
+              <td>Engagement spec · 2ct round options</td>
+              <td>$58,200</td>
+              <td>22</td>
+              <td><span class="tag ruby">Risk · 30-day pending</span></td>
+              <td>Tomorrow · decision or return</td>
+            </tr>
+            <tr>
+              <td>M-2026-0081</td>
+              <td><strong>The Rosen-Levis</strong></td>
+              <td>Estate diamond line bracelet</td>
+              <td>$78,500</td>
+              <td>4</td>
+              <td><span class="tag emerald">Active</span></td>
+              <td>Tuesday June 10 · 1-week check</td>
+            </tr>
+            <tr>
+              <td>M-2026-0080</td>
+              <td><strong>Sterling</strong></td>
+              <td>Vintage Cartier watch · service evaluation</td>
+              <td>$1,073,600</td>
+              <td>27</td>
+              <td><span class="tag gold">Outsourced for service</span></td>
+              <td>Awaiting service estimate</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2" style="margin-top: 18px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Cadence engine — automatic touchpoints</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">Every memo gets an automatic follow-up schedule based on client tier and item value. The system handles the timing; you handle the conversation.</p>
+          <div class="activity-item">
+            <div class="activity-icon">7</div>
+            <div class="activity-text">
+              <div>Day 7 — soft check-in (email + photo refresh)</div>
+              <div class="activity-time">AUTO · UNLESS CLIENT INITIATES SOONER</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">14</div>
+            <div class="activity-text">
+              <div>Day 14 — phone call from house</div>
+              <div class="activity-time">SURFACES IN DASHBOARD · YOU MAKE THE CALL</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">21</div>
+            <div class="activity-text">
+              <div>Day 21 — in-person reset (drop by office or schedule visit)</div>
+              <div class="activity-time">HIGH-TIER CLIENTS ONLY</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--ruby);">30</div>
+            <div class="activity-text">
+              <div>Day 30 — risk flag (decision or return)</div>
+              <div class="activity-time">PROTECTS YOUR EXPOSURE · OVERRIDE FOR LONG-TERM HOLDS</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Exposure by client tier</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--gold);">★</div>
+            <div class="activity-text">
+              <div><strong>Tier 1 VIPs</strong> · $1,612,500 across 7 memos</div>
+              <div class="activity-time">EXTENDED-TERM POLICY APPLIES · NO HARD RETURNS</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">A</div>
+            <div class="activity-text">
+              <div><strong>Tier A</strong> · $130,200 across 3 memos</div>
+              <div class="activity-time">STANDARD CADENCE</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">B</div>
+            <div class="activity-text">
+              <div><strong>Tier B / new</strong> · $104,800 across 1 memo</div>
+              <div class="activity-time">14-DAY RETURN POLICY · INSURANCE COVERS</div>
+            </div>
+          </div>
+          <p style="margin-top: 16px; font-size: 11px; color: var(--text-mute); line-height: 1.5;">Total exposure across all memos: $1,847,500. Insured for $2.5M on the active-memo schedule (Jewelers Mutual policy). Audit log + chain-of-custody photos archived per memo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-appraisals">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">128 pieces · $14.7M insured value · 14 expiring in next 90 days</div>
+          <div class="page-title">Appraisals</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter</button>
+          <button class="btn primary">+ New Appraisal</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Active Appraisals</div>
+          <div class="stat-value">128</div>
+          <div class="stat-delta">$14.7M total value</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Expiring (90 days)</div>
+          <div class="stat-value">14</div>
+          <div class="stat-delta neg">Auto-reminders sent</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Renewal Revenue YTD</div>
+          <div class="stat-value">$48,200</div>
+          <div class="stat-delta">+24% vs LY</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Avg. Turnaround</div>
+          <div class="stat-value">3.2 days</div>
+          <div class="stat-delta">From request to delivery</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Today + this week — appraisals due</div>
+          <a class="panel-link">All upcoming</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Client</th><th>Piece(s)</th><th>Value</th><th>Carrier</th><th>Expires</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Yelena Chen</strong></td>
+              <td>8 pieces · sapphire + emerald collection</td>
+              <td>$165,000</td>
+              <td>Jewelers Mutual</td>
+              <td>Renewal today</td>
+              <td><span class="tag emerald">Scheduled in-store</span></td>
+            </tr>
+            <tr>
+              <td><strong>Sterling Family</strong></td>
+              <td>14 pieces · vault contents</td>
+              <td>$2,840,000</td>
+              <td>Lavalier</td>
+              <td>June 12 · 5 days</td>
+              <td><span class="tag gold">Reminder sent</span></td>
+            </tr>
+            <tr>
+              <td><strong>Goldberg</strong></td>
+              <td>23 pieces · full collection</td>
+              <td>$1,920,000</td>
+              <td>Chubb Masterpiece</td>
+              <td>June 24 · 17 days</td>
+              <td><span class="tag emerald">On track</span></td>
+            </tr>
+            <tr>
+              <td><strong>The Adlers</strong></td>
+              <td>Estate pearl strand · 18in</td>
+              <td>$8,400</td>
+              <td>Jewelers Mutual</td>
+              <td>July 3 · 26 days</td>
+              <td><span class="tag emerald">On track</span></td>
+            </tr>
+            <tr>
+              <td><strong>Sergei Volkov</strong></td>
+              <td>3 pieces · estate gold</td>
+              <td>$72,000</td>
+              <td>Jewelers Mutual</td>
+              <td>July 18 · 41 days</td>
+              <td><span class="tag emerald">On track</span></td>
+            </tr>
+            <tr>
+              <td><strong>Berkowitz</strong></td>
+              <td>Wedding band set</td>
+              <td>$11,200</td>
+              <td>Allstate</td>
+              <td>August 4 · 58 days</td>
+              <td><span class="tag emerald">On track</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">PDF generator — house letterhead</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px;">One click generates a full insurance-grade appraisal PDF on house letterhead. Includes piece photos (multi-angle), cert lookup verification (GIA / AGL / SSEF), stone specifications, replacement and market value, plus the appraiser signature block.</p>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Photo capture station integration (multi-angle, color-calibrated)</div>
+              <div class="activity-time">JEWELLER'S PHOTOGRAPHY STANDARD</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Auto-lookup of GIA / AGL / SSEF certificate numbers</div>
+              <div class="activity-time">PASTES CERT FACE INTO APPRAISAL</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">✓</div>
+            <div class="activity-text">
+              <div>Replacement-value vs market-value side-by-side</div>
+              <div class="activity-time">INSURANCE NEEDS REPLACEMENT, ESTATE NEEDS MARKET</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Carrier integration</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">JM</div>
+            <div class="activity-text">
+              <div><strong>Jewelers Mutual</strong> · 67 active appraisals</div>
+              <div class="activity-time">DIRECT SUBMISSION VIA PORTAL</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">L</div>
+            <div class="activity-text">
+              <div><strong>Lavalier</strong> · 28 active appraisals</div>
+              <div class="activity-time">EMAIL DELIVERY · STANDARD FORMAT</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">C</div>
+            <div class="activity-text">
+              <div><strong>Chubb Masterpiece</strong> · 19 active appraisals</div>
+              <div class="activity-time">PHYSICAL + DIGITAL · WHITE-GLOVE</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">+</div>
+            <div class="activity-text">
+              <div><strong>14 other carriers</strong> · various</div>
+              <div class="activity-time">CLIENT'S CHOICE · WE FORMAT TO ANY STANDARD</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-milestones">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">42 milestones in next 90 days · 11 require outreach</div>
+          <div class="page-title">Milestones</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Filter by month</button>
+          <button class="btn primary">+ Add Milestone</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Next 30 days · highest-value</div>
+          <a class="panel-link">Calendar view</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Date</th><th>Client</th><th>Event</th><th>Recommendation</th><th>Budget</th><th>Outreach</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Jun 14</strong></td>
+              <td>The Kohns</td>
+              <td>30th wedding anniversary</td>
+              <td>Tahitian pearl strand · already memo'd</td>
+              <td>$28,500</td>
+              <td><span class="tag emerald">In hand</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jun 23</strong></td>
+              <td>Sterling family</td>
+              <td>Patriarch's birthday</td>
+              <td>Vintage Cartier item · Estate Sotheby's lot incoming</td>
+              <td>~$40K</td>
+              <td><span class="tag gold">Reach out this week</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jul 5</strong></td>
+              <td>Goldberg household</td>
+              <td>Wife's birthday</td>
+              <td>2.81ct cushion D-VVS1 · memo placed 14 days</td>
+              <td>$48,500</td>
+              <td><span class="tag emerald">Active conversation</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jul 9</strong></td>
+              <td>Berkowitz</td>
+              <td>10th wedding anniversary</td>
+              <td>Custom emerald pendant in CAD · on track</td>
+              <td>$6,400</td>
+              <td><span class="tag emerald">In production</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jul 18</strong></td>
+              <td>Yelena Chen</td>
+              <td>Daughter's bat mitzvah</td>
+              <td>Strand pearls or sapphire studs · Chen prefers sapphires historically</td>
+              <td>~$8K</td>
+              <td><span class="tag gold">Reach out by Jun 21</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jul 28</strong></td>
+              <td>The Adlers</td>
+              <td>Marina's 60th birthday</td>
+              <td>Edwardian-era piece · she collects this period</td>
+              <td>~$15K</td>
+              <td><span class="tag gold">Reach out by Jun 28</span></td>
+            </tr>
+            <tr>
+              <td><strong>Aug 3</strong></td>
+              <td>Daniel Shapiro</td>
+              <td>Engagement (target)</td>
+              <td>2ct round options · memo open · narrowing fast</td>
+              <td>~$58K</td>
+              <td><span class="tag ruby">Close this week or lose</span></td>
+            </tr>
+            <tr>
+              <td><strong>Aug 14</strong></td>
+              <td>The Rosen-Levis</td>
+              <td>Anniversary (silver)</td>
+              <td>Diamond line bracelet (already on memo)</td>
+              <td>$78,500</td>
+              <td><span class="tag emerald">Active</span></td>
+            </tr>
+            <tr>
+              <td><strong>Aug 22</strong></td>
+              <td>Sergei Volkov</td>
+              <td>Wife's birthday</td>
+              <td>Burmese ruby (3.85ct) on memo · or commission new piece</td>
+              <td>$185K or custom</td>
+              <td><span class="tag gold">Reach out by Aug 1</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Recommendation engine — how it picks</div>
+          </div>
+          <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">The system looks at three signals for each milestone: (1) the client's historical preferences (cut, stone, era, color), (2) what's currently in your safe matching those preferences, and (3) the family's known budget patterns from past purchases. It surfaces the best match plus 2-3 alternates.</p>
+          <div class="activity-item">
+            <div class="activity-icon">1</div>
+            <div class="activity-text">
+              <div>Preference signal: per-client style profile (auto-learned + manually editable)</div>
+              <div class="activity-time">EX: GOLDBERG = CUSHION CUTS, D COLOR, MINIMUM 2.5CT</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">2</div>
+            <div class="activity-text">
+              <div>Inventory match: live filter over your safe contents</div>
+              <div class="activity-time">PULLED FROM INVENTORY · UPDATED REAL-TIME</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">3</div>
+            <div class="activity-text">
+              <div>Budget signal: average + median price of past purchases</div>
+              <div class="activity-time">EX: GOLDBERG AVG $104K · MEDIAN $58K</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Outreach cadence per tier</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="color: var(--gold);">★</div>
+            <div class="activity-text">
+              <div><strong>Tier 1 VIPs</strong> · 60-day proactive lead</div>
+              <div class="activity-time">YOU CALL PERSONALLY · NO EMAIL TEMPLATES</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">A</div>
+            <div class="activity-text">
+              <div><strong>Tier A</strong> · 30-day proactive lead</div>
+              <div class="activity-time">PERSONAL EMAIL OR CALL</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">B</div>
+            <div class="activity-text">
+              <div><strong>Tier B + cold</strong> · 14-day reminder for one warm follow-up</div>
+              <div class="activity-time">DEAL-FOCUSED EMAIL</div>
+            </div>
+          </div>
+          <p style="margin-top: 14px; font-size: 11px; color: var(--text-mute); line-height: 1.5;">Past 12 months: 38% of milestone outreaches converted to a purchase. Average milestone-driven purchase: $34K. Best ROI activity in the house.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-suppliers">
+      <div class="page-header"><div><div class="page-subtitle">Stone dealers · jewelers · casting · refining</div><div class="page-title">Suppliers</div></div></div>
+      <div class="coming-soon">
+        <h3>Supplier Network</h3>
+        <p>Every stone you've ever sourced, every jeweler you've ever paid, in one searchable directory with history.</p>
+        <ul>
+          <li>Stone dealer directory with terms, payment history, last activity</li>
+          <li>Bench jeweler tracking with assigned commissions + ratings</li>
+          <li>Casting house, refining, polishing relationships</li>
+          <li>Insurance, shipping, and security partner contacts</li>
+          <li>Memo-out → memo-back chain tracking</li>
+          <li>Spend-per-supplier annual reporting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-trade-events">
+      <div class="page-header"><div><div class="page-subtitle">JCK · GIA · Sotheby's previews · trunk shows</div><div class="page-title">Trade Events</div></div></div>
+      <div class="coming-soon">
+        <h3>Trade Calendar &amp; Pipeline</h3>
+        <p>Track which events to attend, who you're meeting, and what's worth bringing back to clients.</p>
+        <ul>
+          <li>Integrated trade calendar (JCK Las Vegas, Hong Kong, Vicenza, etc.)</li>
+          <li>Per-event budget, travel, attendee list</li>
+          <li>Auction-house preview RSVPs (Sotheby's, Christie's, Bonhams)</li>
+          <li>"Bring back for client X" list per trip</li>
+          <li>Post-event capture: what you saw, what to follow up on</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-auctions">
+      <div class="page-header"><div><div class="page-subtitle">Sotheby's · Christie's · Bonhams · Phillips</div><div class="page-title">Auction Lots</div></div></div>
+      <div class="coming-soon">
+        <h3>Auction Lot Watcher</h3>
+        <p>Watch lots across the major houses that match your VIPs' tastes. Bid on behalf when the price is right.</p>
+        <ul>
+          <li>Lot scraping from Sotheby's / Christie's / Bonhams / Phillips</li>
+          <li>Match-to-client engine (by stone preference, style, budget)</li>
+          <li>Live tracking through hammer + premium</li>
+          <li>Post-auction debrief: what hit, what missed, market implications</li>
+          <li>Provenance tracking for purchased lots (chain of title)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-studio">
+      <div class="page-header"><div><div class="page-subtitle">Workshop schedule · bench assignments</div><div class="page-title">Studio</div></div></div>
+      <div class="coming-soon">
+        <h3>Workshop Management</h3>
+        <p>The bench is the bottleneck. Schedule jeweler time, balance workload, hit deadlines.</p>
+        <ul>
+          <li>Daily / weekly bench calendar per jeweler</li>
+          <li>Workload balancing (Mikhail / Yuri / external)</li>
+          <li>Time tracking per job for true cost accounting</li>
+          <li>Material draw-down (gold, platinum, findings) per project</li>
+          <li>Bench notes thread per piece (mid-project communication)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="view" id="view-reports">
+      <div class="page-header"><div><div class="page-subtitle">Monthly · quarterly · YoY</div><div class="page-title">Reports</div></div></div>
+      <div class="coming-soon">
+        <h3>Business Reporting</h3>
+        <p>Numbers that matter for a jewelry house: revenue, margin, inventory turn, client retention, and where the money is moving.</p>
+        <ul>
+          <li>Monthly sales by category (loose stones / finished pieces / custom / repairs)</li>
+          <li>VIP cohort revenue (top-10 / top-25 / everyone else)</li>
+          <li>Margin by piece, by jeweler, by source dealer</li>
+          <li>Memo-to-sale conversion rate by client tier</li>
+          <li>Inventory aging (stones in safe > 180 days)</li>
+          <li>YoY comparisons + drill-down</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-tax">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Sales tax · use tax · multi-state nexus · insurance reporting</div>
+          <div class="page-title">Tax &amp; Compliance</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Sync to QuickBooks</button>
+          <button class="btn primary">Run filing</button>
+        </div>
+      </div>
+
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 9.5pt; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · jewelry-flavored: luxury thresholds, insurance reporting, multi-state retail nexus</p>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">YTD Taxable Sales</div><div class="stat-value">$3.84M</div><div class="stat-delta">Tier 1 luxury threshold</div></div>
+        <div class="stat"><div class="stat-label">Sales Tax YTD</div><div class="stat-value">$340K</div><div class="stat-delta">Across 4 states</div></div>
+        <div class="stat"><div class="stat-label">Insurance Reports</div><div class="stat-value">62</div><div class="stat-delta">Carrier-specific filings YTD</div></div>
+        <div class="stat"><div class="stat-label">Use Tax</div><div class="stat-value">$28,400</div><div class="stat-delta">Inbound stone purchases</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Sales tax — current period</div></div>
+        <table class="table">
+          <thead><tr><th>State</th><th>Period</th><th>Taxable Sales</th><th>Tax Rate</th><th>Tax Due</th><th>Filing</th></tr></thead>
+          <tbody>
+            <tr><td><strong>New York</strong></td><td>June 2026</td><td>$248,200</td><td>NYC: 8.875%</td><td>$22,028</td><td><span class="tag emerald">Q2 prep</span></td></tr>
+            <tr><td><strong>New Jersey</strong></td><td>June 2026</td><td>$84,500</td><td>6.625%</td><td>$5,598</td><td><span class="tag emerald">Q2 prep</span></td></tr>
+            <tr><td><strong>Connecticut</strong></td><td>June 2026</td><td>$42,800</td><td>6.35% (high-rate 7.75% for &gt;$5K luxury)</td><td>$3,318</td><td><span class="tag gold">Luxury rate triggered</span></td></tr>
+            <tr><td><strong>Florida</strong></td><td>June 2026</td><td>$28,400</td><td>6%</td><td>$1,704</td><td><span class="tag emerald">On track</span></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size: 11px; color: var(--text-mute); line-height: 1.6; margin-top: 14px;">Luxury / discretionary tax rates apply in CT, MA, NJ for individual pieces over $5K, $10K, $25K thresholds. System auto-applies the correct rate per piece per state. Annual reconciliation report ready every January.</p>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Audit Practice cockpit ===== -->
+    <div class="view" id="view-docs">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Certs · appraisals · provenance · insurance · trade docs</div>
+          <div class="page-title">Document Inbox</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Search archive</button>
+          <button class="btn primary">+ Upload</button>
+        </div>
+      </div>
+
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 9.5pt; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Audit Practice cockpit · jewelry-flavored: GIA / AGL / SSEF certificate OCR, provenance chain, insurance carrier filings</p>
+
+      <div class="panel" style="padding:0;">
+        <table class="table">
+          <thead><tr><th>Document</th><th>Type</th><th>Linked to</th><th>Auto-extracted</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>GIA-2287443891.pdf</strong></td><td>Diamond cert</td><td>2.81ct round D-VVS1</td><td>Carat / color / clarity / cut</td><td><span class="tag emerald">Auto-attached</span></td></tr>
+            <tr><td><strong>SSEF-132401-Sapphire.pdf</strong></td><td>Origin cert</td><td>Kashmir sapphire 4.12ct</td><td>Origin · treatment status</td><td><span class="tag emerald">Auto-attached</span></td></tr>
+            <tr><td><strong>Provenance-Volkov-Burmese.pdf</strong></td><td>Provenance chain</td><td>Burmese ruby 3.85ct</td><td>Owner history · auction record</td><td><span class="tag emerald">Auto-attached</span></td></tr>
+            <tr><td><strong>Sterling-Appraisal-2026Q2.pdf</strong></td><td>Insurance appraisal</td><td>Sterling family · 14 pieces</td><td>Carrier: Jewelers Mutual</td><td><span class="tag emerald">Filed</span></td></tr>
+            <tr><td><strong>Bench-Mikhail-W9.pdf</strong></td><td>Contractor W-9</td><td>Mikhail bench jeweler</td><td>TIN verified · 1099 enabled</td><td><span class="tag emerald">Active</span></td></tr>
+            <tr><td><strong>Vendor-Statement-Stone-Co.pdf</strong></td><td>Vendor statement</td><td>Stone dealer · June</td><td>$48K reconciled</td><td><span class="tag emerald">Reconciled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Cross-pollinated from Auto Parts cockpit ===== -->
+    <div class="view" id="view-photo-pipeline">
+      <div class="page-header">
+        <div>
+          <div class="page-subtitle">Stone + piece photography pipeline · AI-tagged · cert-linked</div>
+          <div class="page-title">Photo Pipeline</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn ghost">Open photo station</button>
+          <button class="btn primary">+ New shoot</button>
+        </div>
+      </div>
+
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 9.5pt; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — sourced from the Auto Parts AutoLister · jewelry-flavored: cert lookup integration, multi-angle macro photography, auction-quality output</p>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Pieces Photographed Today</div><div class="stat-value">28</div><div class="stat-delta">Avg 4 angles each</div></div>
+        <div class="stat"><div class="stat-label">Cert Lookups Auto-Run</div><div class="stat-value">12</div><div class="stat-delta">GIA · AGL · SSEF</div></div>
+        <div class="stat"><div class="stat-label">Inventory Live</div><div class="stat-value">47</div><div class="stat-delta">Stones with photo + cert</div></div>
+        <div class="stat"><div class="stat-label">Avg Shoot → Listed</div><div class="stat-value">22 min</div><div class="stat-delta">Photo to 1stDibs / Chairish</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Recent pipeline runs</div></div>
+        <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px;">Same pipeline that handles 1,000 auto parts photos/day in our PA salvage operation — adapted for macro stone photography. Each stone gets 4 angles + crown-pavilion-girdle-table close-ups. AI runs the cert lookup, pulls in the cert PDF face, and writes the listing copy automatically.</p>
+        <div class="activity-item">
+          <div class="activity-icon">◆</div>
+          <div class="activity-text"><div>2.81ct round D-VVS1 · shot, cert pulled, listed to 1stDibs + own site</div><div class="activity-time">22 MIN END-TO-END · GIA 2287443891</div></div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">◆</div>
+          <div class="activity-text"><div>3.04ct emerald cut F-VS1 · shot, listed</div><div class="activity-time">18 MIN · GIA 5184992017</div></div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">◇</div>
+          <div class="activity-text"><div>Kashmir sapphire 4.12ct · shot, SSEF cert OCR, listed</div><div class="activity-time">31 MIN · LONGER REVIEW · HIGH-VALUE</div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  Diamond Atelier · House Management · Built by <span>Heisenbug</span> · v0.1
+</footer>
+
+<script>
+  function navigate(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById('view-' + viewId);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => {
+      n.classList.toggle('active', n.dataset.view === viewId);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.addEventListener('click', () => navigate(n.dataset.view));
+  });
+</script>
+
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
