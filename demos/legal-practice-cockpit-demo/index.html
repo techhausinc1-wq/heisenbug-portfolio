@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1f2c">
+<title>Legal Practice Cockpit — Operator Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #f7f5f0; --bg-2: #ffffff; --bg-3: #ede9dd; --ink: #1a1f2c; --text-dim: #5a606e; --text-mute: #8a8f9e; --line: #dad5c6; --line-2: #b8b2a0; --burgundy: #6b1f2a; --gold: #a0782e; --olive: #5e6e3d; --emerald: #2e7d5b; --red: #b53148; --slate: #1a1f2c; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.55; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  a { color: inherit; text-decoration: none; } button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+  header { background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; gap: 14px; }
+  @media (max-width: 760px) { header { padding: 12px 16px; flex-wrap: wrap; } }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark { width: 38px; height: 38px; background: var(--burgundy); color: var(--bg); display: flex; align-items: center; justify-content: center; font-family: 'Lora', serif; font-weight: 600; font-size: 22px; border-radius: 4px; }
+  .brand-name { font-family: 'Lora', serif; font-weight: 500; font-size: 18px; letter-spacing: 0.5px; }
+  .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-top: 1px; }
+  .user-chip { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--line); border-radius: 24px; font-size: 12px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--burgundy); color: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; flex: 1; min-height: 0; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px 16px; background: var(--bg-3); border-right: 0; border-bottom: 1px solid var(--line); gap: 6px; scrollbar-width: none; } .sidebar::-webkit-scrollbar { display: none; } .nav-section { margin-bottom: 0; display: flex; flex-direction: row; gap: 6px; } .nav-label { display: none; } .nav-item { padding: 6px 14px; font-size: 12px; white-space: nowrap; border-left: 0; border-radius: 16px; } .nav-item.active { background: rgba(107,31,42,0.1); } }
+  .sidebar { background: var(--bg-3); border-right: 1px solid var(--line); padding: 22px 0; overflow-y: auto; }
+  .nav-section { margin-bottom: 26px; }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.8px; color: var(--text-mute); text-transform: uppercase; padding: 0 28px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 9px 28px; color: var(--text-dim); font-size: 13.5px; border-left: 2px solid transparent; cursor: pointer; transition: all 120ms; }
+  .nav-item:hover { color: var(--ink); background: var(--bg-2); }
+  .nav-item.active { color: var(--burgundy); background: var(--bg-2); border-left-color: var(--burgundy); font-weight: 600; }
+  .nav-badge { margin-left: auto; font-size: 10px; background: var(--burgundy); color: white; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+  main { padding: 28px 36px; overflow-y: auto; }
+  @media (max-width: 900px) { main { padding: 20px; } }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  @media (max-width: 600px) { .page-actions { width: 100%; } .page-actions .btn { flex: 1; text-align: center; } }
+  .page-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.6px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 500; line-height: 1.1; }
+  .page-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 16px; border: 1px solid var(--line-2); color: var(--ink); font-size: 12.5px; font-weight: 500; border-radius: 4px; background: var(--bg-2); }
+  .btn.primary { background: var(--burgundy); color: white; border-color: var(--burgundy); font-weight: 600; }
+  .btn.ghost { background: transparent; border-color: transparent; }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  @media (max-width: 760px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; }
+  .stat-value { font-family: 'Lora', serif; font-size: 26px; font-weight: 500; line-height: 1; }
+  .stat-delta { font-size: 11px; color: var(--olive); margin-top: 6px; }
+  .stat-delta.neg { color: var(--red); }
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 22px; margin-bottom: 16px; }
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .panel-title { font-family: 'Lora', serif; font-size: 17px; font-weight: 500; }
+  .panel-link { font-size: 11px; color: var(--burgundy); letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .table th { text-align: left; padding: 11px 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; border-bottom: 1px solid var(--line); font-weight: 500; }
+  .table td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+  .table tr:hover td { background: var(--bg-3); }
+  .table tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; }
+  .tag.burgundy { background: rgba(107,31,42,0.15); color: var(--burgundy); }
+  .tag.gold { background: rgba(160,120,46,0.15); color: var(--gold); }
+  .tag.olive { background: rgba(94,110,61,0.15); color: var(--olive); }
+  .tag.emerald { background: rgba(46,125,91,0.15); color: var(--emerald); }
+  .tag.red { background: rgba(181,49,72,0.15); color: var(--red); }
+  .tag.muted { background: var(--bg-3); color: var(--text-dim); }
+  .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 1100px) { .grid-2 { grid-template-columns: 1fr; } }
+  .activity-item { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .activity-item:last-child { border: 0; }
+  .activity-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-3); color: var(--burgundy); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .activity-text { flex: 1; }
+  .activity-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-mute); margin-top: 2px; }
+  .coming-soon { background: var(--bg-2); border: 1px dashed var(--line-2); border-radius: 6px; padding: 50px 40px; text-align: center; }
+  .coming-soon h3 { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 8px; }
+  .coming-soon p { color: var(--text-dim); font-size: 13px; max-width: 460px; margin: 0 auto 18px; line-height: 1.6; }
+  .coming-soon ul { text-align: left; max-width: 380px; margin: 0 auto; list-style: none; }
+  .coming-soon li { padding: 7px 0; font-size: 12px; color: var(--text-dim); border-bottom: 1px solid var(--line); }
+  .coming-soon li::before { content: '— '; color: var(--burgundy); margin-right: 6px; }
+  footer { padding: 14px 28px; border-top: 1px solid var(--line); background: var(--bg-3); font-size: 11px; color: var(--text-mute); text-align: center; }
+  footer span { color: var(--burgundy); font-weight: 600; }
+  .view { display: none; }
+  .view.active { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">L</div>
+    <div><div class="brand-name">Legal Practice Cockpit</div><div class="brand-sub">Solo to mid-size firm · litigation + transactional</div></div>
+  </div>
+  <div class="user-chip"><div class="user-avatar">P</div><span>Partner</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-section"><div class="nav-label">Today</div><div class="nav-item active" data-view="dashboard">Dashboard</div><div class="nav-item" data-view="deadlines">Deadlines <span class="nav-badge">7</span></div></div>
+    <div class="nav-section"><div class="nav-label">Practice</div><div class="nav-item" data-view="matters">Matters</div><div class="nav-item" data-view="clients">Clients</div><div class="nav-item" data-view="docs">Documents</div><div class="nav-item" data-view="conflicts">Conflict Check</div></div>
+    <div class="nav-section"><div class="nav-label">Billing</div><div class="nav-item" data-view="time">Time Tracking</div><div class="nav-item" data-view="invoicing">Invoicing</div><div class="nav-item" data-view="trust">Trust Accounting</div></div>
+    <div class="nav-section"><div class="nav-label">Business</div><div class="nav-item" data-view="intake">New Client Intake</div><div class="nav-item" data-view="reports">Reports</div></div>
+    <div class="nav-section"><div class="nav-label">Shared Engine</div><div class="nav-item" data-view="tax">Tax &amp; Compliance</div><div class="nav-item" data-view="milestones">Milestone Outreach</div></div>
+  </aside>
+  <main>
+    <div class="view active" id="view-dashboard">
+      <div class="page-header"><div><div class="page-subtitle">Saturday · June 7 · 7 deadlines next 30 days · 1 critical</div><div class="page-title">Good morning</div></div><div class="page-actions"><button class="btn ghost">Open today's matters</button><button class="btn primary">+ New Matter</button></div></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">Active Matters</div><div class="stat-value">38</div><div class="stat-delta">14 litigation · 24 transactional</div></div>
+        <div class="stat"><div class="stat-label">YTD Billable Hrs</div><div class="stat-value">1,184</div><div class="stat-delta">$487K in fees</div></div>
+        <div class="stat"><div class="stat-label">Trust Balance</div><div class="stat-value">$284K</div><div class="stat-delta">Across 22 client matters</div></div>
+        <div class="stat"><div class="stat-label">AR Outstanding</div><div class="stat-value">$48K</div><div class="stat-delta neg">3 invoices &gt; 60 days</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Critical deadlines — next 30 days</div><a class="panel-link" onclick="navigate('deadlines')">All deadlines</a></div>
+            <table class="table">
+              <thead><tr><th>Days</th><th>Matter</th><th>Filing/Event</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td><strong style="color: var(--red);">2</strong></td><td>Stern v. Acme · contract dispute</td><td>Reply brief due Mon</td><td><span class="tag red">Critical · drafting</span></td></tr>
+                <tr><td>9</td><td>Cohen Estate · probate</td><td>Petition for distribution</td><td><span class="tag gold">In review</span></td></tr>
+                <tr><td>14</td><td>Walker LLC · M&amp;A</td><td>Closing target</td><td><span class="tag emerald">On track</span></td></tr>
+                <tr><td>18</td><td>Adler · personal injury</td><td>Discovery responses due</td><td><span class="tag emerald">In progress</span></td></tr>
+                <tr><td>22</td><td>Bergman trust · amendment</td><td>Client signature window</td><td><span class="tag gold">Client review</span></td></tr>
+                <tr><td>28</td><td>Sterling Corp · annual filing</td><td>Delaware franchise tax</td><td><span class="tag emerald">Auto-renewed</span></td></tr>
+                <tr><td>30</td><td>Multiple · billing</td><td>Month-end invoicing run</td><td><span class="tag muted">Scheduled</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Active matters — current status</div><a class="panel-link" onclick="navigate('matters')">All matters</a></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Stern v. Acme Industries</strong> · breach of contract · 8 months in</div><div class="activity-time">REPLY BRIEF DUE MON · MOTION TO DISMISS PENDING</div></div></div>
+            <div class="activity-item"><div class="activity-icon">L</div><div class="activity-text"><div><strong>Adler v. State Farm</strong> · personal injury</div><div class="activity-time">DISCOVERY PHASE · DEPOSITIONS SCHEDULED JULY</div></div></div>
+            <div class="activity-item"><div class="activity-icon">T</div><div class="activity-text"><div><strong>Walker LLC acquisition</strong> · M&amp;A · $8.4M deal</div><div class="activity-time">CLOSING JUN 21 · DUE DILIGENCE COMPLETE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">T</div><div class="activity-text"><div><strong>Cohen Estate · probate</strong> · $4.2M estate</div><div class="activity-time">PETITION FOR DISTRIBUTION DRAFTED · CLIENT REVIEW</div></div></div>
+            <div class="activity-item"><div class="activity-icon">T</div><div class="activity-text"><div><strong>Sterling Corp · annual maintenance</strong></div><div class="activity-time">CORPORATE FILINGS · FRANCHISE TAX · MINUTES</div></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Trust account — by matter</div><a class="panel-link" onclick="navigate('trust')">Full ledger</a></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Adler PI</strong> · $84K trust hold</div><div class="activity-time">SETTLEMENT FUNDS PRE-DISBURSEMENT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Walker LLC</strong> · $120K escrow</div><div class="activity-time">DEAL ESCROW · RELEASES AT CLOSE</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>Bergman trust</strong> · $42K</div><div class="activity-time">RETAINER ON DEPOSIT</div></div></div>
+            <div class="activity-item"><div class="activity-icon">$</div><div class="activity-text"><div><strong>19 other matters</strong> · $38K total</div><div class="activity-time">VARIOUS RETAINERS + ADVANCE COSTS</div></div></div>
+            <p style="font-size: 11px; color: var(--text-mute); margin-top: 12px;">Three-way reconciliation done daily. State bar trust-accounting compliance auto-verified.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Today's billable hour log</div></div>
+            <div class="activity-item"><div class="activity-icon">P</div><div class="activity-text"><div><strong>You · 2.4 hr</strong> · Stern reply brief drafting</div><div class="activity-time">1.8 RESEARCH · 0.6 DRAFTING · $1,080</div></div></div>
+            <div class="activity-item"><div class="activity-icon">A</div><div class="activity-text"><div><strong>Associate Park · 3.2 hr</strong> · Cohen probate petition</div><div class="activity-time">$960 · WILL BE WRITTEN UP 0.5</div></div></div>
+            <div class="activity-item"><div class="activity-icon">P</div><div class="activity-text"><div><strong>You · 1.1 hr</strong> · Walker M&amp;A · client call</div><div class="activity-time">$495</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-deadlines"><div class="page-header"><div><div class="page-subtitle">Federal · state · court-specific · client-specific</div><div class="page-title">Deadlines</div></div></div><div class="coming-soon"><h3>Court + Deadline Calendar</h3><p>Auto-calculated from filing date based on court rules. Multi-jurisdiction support.</p><ul><li>Auto-calc deadlines from court rules per jurisdiction</li><li>State + federal + local court</li><li>Statute-of-limitations tracking per claim</li><li>Two-attorney sign-off on critical filings</li><li>Auto-reminder cadence (30/14/7/3/1)</li></ul></div></div>
+    <div class="view" id="view-matters"><div class="page-header"><div><div class="page-subtitle">38 active · 14 litigation · 24 transactional · $487K YTD fees</div><div class="page-title">Matters</div></div></div><div class="coming-soon"><h3>Matter Management</h3><p>Per-matter file, document, billing, deadline, conflict-check.</p><ul><li>Per-matter file with all docs + emails</li><li>Per-matter billing rate + fee arrangement</li><li>Per-matter assigned attorneys + paralegals</li><li>Statute of limitations tracking</li><li>Matter status workflow (intake → active → settled/closed)</li></ul></div></div>
+    <div class="view" id="view-clients"><div class="page-header"><div><div class="page-subtitle">187 active clients · 84 individuals · 103 entities · referral attribution</div><div class="page-title">Clients</div></div></div><div class="coming-soon"><h3>Client Database</h3><p>Every client, every matter ever opened, every dollar billed.</p><ul><li>Individual + entity differentiation</li><li>Per-client lifetime fees</li><li>Multi-matter relationships</li><li>Referral source + thank-you tracking</li><li>Client communication log (privileged-by-default)</li></ul></div></div>
+    <div class="view" id="view-docs"><div class="page-header"><div><div class="page-subtitle">Document automation · NetDocuments / iManage / Clio integration · template library</div><div class="page-title">Documents</div></div></div><div class="coming-soon"><h3>Document Operations</h3><p>↘ Shared engine — from Audit Practice. Adapted for legal: per-matter file structure, version control, e-sign, document automation from templates.</p><ul><li>Per-matter document folder + version control</li><li>NetDocuments / iManage / Clio integration</li><li>Document automation from template library (engagement letters, contracts, pleadings)</li><li>E-signature integration (DocuSign / Adobe Sign)</li><li>Privilege log + production prep</li></ul></div></div>
+    <div class="view" id="view-conflicts"><div class="page-header"><div><div class="page-subtitle">Before-engagement conflict check · 22 years of historical clients searched</div><div class="page-title">Conflict Check</div></div></div><div class="coming-soon"><h3>Conflict Check Engine</h3><p>Search every party, every adverse party, every spouse, every entity — across firm history.</p><ul><li>Multi-party conflict search (client + spouse + entities)</li><li>Adverse-party + co-counsel checking</li><li>Historical firm matter search (22 years)</li><li>Conflict waiver tracking</li><li>Auto-flag at intake before engagement letter</li></ul></div></div>
+    <div class="view" id="view-time"><div class="page-header"><div><div class="page-subtitle">Per-matter timers · billable + non-billable · realization tracking</div><div class="page-title">Time Tracking</div></div></div><div class="coming-soon"><h3>Time + Realization</h3><p>One-tap timers per matter. Auto-time from email, document opens, calendar events.</p><ul><li>Per-matter timer (one-tap start/stop)</li><li>Auto-time from email, document opens, calendar events</li><li>Realization tracking (billed ÷ recorded)</li><li>Write-up / write-down tracking with reason codes</li><li>Per-attorney utilization reporting</li><li>Mobile time entry app</li></ul></div></div>
+    <div class="view" id="view-invoicing"><div class="page-header"><div><div class="page-subtitle">LEDES e-billing · per-matter detailed invoices · LegalTrack / Tymetrix integration</div><div class="page-title">Invoicing</div></div></div><div class="coming-soon"><h3>Billing + LEDES</h3><p>Per-matter detailed invoicing with LEDES e-billing for corporate clients.</p><ul><li>Per-matter invoice with task/activity coding</li><li>LEDES UTBMS for corporate clients</li><li>Insurance defense + corporate guidelines compliance</li><li>Pre-bill review workflow</li><li>Stripe + ACH + check payment</li><li>Per-client AR aging</li></ul></div></div>
+    <div class="view" id="view-trust"><div class="page-header"><div><div class="page-subtitle">IOLTA + non-IOLTA · 3-way reconciliation · per-matter ledger · state bar compliant</div><div class="page-title">Trust Accounting</div></div></div><div class="coming-soon"><h3>Trust Account Operations</h3><p>State-bar-compliant IOLTA + retainer trust management. Three-way reconciled daily.</p><ul><li>Per-matter trust ledger</li><li>IOLTA + non-IOLTA differentiation</li><li>Three-way reconciliation daily (bank + book + per-client)</li><li>State bar audit-ready reports</li><li>Auto-replenish from operating when costs advance</li><li>Trust-to-fees transfer with attorney approval</li></ul></div></div>
+    <div class="view" id="view-intake"><div class="page-header"><div><div class="page-subtitle">Online intake · conflict check · engagement letter · trust deposit</div><div class="page-title">New Client Intake</div></div></div><div class="coming-soon"><h3>Client Intake Workflow</h3><p>Online intake → conflict check → engagement letter → trust deposit → matter opens.</p><ul><li>Online intake form per practice area</li><li>Auto conflict check before engagement</li><li>Engagement letter generation + e-sign</li><li>Initial trust deposit via Stripe/LawPay</li><li>Auto-matter creation on signature</li></ul></div></div>
+    <div class="view" id="view-reports"><div class="page-header"><div><div class="page-subtitle">Per-attorney · per-matter · per-practice-area · realization + collection rates</div><div class="page-title">Reports</div></div></div><div class="coming-soon"><h3>Practice Reports</h3><p>Numbers a managing partner needs to run the firm.</p><ul><li>Per-attorney utilization + realization + collection</li><li>Per-matter profitability (fee vs cost-to-deliver)</li><li>Per-practice-area revenue mix</li><li>Origination credit + working credit attribution</li><li>Cash-flow forecasting from open matters</li><li>Aged WIP + AR</li></ul></div></div>
+
+    <div class="view" id="view-tax">
+      <div class="page-header"><div><div class="page-subtitle">1099 contractors · CLE expenses · bar dues · home office</div><div class="page-title">Tax &amp; Compliance</div></div></div>
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Audit Practice · law-flavored: pass-through entity tax, CLE + bar dues deductions, expert-witness 1099s, home office</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-label">YTD Fees Collected</div><div class="stat-value">$487K</div><div class="stat-delta">Pass-through to partners</div></div>
+        <div class="stat"><div class="stat-label">1099 Contractors</div><div class="stat-value">8</div><div class="stat-delta">Experts · paralegals · investigators</div></div>
+        <div class="stat"><div class="stat-label">Bar Dues + CLE</div><div class="stat-value">$2,840</div><div class="stat-delta">Per attorney annual deductible</div></div>
+        <div class="stat"><div class="stat-label">Q2 Est Tax Due</div><div class="stat-value">$28,000</div><div class="stat-delta neg">Due Jun 15</div></div>
+      </div>
+    </div>
+    <div class="view" id="view-milestones"><div class="page-header"><div><div class="page-subtitle">Annual review reminders · estate-plan updates · corporate-renewal cycles</div><div class="page-title">Milestone Outreach</div></div></div><p style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; color: var(--text-mute); text-transform: uppercase; margin-bottom: 20px;">↘ Shared engine — from Diamond Atelier · law-flavored: annual estate-plan review reminders, corporate maintenance renewals, post-life-event outreach</p>
+    <div class="panel" style="padding:0;"><table class="table"><thead><tr><th>Date</th><th>Client</th><th>Trigger</th><th>Outreach</th></tr></thead><tbody><tr><td><strong>Jun 14</strong></td><td>The Bergmans</td><td>5-yr estate plan anniversary</td><td>Annual review + tax-law changes update</td></tr><tr><td><strong>Jun 28</strong></td><td>Sterling Corp</td><td>Annual minutes + maintenance</td><td>Annual minutes drafted · ready for board</td></tr><tr><td><strong>Jul 14</strong></td><td>Walker family</td><td>New-child estate update needed</td><td>Trust amendment + guardian appointment</td></tr><tr><td><strong>Jul 22</strong></td><td>Cohen Trust</td><td>10-yr trust review</td><td>Trust amendment + trustee succession review</td></tr></tbody></table></div></div>
+  </main>
+</div>
+<footer>Legal Practice Cockpit · Operator Demo · Built by <span>Heisenbug</span> · v0.1</footer>
+<script>
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));const t=document.getElementById('view-'+v);if(t)t.classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>navigate(n.dataset.view)));
+</script>
+<div style="position:fixed; bottom:14px; right:14px; background:#0F1F0F; color:#C6D97A; padding:8px 14px; border-radius:24px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:1px; z-index:9999; box-shadow:0 4px 14px rgba(0,0,0,0.3); border:1px solid rgba(198,217,122,0.25);"><a href="https://heisenbug.app/built/" style="color:#C6D97A; text-decoration:none;">↩ heisenbug catalog</a></div>
+</body>
+</html>
