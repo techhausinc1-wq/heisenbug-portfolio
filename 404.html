@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Not found · Heisenbug</title>
+<!-- Security: partial headers via meta (full headers require Cloudflare/server) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com 'unsafe-inline'; img-src 'self' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src https://fonts.gstatic.com data:; form-action https://formsubmit.co; frame-ancestors 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
@@ -31,15 +37,15 @@ p { font-size: 15.5px; color: var(--muted); margin-bottom: 22px; }
   <p>The URL you typed (or the link you clicked) doesn't match anything on heisenbug.app. The page was probably renamed when we cleaned up the site, or never existed.</p>
   <div class="actions">
     <a class="btn primary" href="/">Back to home</a>
-    <a class="btn secondary" href="/#/built">Browse the catalog</a>
+    <a class="btn secondary" href="/built/">Browse the catalog</a>
     <a class="btn secondary" href="mailto:hello@heisenbug.app">Email us</a>
   </div>
   <div class="context">
     Looking for a specific cockpit?<br>
-    <a href="/#/home-health">Home Health</a> &middot;
-    <a href="/#/built">Full catalog</a> &middot;
-    <a href="/#/about">About</a> &middot;
-    <a href="/#/contact">Contact</a>
+    <a href="/home-health/">Home Health</a> &middot;
+    <a href="/built/">Full catalog</a> &middot;
+    <a href="/about/">About</a> &middot;
+    <a href="/contact/">Contact</a>
   </div>
 </div>
 </body>
