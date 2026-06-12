@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Heisenbug — vertical software for operators</title>
-<meta name="description" content="We build custom-fit operator cockpits — daily-driver software that runs a single business. Web, PWA, native app, or simple website. Your call.">
+<title>Heisenbug · custom-fit operator cockpits for owner-operators</title>
+<meta name="description" content="Operator-run software shop. Custom cockpits that replace 7 browser tabs with one screen. Flat fee, 7-10 day first version, no SOWs. Catalog of 28 industries.">
 <meta name="theme-color" content="#0F1F0F">
 <link rel="canonical" href="https://heisenbug.app/">
 <link rel="icon" href="heisenbug-square-small.png" type="image/png">
@@ -13,8 +13,8 @@
 <!-- Open Graph (Facebook, iMessage, Slack, LinkedIn, etc.) -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://heisenbug.app/">
-<meta property="og:title" content="Heisenbug — vertical software for operators">
-<meta property="og:description" content="Custom-fit operator cockpits — daily-driver software that runs a single business. 28 demos live. Web, PWA, native app, or just a website. Your call.">
+<meta property="og:title" content="Heisenbug · custom-fit operator cockpits for owner-operators">
+<meta property="og:description" content="Operator-run software shop. Custom cockpits that replace 7 browser tabs with one screen. Flat fee, 7-10 day first version, no SOWs. Catalog of 28 industries.">
 <meta property="og:image" content="https://heisenbug.app/heisenbug-og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="1200">
@@ -22,8 +22,8 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Heisenbug — vertical software for operators">
-<meta name="twitter:description" content="Custom-fit operator cockpits — daily-driver software that runs a single business. 28 demos live.">
+<meta name="twitter:title" content="Heisenbug · custom-fit operator cockpits for owner-operators">
+<meta name="twitter:description" content="Operator-run software shop. Custom cockpits that replace 7 browser tabs with one screen. Flat fee, 7-10 day first version, no SOWs. Catalog of 28 industries.">
 <meta name="twitter:image" content="https://heisenbug.app/heisenbug-og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -553,12 +553,12 @@ footer .brand-mark {
   "inLanguage": "en-US"
 }
 </script>
-</head>
-<body>
+</head><body>
 
+<a class="skip-link" href="#main-content" style="position:absolute;left:-9999px;top:0;background:#1f5b3a;color:#fff;padding:10px 14px;border-radius:0 0 6px 0;z-index:9999;font-weight:600;text-decoration:none;" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Skip to main content</a>
 <header>
   <div class="header-inner">
-    <a class="brand" href="#/">
+    <a class="brand" href="/">
       <div class="brand-mark"><img src="heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
       <div class="brand-text">
         <div class="brand-name">Heisenbug</div>
@@ -567,17 +567,15 @@ footer .brand-mark {
     </a>
     <div class="header-spacer"></div>
     <nav class="nav" id="nav">
-      <a href="#/" data-route="/">Home</a>
-      <a href="#/built" data-route="/built">Built</a>
-      <a href="#/about" data-route="/about">About</a>
-      <a href="#/contact" data-route="/contact">Contact</a>
+      <a class="is-active" href="/" data-route="/">Home</a>
+      <a href="built/" data-route="/built">Built</a>
+      <a href="about/" data-route="/about">About</a>
+      <a href="contact/" data-route="/contact">Contact</a>
     </nav>
-    <a class="header-cta" href="#/contact">Start a project →</a>
+    <a class="header-cta" href="contact/">Start a project →</a>
   </div>
 </header>
-
-<!-- ====================== HOME ====================== -->
-<main class="page" data-page="/">
+<main id="main-content" class="page is-active" role="main">
 
   <section class="hero sec-dark">
     <div class="hero-inner">
@@ -586,8 +584,8 @@ footer .brand-mark {
         <h1>Software that <em>fits</em> the way you actually run the business.</h1>
         <p class="hero-lead">Most operator software is generic SaaS bent into your shape. Heisenbug builds the opposite — a custom-fit cockpit for your industry, your team, your accounts. The same workflow your business already runs on, but in one screen instead of seven browser tabs.</p>
         <div class="hero-cta-row">
-          <a class="btn-primary" href="#/built">See what's built →</a>
-          <a class="btn-secondary" href="#/contact">Start a project</a>
+          <a class="btn-primary" href="built/">See what's built →</a>
+          <a class="btn-secondary" href="contact/">Start a project</a>
         </div>
       </div>
       <div class="hero-artwork">
@@ -625,7 +623,7 @@ footer .brand-mark {
       <div class="section-eyebrow">→ How we build</div>
       <p>We start with <em>one operator</em>, <em>one industry</em>, <em>one cockpit</em>. We build what they wished existed. We ship it. We watch them use it. We fix what's wrong. Then we propagate the working pieces to adjacent industries.</p>
       <div style="margin-top:32px;">
-        <a class="btn-primary" href="#/built">See the catalog →</a>
+        <a class="btn-primary" href="built/">See the catalog →</a>
       </div>
     </div>
   </section>
@@ -637,581 +635,13 @@ footer .brand-mark {
       <p>Most first cockpits land between <strong>$3,500 and $8,500</strong>, flat fee. Sized at the kickoff call, no scope-creep invoices. First working version in 7-10 days. After that you decide whether to keep iterating, at what cadence, or just take it and run.</p>
       <p style="margin-top:12px; color:var(--text2); font-size:14px;">No SOWs. No monthly retainers locked in. No per-seat scaling. No &quot;professional services&quot; line items you don't understand. Hosting is whatever the actual cloud cost is, pass-through (usually $30-60/mo).</p>
       <div style="margin-top:24px;">
-        <a class="btn-primary" href="#/contact">Start a project →</a>
-        <a class="btn-secondary" href="#/about" style="margin-left:8px;">Who runs this</a>
+        <a class="btn-primary" href="contact/">Start a project →</a>
+        <a class="btn-secondary" href="about/" style="margin-left:8px;">Who runs this</a>
       </div>
     </div>
   </section>
 
 </main>
-
-<!-- ====================== BUILT ====================== -->
-<main class="page" data-page="/built">
-  <section class="sec sec-dark">
-    <div class="sec-inner">
-      <div class="work-head">
-        <div>
-          <div class="section-eyebrow">→ The catalog</div>
-          <h2>28 cockpits, every industry we've gone deep on,<br><em>one engine</em>.</h2>
-        </div>
-        <div class="small">Each tile opens a live demo you can click around. Mobile + desktop. Mock data inside, real features. Pick the one closest to your business.</div>
-      </div>
-
-    <h3 class="cat-title">Trades · construction · field service</h3>
-    <div class="tiles">
-      <a class="tile" href="https://techhausinc1-wq.github.io/stockscout-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark hvac">HVAC Inventory</div>
-        <div class="tile-body">
-          <div class="tile-industry">HVAC service · field inventory</div>
-          <div class="tile-name">PWA for the truck — barcode + voice + EPA</div>
-          <div class="tile-desc">Field-grade inventory PWA. Barcode scan with the phone camera, voice queries ('where's the 2-ton condenser fan motor?'), EPA Section 608 refrigerant logging, two views (tech / owner), works offline. Live with a San Antonio HVAC contractor.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status prod">Production · client</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/plumber-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark pool-live">Plumbing Service</div>
-        <div class="tile-body">
-          <div class="tile-industry">Plumbing · residential + commercial</div>
-          <div class="tile-name">Dispatch + service calls + maintenance plans</div>
-          <div class="tile-desc">Live dispatch board with GPS-aware tech routing, service-call pipeline with on-site invoice + tap-to-pay, recurring maintenance plan engine (the MRR base), big-job estimating with 3-tier options, after-hours emergency routing.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/auto-repair-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark auto-live">Auto Repair Shop</div>
-        <div class="tile-body">
-          <div class="tile-industry">Independent auto shop · ASE</div>
-          <div class="tile-name">Bays + ROs + text estimates + service recall</div>
-          <div class="tile-desc">Live bay status with tech assignment, digital vehicle inspections, text-based estimate approval, service-interval recall engine, parts inventory with multi-supplier price comparison, per-tech efficiency tracking.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/contractor-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark construction">Contractor (GC)</div>
-        <div class="tile-body">
-          <div class="tile-industry">General contractor · residential + commercial</div>
-          <div class="tile-name">Jobs + bids + subs + change orders + safety</div>
-          <div class="tile-desc">Active jobs by phase with % complete, bid pipeline, change order tracking with e-sign, sub roster + W-9 + COI compliance, permits + inspections, OSHA logs, job-photo pipeline, AIA progress billing.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/insulation-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark insulation">Insulation</div>
-        <div class="tile-body">
-          <div class="tile-industry">Spray foam · blown-in · weatherization</div>
-          <div class="tile-name">Leads + proposals + crews + rebates</div>
-          <div class="tile-desc">Per-source lead attribution with CPA tracking, proposal-to-contract pipeline, crew scheduling with SPFA cert tracking, materials with foam-drum inventory, rebate-program automation (federal 25C + state + utility).</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/landscape-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark hemp">Landscape + Lawn</div>
-        <div class="tile-body">
-          <div class="tile-industry">Landscape · lawn care · hardscape · design</div>
-          <div class="tile-name">Weekly routes + design projects + hardscape jobs</div>
-          <div class="tile-desc">Per-crew GPS-optimized routes with weather-aware rescheduling, design project pipeline from estimate to install, hardscape jobs (patios + walls + firepits), pesticide applicator license tracking, equipment maintenance log.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/pool-service-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark pool-c">Pool Service</div>
-        <div class="tile-body">
-          <div class="tile-industry">Pool service · residential + commercial</div>
-          <div class="tile-name">Route + chemistry + equipment service</div>
-          <div class="tile-desc">Today's route with live status, chemistry log with auto-alerts on out-of-range readings, equipment work-order pipeline, per-pool spec history, monthly auto-invoicing.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/vending-route-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark brew">Vending Route</div>
-        <div class="tile-body">
-          <div class="tile-industry">Vending · coffee + snack route ops</div>
-          <div class="tile-name">Route + telemetry + location scout</div>
-          <div class="tile-desc">Today's optimized route built from machine telemetry (DEX/MDB), location-scout engine surfacing new opportunities from permits + business openings, cashless integration (NayaX/Cantaloupe), per-machine P&L. Live as BrewRoute with a Pennsylvania route operator.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status prod">Production · client</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/pet-services-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark construction">Pet Services</div>
-        <div class="tile-body">
-          <div class="tile-industry">Pet · grooming + boarding + daycare + walking</div>
-          <div class="tile-name">Multi-service pet shop ops</div>
-          <div class="tile-desc">Per-pet profile with breed-specific service templates, vaccination compliance auto-blocking bookings, membership programs (daycare unlimited / monthly groom), boarding ops with daily photo updates, walking GPS.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-    </div>
-
-    <h3 class="cat-title">Professional services</h3>
-    <div class="tiles">
-      <a class="tile" href="https://techhausinc1-wq.github.io/audit-practice-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark audit-c">Audit / CPA Practice</div>
-        <div class="tile-body">
-          <div class="tile-industry">CPA / tax practice · solo to mid-size</div>
-          <div class="tile-name">Returns + deadlines + docs + time</div>
-          <div class="tile-desc">Returns pipeline (1040 / 1120 / 1041 / 1065), critical-deadline calendar, secure document inbox with OCR, time tracking with realization reporting, audit + advisory engagements.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/legal-practice-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark audit-c">Legal Practice</div>
-        <div class="tile-body">
-          <div class="tile-industry">Law firm · solo to mid-size · litigation + transactional</div>
-          <div class="tile-name">Matters + deadlines + trust + LEDES billing</div>
-          <div class="tile-desc">Matter management with conflict checking, court deadline calendar with auto-rules per jurisdiction, three-way trust reconciliation (IOLTA compliant), LEDES e-billing for corporate clients, time tracking.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/realtor-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture">Realtor</div>
-        <div class="tile-body">
-          <div class="tile-industry">Real estate · residential agent</div>
-          <div class="tile-name">Listings + buyer pipeline + escrow + sphere</div>
-          <div class="tile-desc">Today's showings, active listings, buyer pipeline with pre-approval tracking, in-escrow deals with close dates, sphere CRM with milestone outreach, GCI dashboard, Schedule C tax + deductible mile tracking.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/realtor-launch-kit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture">New Realtor Launch Kit</div>
-        <div class="tile-body">
-          <div class="tile-industry">Real estate · brand-new agent · family team</div>
-          <div class="tile-name">10-3-1 habit + sphere + social engine</div>
-          <div class="tile-desc">Built for the agent with zero clients. Daily 10-3-1 prospecting habit, tiered sphere CRM with cadence, lead pipeline, social engine that auto-publishes 12-15 posts/week with DM-to-lead capture and sphere share kit.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/property-mgmt-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark audit-live">Property Mgmt</div>
-        <div class="tile-body">
-          <div class="tile-industry">Residential + commercial PM</div>
-          <div class="tile-name">Maintenance + rent + owner statements + leasing</div>
-          <div class="tile-desc">Per-property and per-unit detail, maintenance ticket pipeline with vendor dispatch, rent collection with auto-ACH and failed-payment recovery, owner statements with ACH distribution, leasing pipeline.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/vacation-rental-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark rental">Vacation Rental</div>
-        <div class="tile-body">
-          <div class="tile-industry">Short-term rental · Airbnb + VRBO + direct</div>
-          <div class="tile-name">Unified inbox + multi-platform calendar + bank-linked P&amp;L</div>
-          <div class="tile-desc">Multi-property calendar with Airbnb + VRBO + direct booking iCal sync, unified inbox pulling guest messages + vendor emails + payout notifications with AI-drafted replies, auto-triggered cleaning crew dispatch on checkout, bank-connected expense feed auto-categorized per property, Schedule E-ready output for tax time.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/photographer-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark jewelry">Photographer</div>
-        <div class="tile-body">
-          <div class="tile-industry">Photo / video · wedding · portrait · commercial</div>
-          <div class="tile-name">Inquiries → bookings → galleries → prints</div>
-          <div class="tile-desc">Inquiry intake from multiple channels, booking calendar with deliverable scheduling, AI-assisted culling, editing workflow with Lightroom integration, client galleries with print sales, Schedule C tax.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-    </div>
-
-    <h3 class="cat-title">Retail + commerce</h3>
-    <div class="tiles">
-      <a class="tile" href="https://techhausinc1-wq.github.io/furniture-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture">Furniture &amp; Mattress</div>
-        <div class="tile-body">
-          <div class="tile-industry">Discount furniture · multi-account retail</div>
-          <div class="tile-name">Multi-account inbox + inventory + financing + reels</div>
-          <div class="tile-desc">Unifies every customer channel (Facebook Pages, FB Marketplace, Instagram, TikTok, OfferUp, WhatsApp, Google Business, email) into one inbox. Live inventory with tap-to-add Easy Order. In-app finance application supporting the major no-credit lenders. Auto-generated TikTok reels from showroom photos.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/diamond-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark diamond">Diamond Atelier</div>
-        <div class="tile-body">
-          <div class="tile-industry">Diamond &amp; fine jewelry · multi-client memos</div>
-          <div class="tile-name">14-tab cockpit for a diamond house</div>
-          <div class="tile-desc">Dashboard, leads, 7-stage custom design pipeline, repairs, memos with cadence engine, appraisals with letterhead PDFs, VIP portfolios with notes, milestone calendar with anniversary outreach.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/florist-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark pool-c">Florist</div>
-        <div class="tile-body">
-          <div class="tile-industry">Florist · retail + event + wedding + subscription</div>
-          <div class="tile-name">Design bench + weddings + subscriptions + stems</div>
-          <div class="tile-desc">Multi-source order intake (own site + Teleflora + FTD + walk-in), per-designer bench queue, wedding event management with mood-boards + spec sheets, subscription engine for hospital/corporate/restaurant accounts, fresh-stem inventory.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/auto-parts-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark parts">Auto Parts Pipeline</div>
-        <div class="tile-body">
-          <div class="tile-industry">Auto parts · salvage + aftermarket</div>
-          <div class="tile-name">1,000-photo-a-day listing pipeline</div>
-          <div class="tile-desc">AI part-ID from photos, auto-listing to eBay + Facebook Marketplace + OfferUp + the shop's own site, source-vehicle tracking from VIN to part-out, Hollander interchange mapping. For high-volume operations where every minute saved per part compounds.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/restaurant-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture-live">Restaurant</div>
-        <div class="tile-body">
-          <div class="tile-industry">Full-service hospitality</div>
-          <div class="tile-name">Service + kitchen + house + compliance</div>
-          <div class="tile-desc">Tonight's covers + VIPs + 86 list, sales heatmap by day/hour, prep sheets auto-generated from bookings, recipe + margin database, supplier orders, staff scheduling with tip pool, multi-channel review monitoring.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-    </div>
-
-    <h3 class="cat-title">Health · wellness · lifestyle</h3>
-    <div class="tiles">
-      <a class="tile" href="https://techhausinc1-wq.github.io/home-health-care-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark homehealth">Home Health</div>
-        <div class="tile-body">
-          <div class="tile-industry">Home health · skilled + non-medical · agency ops</div>
-          <div class="tile-name">Caregiver dispatch + EVV + care plans + Medicare billing</div>
-          <div class="tile-desc">Caregiver scheduling with GPS-aware routing, federal Electronic Visit Verification, per-patient care plans with task completion, family secure messaging, encrypted records aligned to HIPAA practice, background-check + license expiry tracking, Medicare and Medicaid waiver billing in one cockpit. Live with a home health agency client.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status prod">Production · client</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/dental-practice-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark pool-c">Dental Practice</div>
-        <div class="tile-body">
-          <div class="tile-industry">Dental · general + cosmetic + ortho</div>
-          <div class="tile-name">Chair schedule + recall + treatment + insurance</div>
-          <div class="tile-desc">Multi-chair multi-provider scheduling, the all-important recall engine (overdue patient outreach), treatment plan tracking with insurance pre-auth, real-time eligibility verification, claim submission, hygiene productivity.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/med-spa-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark jewelry">Med Spa</div>
-        <div class="tile-body">
-          <div class="tile-industry">Aesthetics · injectables · skin · body</div>
-          <div class="tile-name">Multi-provider + EMR-lite + memberships</div>
-          <div class="tile-desc">Multi-provider scheduling, injectables inventory with lot/expiration tracking, patient memberships with auto-billing, Alle/Aspire/Xperience loyalty integration, before/after photo timeline with consent.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/fitness-studio-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark parts-c">Fitness Studio</div>
-        <div class="tile-body">
-          <div class="tile-industry">Boutique fitness · group class · personal training</div>
-          <div class="tile-name">Classes + members + retention + trial conversion</div>
-          <div class="tile-desc">Class schedule with waitlist auto-promote, member database with attendance tracking, retention engine surfacing at-risk members before they churn, trial-to-paid conversion pipeline, branded merch + retail POS integration.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/daycare-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark audit-c">Daycare + Preschool</div>
-        <div class="tile-body">
-          <div class="tile-industry">Childcare · infant + toddler + pre-K</div>
-          <div class="tile-name">Check-in + ratios + curriculum + tuition</div>
-          <div class="tile-desc">Parent QR check-in/out with authorized-pickup verification, real-time classroom ratio compliance, USDA CACFP meal planning, immunization compliance auto-blocking, per-classroom curriculum + daily activity log.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/salon-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark furniture-live">Salon + Barbershop</div>
-        <div class="tile-body">
-          <div class="tile-industry">Hair salon · color · barber · booth + commission</div>
-          <div class="tile-name">Appointments + rebook + retail + commissions</div>
-          <div class="tile-desc">Per-stylist booking with skill + preference matching, the rebook engine that drives 68%+ rebook rate, per-client formula card history, retail attach tracking, commission vs booth-rental management.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-      <a class="tile" href="https://techhausinc1-wq.github.io/tattoo-cockpit-demo/" target="_blank" rel="noopener">
-        <div class="tile-mark jewelry">Tattoo Studio</div>
-        <div class="tile-body">
-          <div class="tile-industry">Tattoo · custom + flash + piercing</div>
-          <div class="tile-name">Per-artist booking + consult + aftercare</div>
-          <div class="tile-desc">Per-artist booking with deposit-required online scheduling, consult pipeline from Instagram DM to signed deposit, portfolio + flash sheet management, aftercare auto-text engine, BBP compliance + per-artist booth rent / commission split.</div>
-          <div class="tile-foot"><span class="tile-link">Open demo →</span><span class="tile-status">Live</span></div>
-        </div>
-      </a>
-    </div>
-
-    </div>
-  </section>
-</main>
-
-<!-- ====================== ABOUT ====================== -->
-<main class="page" data-page="/about">
-
-  <section class="sec sec-light">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ Who runs this</div>
-      <h2>Ivan Svedov &mdash; Founder</h2>
-      <div style="display:grid; grid-template-columns:140px 1fr; gap:24px; margin-top:16px; align-items:start;">
-        <div style="background:linear-gradient(135deg,var(--green-mid),var(--dark)); color:var(--cream); width:140px; height:140px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:46px; font-weight:500;">IS</div>
-        <div>
-          <p style="font-size:14.5px; line-height:1.65;">San Antonio, TX. 10+ years operator-side &mdash; ecommerce, hardware, hemp distribution. Built operations tools for the family + friends portfolio since 2024 under TechHaus before consolidating the methodology and the codebase into Heisenbug in 2026. Still the one sitting next to the operator when a cockpit gets designed.</p>
-          <p style="font-size:14.5px; line-height:1.65; margin-top:10px;"><strong>Reach Ivan directly:</strong> <a href="mailto:hello@heisenbug.app" style="color:var(--green-mid); font-weight:600;">hello@heisenbug.app</a> &middot; replies within 24 hours, usually faster.</p>
-          <p style="font-size:13px; color:var(--text2); margin-top:10px;">Heisenbug Inc. is a Texas corporation registered at 16811 Cedar Tree Way, San Antonio TX 78247.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-dark">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ Who we are</div>
-      <h2>An operator-run software shop.<br><em>Not a consultancy.</em></h2>
-      <p>Heisenbug Inc. builds vertical software for operators — the people who actually run a business, not the people who buy software for a business. The team is operator-first: every cockpit gets designed with someone who lives in that workflow daily, not a product manager guessing at the requirements.</p>
-      <p>We started in 2024 under TechHaus by building one cockpit for one operator in one industry — Ivan's hemp distribution business needed something the off-the-shelf tools couldn't do. It worked. The pattern repeated across friends and family running other businesses: pool service, HVAC, vending routes, accounting, furniture retail, home health. Eight production deployments later, we consolidated the methodology and the codebase under Heisenbug in 2026. The 28 cockpits in the catalog are the result — every one of them seeded by a real operator with a real problem.</p>
-    </div>
-  </section>
-
-  <section class="sec sec-light">
-    <div class="sec-inner">
-      <div class="section-eyebrow">→ How we build</div>
-      <h2>One operator, one industry,<br><em>one cockpit at a time</em>.</h2>
-      <div class="process">
-        <div class="step">
-          <div class="step-n">STEP 01</div>
-          <div class="step-h">Sit with the operator</div>
-          <div class="step-p">No questionnaires. No discovery calls billed by the hour. We watch how you actually run the business — the tabs, the spreadsheets, the texts, the things you hate doing.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">STEP 02</div>
-          <div class="step-h">Build what's missing</div>
-          <div class="step-p">First version in your hands in 7-10 days. Not a wireframe, not a Figma. A working cockpit with your real data shape, your real accounts, your real workflow.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">STEP 03</div>
-          <div class="step-h">Refine live</div>
-          <div class="step-p">You use it. We watch the friction. We fix it. Weekly iteration loops until the cockpit replaces the seven tabs and the spreadsheet and the WhatsApp group.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">STEP 04</div>
-          <div class="step-h">Propagate</div>
-          <div class="step-p">What we build for HVAC inventory is mostly true for plumbing inventory. The engine carries forward. The branding, the workflow, the accounts — that's per-operator.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-dark">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ How we ship</div>
-      <h2>Web app, native iOS/Android, installable PWA, or just a website.<br><em>Your call.</em></h2>
-      <p>Every cockpit ships in whatever format actually fits how your team works. We don't push native iOS to charge for native iOS, and we don't push a web app just because it's faster to build.</p>
-      <div class="ship-grid">
-        <div class="ship-card">
-          <h3>Installable PWA</h3>
-          <p>Opens in any browser. Tap "Add to Home Screen" on iPhone or "Install" on Android / Chrome desktop and it runs like a native app — full-screen, offline-capable, push notifications, vibration. No App Store review wait, ships the moment we push. Best default.</p>
-        </div>
-        <div class="ship-card">
-          <h3>Native iOS &amp; Android</h3>
-          <p>When you actually need it — App Store presence, deeper device integration (camera APIs, background sync, secure element). Built with Capacitor on top of the same web codebase, so the same cockpit ships everywhere without rewriting.</p>
-        </div>
-        <div class="ship-card">
-          <h3>Simple marketing website</h3>
-          <p>Some operators just need a clean web presence with a contact form and a phone number. We do those too — fast, mobile-first, no template-builder bloat. Often paired with the operational cockpit behind a login.</p>
-        </div>
-        <div class="ship-card">
-          <h3>Desktop browser cockpit</h3>
-          <p>For operators who run their business from a back-office desk, the cockpit works equally well on a 27-inch monitor. Same login, same data, more screen real estate for the dense views.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-light approach">
-    <div class="sec-inner sec-narrow approach-inner">
-      <div class="section-eyebrow">→ The philosophy</div>
-      <p>We propagate the working pieces to adjacent industries — what's true for HVAC inventory is mostly true for plumbing inventory, what works for furniture financing mostly works for mattress financing. <em>The cockpits are different. The engine underneath is one.</em></p>
-    </div>
-  </section>
-
-</main>
-
-<!-- ====================== CONTACT ====================== -->
-<main class="page" data-page="/contact">
-  <section class="sec sec-light contact">
-    <div class="sec-inner sec-narrow contact-inner">
-      <div class="section-eyebrow">→ Start a project</div>
-      <h2>Want a cockpit for <em>your</em> business?</h2>
-      <p>Open the demo closest to your industry on your phone, click around for 10 minutes, then tell us what's wrong and what's missing. That's how every Heisenbug tool starts — one operator, one conversation, one cockpit built around the work you actually do.</p>
-      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
-        <a class="btn-primary" href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@heisenbug.app&su=Heisenbug%20%E2%80%94%20cockpit%20inquiry&body=Hi%20Heisenbug%2C%0A%0AI%20saw%20your%20site.%20A%20bit%20about%20my%20business%3A%0A%0A%5BIndustry%2C%20what%20you%20do%2C%20what's%20currently%20painful%5D%0A%0AThanks." target="_blank" rel="noopener">Open Gmail to start →</a>
-        <a class="btn-primary" style="background:transparent; color:var(--green-mid); border:1px solid var(--green-mid);" href="mailto:hello@heisenbug.app?subject=Heisenbug%20%E2%80%94%20cockpit%20inquiry">Or use your mail app</a>
-      </div>
-      <div class="contact-alt">
-        Prefer to browse first? <a href="#/built">See the catalog</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-dark">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ The commercial terms</div>
-      <h2>Flat fee.<br><em>No SOWs, no monthly retainers.</em></h2>
-      <p>Most first cockpits land between <strong style="color:var(--green-bright);">$3,500 and $8,500</strong>, flat fee. We size it at the kickoff call after the discovery — the number is the number, no scope-creep invoices, no surprise change orders. Hosting is whatever the actual cloud cost is (usually $30-60/mo, pass-through). After the first cockpit ships, you decide whether to keep iterating, and at what cadence. Most operators do one big push then a smaller monthly evolution; some just take the cockpit and run.</p>
-      <p style="margin-top:14px;">What's NOT in the model: no $50K enterprise SaaS commitments, no per-seat pricing scaling, no &quot;professional services&quot; line items you don't understand, no MSAs to sign before we'll talk. Operators run on cash flow. We price to respect that.</p>
-    </div>
-  </section>
-
-  <section class="sec sec-light">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ What to expect</div>
-      <h2>What happens after you reach out.</h2>
-      <div class="process" style="margin-top:24px;">
-        <div class="step">
-          <div class="step-n">→ DAY 0</div>
-          <div class="step-h">Reply within 24 hours</div>
-          <div class="step-p">A real reply from a real person, not an auto-responder. We'll ask three short questions about your business and book a 30-minute call.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ DAY 1-2</div>
-          <div class="step-h">30-min discovery call</div>
-          <div class="step-p">We listen. You show us how you actually run the day. We figure out together whether we're the right fit, no pitch theater.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ DAY 3-5</div>
-          <div class="step-h">Scope + budget</div>
-          <div class="step-p">A one-page scope of the first cockpit version, a flat-fee budget, and a delivery date. No SOWs, no monthly retainers locked in.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ DAY 7-14</div>
-          <div class="step-h">First version live</div>
-          <div class="step-p">A working cockpit in your hands within two weeks. Real data shape, real workflow. Then we iterate weekly until it replaces what you had.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- ====================== /home-health ====================== -->
-<main class="page" data-page="/home-health">
-  <section class="sec sec-dark">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ Home health care cockpit</div>
-      <h1 style="font-size:clamp(34px,5vw,56px); line-height:1.05; margin-bottom:14px;">One cockpit for the whole agency.</h1>
-      <p style="font-size:18px; max-width:720px;">Replace the stack of seven disconnected tools — scheduler, EVV, charting, payroll, family messaging, compliance tracker, billing — with one daily driver. Built for the way an agency administrator actually runs the day, from 7am dispatch through end-of-month claim submission.</p>
-      <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:22px;">
-        <a class="btn-primary" href="https://techhausinc1-wq.github.io/home-health-care-cockpit-demo/" target="_blank" rel="noopener">Open the live demo →</a>
-        <a class="btn-primary" style="background:transparent; color:var(--green-mid); border:1px solid var(--green-mid);" href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@heisenbug.app&su=Heisenbug%20%E2%80%94%20Home%20Health%20cockpit%20inquiry&body=Hi%20Heisenbug%2C%0A%0AI%20run%20a%20home%20health%20agency%20and%20I%27d%20like%20to%20talk%20about%20the%20cockpit.%0A%0AA%20bit%20about%20us%3A%0A%5BAgency%20name%20%E2%80%94%20skilled%20%2F%20non-medical%20%2F%20both%20%E2%80%94%20number%20of%20caregivers%20%E2%80%94%20what%27s%20painful%20today%5D%0A%0AThanks." target="_blank" rel="noopener">Start a project</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-light">
-    <div class="sec-inner">
-      <div class="section-eyebrow">→ What it does</div>
-      <h2>The seven tools, collapsed into one cockpit.</h2>
-      <div class="process" style="margin-top:24px;">
-        <div class="step">
-          <div class="step-n">→ DISPATCH</div>
-          <div class="step-h">Caregiver scheduling + GPS routing</div>
-          <div class="step-p">Drag-and-drop weekly schedule across all caregivers and all patients. Routing engine accounts for caregiver location, patient time-windows, hours-of-service, and certification match. Visit changes propagate in real-time to caregiver phones.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ EVV</div>
-          <div class="step-h">Federal Electronic Visit Verification</div>
-          <div class="step-p">Caregiver checks in on the phone at the patient's location — GPS + biometric + task-list confirmation. Required federally for Medicaid-funded personal care and home health services since 2023. Auto-syncs to state EVV aggregator. No paper, no separate app, no missed verification.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ CARE PLANS</div>
-          <div class="step-h">Per-patient task lists + completion tracking</div>
-          <div class="step-p">Each patient has a care plan: tasks per visit, frequency, observations to capture. Caregiver completes on the phone during the visit. Care plan changes (from RN supervision or physician orders) propagate immediately. Family can see completion status without compromising HIPAA.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ FAMILY</div>
-          <div class="step-h">Secure family messaging + visit summaries</div>
-          <div class="step-p">Family members get a sanitized post-visit summary on the phone: who was there, when, what was done, any observations. Secure messaging (architecture aligned to HIPAA practice — BAA required for production deployment) when family has a question. No more "I never know what's happening with mom."</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ COMPLIANCE</div>
-          <div class="step-h">License + background-check expiry tracking</div>
-          <div class="step-p">Every caregiver's CPR cert, TB test, background check, state-required training, and license renewal tracked with auto-alerts before expiry. Schedule blocks any caregiver with a lapsed credential before they can be assigned a visit. Audit-trail ready for state inspection.</div>
-        </div>
-        <div class="step">
-          <div class="step-n">→ BILLING</div>
-          <div class="step-h">Medicare / Medicaid waiver billing</div>
-          <div class="step-p">Billing pulls verified visits from EVV records, generates claim files in the state-required format, tracks claim status, flags denials with reason codes. Private-pay invoices auto-generated with hour breakdowns. No double entry, no end-of-month panic.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-light">
-    <div class="sec-inner sec-narrow">
-      <div class="section-eyebrow">→ Built for both flavors</div>
-      <h2>Skilled or non-medical — both work.</h2>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:18px;">
-        <div>
-          <h3 style="font-family:'Fraunces',serif; font-size:22px; margin-bottom:8px;">Skilled home health</h3>
-          <p style="font-size:14.5px;">RN, PT, OT, SLP visits. Medicare-certified. OASIS assessments, plan-of-care approval workflows, physician orders, 60-day recertification cadences, episode-based billing. Higher reimbursement, heavier compliance — and that is where the cockpit earns its keep.</p>
-        </div>
-        <div>
-          <h3 style="font-family:'Fraunces',serif; font-size:22px; margin-bottom:8px;">Non-medical home care</h3>
-          <p style="font-size:14.5px;">Personal care aides, companions, homemakers. Medicaid waiver programs (CDPAP, MLTC, state-specific) or private-pay. Hourly rate billing, EVV mandate, caregiver-to-patient matching, family communication. Lighter compliance, higher volume, sharper margins.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec-dark">
-    <div class="sec-inner">
-      <div class="section-eyebrow">→ Built on the shared engine</div>
-      <h2>Seven features. Eleven other Heisenbug verticals.</h2>
-      <p style="max-width:760px; font-size:15.5px; margin-top:6px;">Home Health Care looks unique but it's built on the same engine as every other field-service and care-delivery cockpit in the catalog. When we improve the route optimizer here, plumbing and pool service get the improvement next week. When we tighten the EVV verification flow, every HVAC and pet-services tool inherits it. The cockpits are different. The engine underneath is one.</p>
-
-      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(198,217,122,0.18); border-radius:10px; padding:0; margin-top:22px; overflow:hidden;">
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--green-bright); padding:13px 18px; border-bottom:1px solid rgba(198,217,122,0.2); font-weight:600;">
-          <div>→ Home health feature</div>
-          <div>→ Other Heisenbug verticals it powers</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Caregiver ↔ patient match<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">cert · skill · language · location</span></div>
-          <div>HVAC tech ↔ service call · plumber ↔ job · pool tech ↔ property · auto tech ↔ bay · photographer ↔ shoot · real estate agent ↔ showing · landscaper ↔ route stop</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Route map + drive-time optimizer<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">multi-stop · constraint-aware</span></div>
-          <div>HVAC dispatch · plumbing service calls · pool service routes · vending route (BrewRoute) · landscape · pet walking · contractor PM site visits · real estate tour day</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">EVV · proof-of-work<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">GPS + biometric + task complete</span></div>
-          <div>HVAC service-call hour verification · plumbing billable hours · pool chemical-test logs (state mandate) · landscape per-property completion · pet walk GPS verify · contractor punch-list sign-off · insurance claim defense across all of them</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Cert + license expiry tracker<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">auto-block on lapse</span></div>
-          <div>HVAC EPA 608 + NATE · plumbing master + backflow · auto ASE A1-A8 · GC license + OSHA-30 + bonding · pool CPO · daycare CPR + child abuse + immunization · dental hygienist + DEA · med spa nurse · salon · tattoo BBP</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Verified-work → billing<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">no double entry</span></div>
-          <div>Every service vertical: work session → invoice · insurance claim · progress draw · Medicare/Medicaid · LTC insurance · private pay. Same pipeline shape, different format rules per industry.</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Customer / family comms thread<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">HIPAA-grade · sanitized summary</span></div>
-          <div>Pet services daily walk pic to owner · daycare parent updates · auto repair text-based estimate approval · contractor daily homeowner progress · med spa post-procedure followup · dental recall</div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1.2fr 2.5fr; gap:0; padding:13px 18px; font-size:14px; line-height:1.55;">
-          <div style="font-weight:600; color:var(--green-bright);">Recurring care plan / task engine<br><span style="font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:400; color:#8a9088; letter-spacing:0.6px; text-transform:none;">cadence · auto-schedule · template</span></div>
-          <div>Pool chemical schedule · HVAC PM (preventive maintenance) plan · lawn weekly schedule · pet recurring walks · med spa treatment series · dental recall · auto repair service-interval reminders</div>
-        </div>
-      </div>
-
-      <p style="max-width:760px; font-size:14.5px; margin-top:22px; color:rgba(255,255,255,0.7);">This is why the catalog can have 28 cockpits run by a small team. The verticals are the surface area. The engine is the leverage.</p>
-    </div>
-  </section>
-
-  <section class="sec sec-dark">
-    <div class="sec-inner sec-narrow" style="text-align:center;">
-      <div class="section-eyebrow">→ Next step</div>
-      <h2>Run an agency? Let's talk.</h2>
-      <p>30-minute call to see if it fits. We'll show you the live system, talk through your current pain, and tell you straight whether we're the right fit or not. No SOWs, no sales theater.</p>
-      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:18px;">
-        <a class="btn-primary" href="https://mail.google.com/mail/?view=cm&fs=1&to=hello@heisenbug.app&su=Heisenbug%20%E2%80%94%20Home%20Health%20cockpit%20inquiry&body=Hi%20Heisenbug%2C%0A%0AI%20run%20a%20home%20health%20agency%20and%20I%27d%20like%20to%20talk%20about%20the%20cockpit.%0A%0AA%20bit%20about%20us%3A%0A%5BAgency%20name%20%E2%80%94%20skilled%20%2F%20non-medical%20%2F%20both%20%E2%80%94%20number%20of%20caregivers%20%E2%80%94%20what%27s%20painful%20today%5D%0A%0AThanks." target="_blank" rel="noopener">Open Gmail to start →</a>
-        <a class="btn-primary" style="background:transparent; color:var(--green-mid); border:1px solid var(--green-mid);" href="mailto:hello@heisenbug.app?subject=Heisenbug%20%E2%80%94%20Home%20Health%20cockpit%20inquiry">Or use your mail app</a>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- ====================== FOOTER (shared) ====================== -->
 <footer>
   <div class="brand-mark"><img src="heisenbug-square-small.png" alt="Heisenbug" width="54" height="54"></div>
   <div class="foot-name">Heisenbug Software</div>
@@ -1220,51 +650,10 @@ footer .brand-mark {
   <div class="foot-links" style="margin-top:14px; font-size:13px; display:flex; gap:18px; justify-content:center; flex-wrap:wrap;">
     <a href="privacy.html" style="color:var(--text2); text-decoration:none;">Privacy</a>
     <a href="terms.html" style="color:var(--text2); text-decoration:none;">Terms</a>
-    <a href="#/home-health" style="color:var(--text2); text-decoration:none;">Home Health cockpit</a>
+    <a href="home-health/" style="color:var(--text2); text-decoration:none;">Home Health cockpit</a>
     <a href="https://github.com/techhausinc1-wq" target="_blank" rel="noopener" style="color:var(--text2); text-decoration:none;">GitHub</a>
     <a href="mailto:hello@heisenbug.app" style="color:var(--text2); text-decoration:none;">hello@heisenbug.app</a>
   </div>
 </footer>
-
-<script>
-// Tiny hash router: shows the matching <main data-page="..."> and
-// highlights the matching nav link. Routes: / · /built · /about · /contact
-(function() {
-  var pages = document.querySelectorAll('.page');
-  var navLinks = document.querySelectorAll('#nav a');
-
-  function currentRoute() {
-    var h = (location.hash || '#/').replace(/^#/, '');
-    if (!h || h === '/') return '/';
-    if (h === '/built' || h === '/about' || h === '/contact' || h === '/home-health') return h;
-    return '/'; // fallback
-  }
-
-  function render() {
-    var route = currentRoute();
-    pages.forEach(function(p) {
-      p.classList.toggle('is-active', p.getAttribute('data-page') === route);
-    });
-    navLinks.forEach(function(a) {
-      a.classList.toggle('is-active', a.getAttribute('data-route') === route);
-    });
-    // scroll to top of page on route change for a clean tab-switch feel
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
-    // update document title for context
-    var titles = {
-      '/':         'Heisenbug — vertical software for operators',
-      '/built':    'Built — the catalog · Heisenbug',
-      '/about':    'About · Heisenbug',
-      '/contact':  'Start a project · Heisenbug',
-      '/home-health': 'Home Health Care cockpit · Heisenbug'
-    };
-    document.title = titles[route] || titles['/'];
-  }
-
-  window.addEventListener('hashchange', render);
-  render();
-})();
-</script>
-
 </body>
 </html>
