@@ -1,5 +1,5 @@
 // Heisenbug Service Worker — cache-first for app shell, network-first for HTML pages
-const VERSION = 'hb-v7-20260612-0425';
+const VERSION = 'hb-v8-20260613-0530';
 const SHELL = [
   '/',
   '/built/',
