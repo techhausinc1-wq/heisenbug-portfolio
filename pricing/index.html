@@ -284,6 +284,80 @@ footer[role="contentinfo"] .foot-links a {
 }
 footer[role="contentinfo"] .foot-links a:hover { color: var(--hb-green-bright) !important; }
 
+
+/* === MOBILE NAV FIX v1 (applied 2026-06-24) === */
+html, body { overflow-x: hidden; }
+em { font-style: normal !important; font-weight: 600; }
+header[role="banner"] { position: relative; }
+header[role="banner"] .menu-toggle {
+  display: none;
+  background: transparent;
+  border: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  cursor: pointer;
+  margin-left: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  -webkit-tap-highlight-color: transparent;
+}
+header[role="banner"] .menu-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #F2EBCB;
+  border-radius: 2px;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+header[role="banner"] .menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+header[role="banner"] .menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+header[role="banner"] .menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 820px) {
+  header[role="banner"] .menu-toggle { display: flex !important; }
+  header[role="banner"] nav,
+  header[role="banner"] .nav {
+    display: none !important;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #0F1F0F;
+    border-top: 0.5px solid rgba(242,235,203,0.12);
+    padding: 6px 6%;
+    flex-direction: column !important;
+    gap: 0 !important;
+    align-items: stretch !important;
+    margin-left: 0 !important;
+    flex-wrap: nowrap !important;
+    z-index: 60;
+  }
+  header[role="banner"] nav.open,
+  header[role="banner"] .nav.open {
+    display: flex !important;
+  }
+  header[role="banner"] nav a,
+  header[role="banner"] .nav a {
+    padding: 16px 8px !important;
+    border-radius: 0 !important;
+    border-bottom: 0.5px solid rgba(242,235,203,0.08) !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    white-space: nowrap !important;
+    font-size: 15px !important;
+    min-height: 44px;
+  }
+  header[role="banner"] nav a:last-child,
+  header[role="banner"] .nav a:last-child {
+    border-bottom: 0 !important;
+  }
+  header[role="banner"] .header-cta {
+    display: none !important;
+  }
+  header[role="banner"] .header-spacer { display: none !important; }
+}
+/* === END MOBILE NAV FIX v1 === */
 </style>
 
 <script type="application/ld+json">
@@ -337,7 +411,9 @@ footer[role="contentinfo"] .foot-links a:hover { color: var(--hb-green-bright) !
       <a href="/contact/">Contact</a>
     </nav>
     <a class="header-cta" href="/contact/">Start a project →</a>
-  </div>
+  
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav"><span></span><span></span><span></span></button>
+    </div>
 </header>
 
 <main id="main" role="main">
@@ -658,5 +734,33 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<script>
+/* === MOBILE NAV FIX v1 (applied 2026-06-24) === */
+(function(){
+  var btn = document.querySelector('header[role="banner"] .menu-toggle');
+  var nav = document.querySelector('header[role="banner"] nav, header[role="banner"] .nav');
+  if (!btn || !nav) return;
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var open = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  nav.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      nav.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+  document.addEventListener('click', function(e){
+    if (!nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+})();
+/* === END === */
+</script>
+
 </body>
 </html>
